@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Anti-Waste Kitchen – aplikacja pomagająca wykorzystać składniki, które tracą świeżość. Znajdź przepis zanim jedzenie trafi do kosza." />
+<title>Anti-Waste Kitchen – Co ugotować z tego, co zaraz się zepsuje?</title>
+
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Google Fonts: Inter -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<script>
+  // Tailwind konfiguracja – niestandardowa paleta Anti-Waste Eco Theme
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          brand: {
+            500: '#3B7A57',
+            600: '#2E5A44',
+            700: '#234634',
+          },
+          accent: {
+            400: '#F4A261',
+            500: '#E07A5F',
+            600: '#C8604A',
+          },
+          sand: {
+            50:  '#FDFBF7',
+            100: '#F4F1EA',
+            200: '#E8E3D7',
+          },
+          coal: {
+            900: '#2B2D42',
+            700: '#4A4E69',
+            500: '#6C7086',
+          },
+          fresh: {
+            krit: '#D94A3D',
+            urg: '#E67E22',
+            ok:  '#4CAF50',
+          }
+        },
+        fontFamily: {
+          sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
+        },
+        boxShadow: {
+          card: '0 4px 20px -2px rgba(0,0,0,0.05)',
+          cardHover: '0 10px 30px -5px rgba(46,90,68,0.15)',
+        },
+        animation: {
+          'fade-in': 'fadeIn 0.4s ease-out forwards',
+          'slide-up': 'slideUp 0.5s ease-out forwards',
+          'pop': 'pop 0.25s ease-out forwards',
+          'pulse-slow': 'pulse 3s ease-in-out infinite',
+          'counter': 'countUp 2s ease-out forwards',
+        },
+        keyframes: {
+          fadeIn:   { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+          slideUp:  { '0%': { opacity: '0', transform: 'translateY(10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+          pop:      { '0%': { transform: 'scale(0.8)', opacity: '0' }, '100%': { transform: 'scale(1)', opacity: '1' } },
+          countUp:  { '0%': { opacity: '0', transform: 'translateY(-5px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+        }
+      }
+    }
+  }
+</script>
+
+<style>
+  /* ========= Styl globalny & zmienne CSS ========= */
+  :root {
+    --brand-500: #3B7A57;
+    --brand-600: #2E5A44;
+    --accent-400: #F4A261;
+    --accent-500: #E07A5F;
+    --sand-50:  #FDFBF7;
+    --sand-100: #F4F1EA;
+    --coal-900: #2B2D42;
+    --shadow-card: 0 4px 20px -2px rgba(0,0,0,0.05);
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background-color: var(--sand-50);
+    color: var(--coal-900);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Hierarchia typograficzna */
+  h1, h2, h3, h4 { letter-spacing: -0.01em; }
+  .caption { font-size: 0.75rem; letter-spacing: 0.04em; text-transform: uppercase; font-weight: 600; }
+
+  /* ========= Komponenty wielokrotnego użytku ========= */
+  .card-surface {
+    background: #ffffff;
+    box-shadow: var(--shadow-card);
+    border-radius: 1rem;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  }
+  .card-surface:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px -5px rgba(46,90,68,0.15);
+  }
+
+  /* Przyciski */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+    border: none;
+    white-space: nowrap;
+  }
+  .btn:active { transform: scale(0.95); }
+  .btn:focus-visible {
+    outline: 3px solid var(--accent-400);
+    outline-offset: 2px;
+  }
+  .btn-primary {
+    background: var(--brand-600);
+    color: white;
+  }
+  .btn-primary:hover { background: var(--brand-700); }
+  .btn-primary:disabled { background: #a8b5ad; cursor: not-allowed; }
+
+  .btn-accent {
+    background: var(--accent-500);
+    color: white;
+  }
+  .btn-accent:hover { background: var(--accent-600); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--brand-600);
+    border: 1.5px solid var(--sand-200);
+  }
+  .btn-ghost:hover { background: var(--sand-100); }
+
+  /* Focus widoczny dla dostępności */
+  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible {
+    outline: 3px solid var(--accent-400);
+    outline-offset: 2px;
+  }
+
+  /* ========= System tagów / pigułek składników ========= */
+  .ingredient-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.5rem 0.4rem 0.9rem;
+    background: white;
+    border: 1.5px solid var(--sand-200);
+    border-radius: 999px;
+    transition: all 0.2s ease-in-out;
+    animation: pop 0.25s ease-out;
+  }
+  .ingredient-pill:hover { border-color: var(--brand-500); }
+
+  .priority-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    user-select: none;
+  }
+  .priority-normal  { background: #E8F5E9; color: #2E7D32; }
+  .priority-urgent  { background: #FFE0B2; color: #E67E22; }
+  .priority-critical { background: #FFCDD2; color: #C62828; }
+
+  .remove-btn {
+    width: 22px; height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--sand-100);
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+  }
+  .remove-btn:hover { background: #FFCDD2; color: #C62828; }
+
+  /* Auto-suggest dropdown */
+  .suggestions-list {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0; right: 0;
+    background: white;
+    border: 1px solid var(--sand-200);
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow-card);
+    max-height: 240px;
+    overflow-y: auto;
+    z-index: 40;
+    display: none;
+  }
+  .suggestions-list.open { display: block; animation: fadeIn 0.15s ease-out; }
+  .suggestion-item {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: background 0.15s ease-in-out;
+    border-bottom: 1px solid var(--sand-100);
+  }
+  .suggestion-item:last-child { border-bottom: none; }
+  .suggestion-item:hover, .suggestion-item.active { background: var(--sand-50); color: var(--brand-600); }
+
+  /* Filtry – chips */
+  .filter-chip {
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    border: 1.5px solid var(--sand-200);
+    background: white;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+    font-size: 0.875rem;
+  }
+  .filter-chip:hover { border-color: var(--brand-500); }
+  .filter-chip.active {
+    background: var(--brand-600);
+    color: white;
+    border-color: var(--brand-600);
+  }
+
+  /* Eco score */
+  .eco-score {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: #E8F5E9;
+    color: #1B5E20;
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  /* Skeleton loader */
+  .skeleton {
+    background: linear-gradient(90deg, var(--sand-100) 0%, #fff 50%, var(--sand-100) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 0.5rem;
+  }
+  @keyframes shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* Accordion (baza wiedzy) */
+  details > summary { list-style: none; cursor: pointer; }
+  details > summary::-webkit-details-marker { display: none; }
+  details[open] summary .chev { transform: rotate(180deg); }
+  .chev { transition: transform 0.2s ease-in-out; }
+
+  /* Badge uratowanego jedzenia – puls */
+  .live-badge {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.8rem;
+    background: #E8F5E9;
+    color: #1B5E20;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+  .live-dot {
+    width: 8px; height: 8px;
+    background: var(--brand-500);
+    border-radius: 50%;
+    animation: pulse-slow 2s ease-in-out infinite;
+  }
+
+  /* Slider */
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    background: var(--sand-200);
+    border-radius: 999px;
+    outline: none;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px; height: 24px;
+    background: var(--brand-600);
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid white;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 24px; height: 24px;
+    background: var(--brand-600);
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid white;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+
+  /* Rozwijana sekcja karty przepisu */
+  .recipe-details {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-in-out, padding 0.3s ease-in-out;
+  }
+  .recipe-details.open {
+    max-height: 1200px;
+    padding-top: 1rem;
+    padding-bottom: 0.5rem;
+  }
+
+  /* Hero dekoracja */
+  .hero-bg-pattern {
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(59,122,87,0.08) 0%, transparent 40%),
+      radial-gradient(circle at 90% 80%, rgba(244,162,97,0.08) 0%, transparent 40%);
+  }
+
+  /* Mobilna nawigacja */
+  .mobile-menu { display: none; }
+  .mobile-menu.open { display: block; }
+
+  /* Ukryte dostępne */
+  .sr-only {
+    position: absolute; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
+
+  /* Scrollbar estetyka */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: var(--sand-100); }
+  ::-webkit-scrollbar-thumb { background: var(--brand-500); border-radius: 999px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--brand-600); }
+</style>
+</head>
+
+<body class="antialiased">
+
+<!-- ====================================================== -->
+<!-- =================== HEADER / NAV ===================== -->
+<!-- ====================================================== -->
+<header class="sticky top-0 z-50 bg-sand-50/90 backdrop-blur-md border-b border-sand-200">
+  <div class="max-w-7xl mx-auto px-4 md:px-8 py-3 flex items-center justify-between gap-4">
+    <!-- Logo -->
+    <a href="#top" class="flex items-center gap-2 group" aria-label="Anti-Waste Kitchen - strona główna">
+      <div class="w-10 h-10 bg-brand-600 rounded-xl flex items-center justify-center transition-transform group-hover:rotate-12">
+        <!-- Ikona liścia + garnka -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M11 20A7 7 0 0 1 4 13V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v7a7 7 0 0 1-7 7h-2z"/>
+          <path d="M2 12h20"/>
+          <path d="M12 2v2"/>
+          <path d="M9 4c0 1-1 2-2 2"/>
+        </svg>
+      </div>
+      <div>
+        <div class="font-extrabold text-lg text-coal-900 leading-none">Anti-Waste Kitchen</div>
+        <div class="text-xs text-coal-500 mt-0.5">Gotuj. Nie wyrzucaj.</div>
+      </div>
+    </a>
+
+    <!-- Desktop Nav -->
+    <nav class="hidden lg:flex items-center gap-8" aria-label="Główna nawigacja">
+      <a href="#hero"     class="text-coal-700 hover:text-brand-600 font-medium transition">Strona Główna</a>
+      <a href="#search"   class="text-coal-700 hover:text-brand-600 font-medium transition">Wyszukiwarka</a>
+      <a href="#calculator" class="text-coal-700 hover:text-brand-600 font-medium transition">Kalkulator Oszczędności</a>
+      <a href="#knowledge" class="text-coal-700 hover:text-brand-600 font-medium transition">Porady Zero-Waste</a>
+    </nav>
+
+    <!-- Live Badge -->
+    <div class="hidden md:inline-flex live-badge" aria-live="polite">
+      <span class="live-dot" aria-hidden="true"></span>
+      <span>Uratowano dziś: <strong id="savedToday">1 420</strong> kg</span>
+    </div>
+
+    <!-- Mobile hamburger -->
+    <button id="menuBtn" class="lg:hidden p-2 rounded-lg hover:bg-sand-100 transition" aria-label="Otwórz menu" aria-expanded="false">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="3" y1="6"  x2="21" y2="6"/>
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Mobile menu -->
+  <div id="mobileMenu" class="mobile-menu lg:hidden border-t border-sand-200 bg-sand-50">
+    <nav class="px-4 py-4 flex flex-col gap-2" aria-label="Nawigacja mobilna">
+      <a href="#hero"     class="py-2 px-3 rounded-lg hover:bg-sand-100 transition">Strona Główna</a>
+      <a href="#search"   class="py-2 px-3 rounded-lg hover:bg-sand-100 transition">Wyszukiwarka</a>
+      <a href="#calculator" class="py-2 px-3 rounded-lg hover:bg-sand-100 transition">Kalkulator Oszczędności</a>
+      <a href="#knowledge" class="py-2 px-3 rounded-lg hover:bg-sand-100 transition">Porady Zero-Waste</a>
+      <div class="live-badge mt-2 self-start">
+        <span class="live-dot" aria-hidden="true"></span>
+        <span>Uratowano dziś: <strong>1 420</strong> kg</span>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ====================================================== -->
+<!-- ====================== HERO ========================== -->
+<!-- ====================================================== -->
+<section id="hero" class="hero-bg-pattern pt-12 md:pt-20 pb-16 md:pb-24">
+  <div class="max-w-7xl mx-auto px-4 md:px-8 grid md:grid-cols-2 gap-10 items-center">
+    <div class="animate-slide-up">
+      <span class="caption text-brand-600 flex items-center gap-2 mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+        Zero Waste Kitchen
+      </span>
+      <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-coal-900 leading-tight">
+        Zanim wyrzucisz – <span class="text-brand-600">ugotuj!</span><br/>
+        Daj drugie życie swoim składnikom.
+      </h1>
+      <p class="mt-6 text-lg text-coal-700 max-w-xl leading-relaxed">
+        Wpisz produkty z lodówki, które tracą świeżość, a my dobierzemy przepis, który zapobiegnie ich zmarnowaniu. Gotowanie, które oszczędza Twój budżet i planetę.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="#search" class="btn btn-primary">
+          Zacznij ratować jedzenie
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+        <a href="#knowledge" class="btn btn-ghost">Jak marnujemy mniej?</a>
+      </div>
+
+      <!-- Statystyki -->
+      <div class="mt-10 grid grid-cols-3 gap-4 max-w-md">
+        <div>
+          <div class="text-2xl md:text-3xl font-extrabold text-brand-600">98%</div>
+          <div class="text-xs text-coal-500 mt-1">Trafność przepisów</div>
+        </div>
+        <div>
+          <div class="text-2xl md:text-3xl font-extrabold text-brand-600">500+</div>
+          <div class="text-xs text-coal-500 mt-1">Przepisów Anti-Waste</div>
+        </div>
+        <div>
+          <div class="text-2xl md:text-3xl font-extrabold text-brand-600">4.9★</div>
+          <div class="text-xs text-coal-500 mt-1">Ocena użytkowników</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ilustracja hero -->
+    <div class="relative animate-slide-up" style="animation-delay: 0.1s">
+      <div class="absolute -top-6 -right-6 w-24 h-24 bg-accent-400/20 rounded-full blur-2xl"></div>
+      <div class="absolute -bottom-6 -left-6 w-32 h-32 bg-brand-500/20 rounded-full blur-2xl"></div>
+      <img
+        src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80"
+        alt="Świeże warzywa i składniki na kuchennym blacie – ratuj jedzenie przed zepsuciem"
+        class="relative rounded-3xl shadow-cardHover w-full aspect-square object-cover"
+        loading="eager"
+      />
+      <!-- Pływająca karta -->
+      <div class="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur rounded-2xl p-4 shadow-card flex items-center gap-3">
+        <div class="w-10 h-10 bg-brand-600 rounded-full flex items-center justify-center flex-shrink-0">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div>
+          <div class="font-semibold text-sm text-coal-900">Uratowałaś dziś 3 składniki</div>
+          <div class="text-xs text-coal-500">Zaoszczędziłaś ok. 24 zł i 450 l wody</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== -->
+<!-- ============== INTERAKTYWNA WYSZUKIWARKA ============= -->
+<!-- ====================================================== -->
+<section id="search" class="py-16 md:py-24 bg-sand-100">
+  <div class="max-w-7xl mx-auto px-4 md:px-8">
+    <div class="text-center max-w-2xl mx-auto mb-10">
+      <span class="caption text-brand-600">1. Dodaj składniki</span>
+      <h2 class="text-3xl md:text-4xl font-extrabold text-coal-900 mt-2">
+        Co leży w Twojej lodówce?
+      </h2>
+      <p class="mt-3 text-coal-700">
+        Dodaj produkty, które należy zużyć, a oznacz ich priorytet świeżości. Znajdziemy idealny przepis w kilka sekund.
+      </p>
+    </div>
+
+    <!-- Tag input container -->
+    <div class="card-surface p-6 md:p-8 mb-6">
+      <label for="ingredientInput" class="block text-sm font-semibold text-coal-900 mb-2">
+        Wpisz składnik i naciśnij Enter lub kliknij „Dodaj”
+      </label>
+      <div class="relative">
+        <div class="flex gap-2">
+          <div class="relative flex-1">
+            <input
+              type="text"
+              id="ingredientInput"
+              autocomplete="off"
+              placeholder="np. pomidory, śmietana 18%, czerstwy chleb, banany..."
+              class="w-full px-4 py-3 bg-sand-50 border-2 border-sand-200 rounded-xl focus:border-brand-500 focus:bg-white transition text-coal-900 placeholder-coal-500"
+              aria-describedby="inputHint"
+              aria-controls="suggestionsList"
+              aria-expanded="false"
+            />
+            <ul id="suggestionsList" class="suggestions-list" role="listbox" aria-label="Sugerowane składniki"></ul>
+          </div>
+          <button id="addBtn" class="btn btn-primary flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span class="hidden sm:inline">Dodaj</span>
+          </button>
+        </div>
+        <p id="inputHint" class="text-xs text-coal-500 mt-2">
+          Podpowiedź: kliknij badge w dodanym składniku, aby zmienić priorytet świeżości.
+        </p>
+      </div>
+
+      <!-- Dodane tagi -->
+      <div id="tagsContainer" class="mt-6 min-h-[48px] flex flex-wrap gap-2 items-center">
+        <span id="emptyHint" class="text-sm text-coal-500 italic">
+          Jeszcze nic nie dodałaś/eś. Zacznij pisać powyżej...
+        </span>
+      </div>
+    </div>
+
+    <!-- Filtry zaawansowane -->
+    <div class="card-surface p-6 md:p-8 mb-8">
+      <div class="flex items-center justify-between flex-wrap gap-3 mb-6">
+        <h3 class="text-xl font-bold text-coal-900">Dopasuj do swoich potrzeb</h3>
+        <button id="resetFilters" class="text-sm text-brand-600 font-semibold hover:underline">Wyczyść filtry</button>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-6">
+        <!-- Czas -->
+        <fieldset>
+          <legend class="text-sm font-semibold text-coal-900 mb-2">⏱️ Czas przygotowania</legend>
+          <div class="flex flex-wrap gap-2" data-filter="time">
+            <button class="filter-chip active" data-value="any">Dowolne</button>
+            <button class="filter-chip" data-value="15">Szybkie &lt; 15 min</button>
+            <button class="filter-chip" data-value="30">Średnie &lt; 30 min</button>
+          </div>
+        </fieldset>
+        <!-- Dieta -->
+        <fieldset>
+          <legend class="text-sm font-semibold text-coal-900 mb-2">🥗 Dieta</legend>
+          <div class="flex flex-wrap gap-2" data-filter="diet">
+            <button class="filter-chip active" data-value="any">Wszystkie</button>
+            <button class="filter-chip" data-value="weget">Wegetariańska</button>
+            <button class="filter-chip" data-value="wegan">Wegańska</button>
+            <button class="filter-chip" data-value="bez-lak">Bez laktozy</button>
+            <button class="filter-chip" data-value="bez-glut">Bez glutenu</button>
+          </div>
+        </fieldset>
+        <!-- Typ dania -->
+        <fieldset>
+          <legend class="text-sm font-semibold text-coal-900 mb-2">🍽️ Typ dania</legend>
+          <div class="flex flex-wrap gap-2" data-filter="type">
+            <button class="filter-chip active" data-value="any">Dowolne</button>
+            <button class="filter-chip" data-value="obiad">Obiad</button>
+            <button class="filter-chip" data-value="śniad">Śniadanie / Kolacja</button>
+            <button class="filter-chip" data-value="przek">Przekąska / Dessert</button>
+            <button class="filter-chip" data-value="zupa">Zupa</button>
+            <button class="filter-chip" data-value="zapiek">Zapiekanka</button>
+          </div>
+        </fieldset>
+        <!-- Urządzenie -->
+        <fieldset>
+          <legend class="text-sm font-semibold text-coal-900 mb-2">🔥 Urządzenie kuchenne</legend>
+          <div class="flex flex-wrap gap-2" data-filter="device">
+            <button class="filter-chip active" data-value="any">Dowolne</button>
+            <button class="filter-chip" data-value="piekarnik">Piekarnik</button>
+            <button class="filter-chip" data-value="patelnia">Patelnia</button>
+            <button class="filter-chip" data-value="garnek">Jednogarnkowe</button>
+            <button class="filter-chip" data-value="airfryer">AirFryer</button>
+          </div>
+        </fieldset>
+      </div>
+
+      <!-- CTA -->
+      <div class="mt-8 pt-6 border-t border-sand-200 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <button id="findRecipesBtn" class="btn btn-accent text-lg flex-1 py-4" disabled>
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Znajdź Przepisy Anti-Waste
+          <span id="ingCount" class="bg-white/20 px-2 py-0.5 rounded-full text-sm font-bold ml-1">0</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- ========== SEKCJA WYNIKÓW (CARDS GRID) ======= -->
+    <!-- ============================================== -->
+    <section id="results" class="pt-4" aria-live="polite">
+      <div class="flex items-end justify-between flex-wrap gap-3 mb-6">
+        <div>
+          <h2 class="text-2xl md:text-3xl font-extrabold text-coal-900">Propozycje przepisów</h2>
+          <p id="resultsHint" class="text-sm text-coal-500 mt-1">Dodaj składniki i kliknij „Znajdź Przepisy”, aby zobaczyć wyniki.</p>
+        </div>
+      </div>
+
+      <!-- Grid wyników -->
+      <div id="recipesGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <!-- Renderowane przez JS -->
+      </div>
+    </section>
+  </div>
+</section>
+
+<!-- ====================================================== -->
+<!-- ================ KALKULATOR OSZCZĘDNOŚCI ============= -->
+<!-- ====================================================== -->
+<section id="calculator" class="py-16 md:py-24 bg-brand-600 text-white relative overflow-hidden">
+  <div class="absolute -top-20 -left-20 w-80 h-80 bg-accent-400/10 rounded-full blur-3xl"></div>
+  <div class="absolute -bottom-20 -right-20 w-96 h-96 bg-white/5 rounded-full blur-3xl"></div>
+
+  <div class="relative max-w-7xl mx-auto px-4 md:px-8">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <span class="caption text-accent-400">2. Policz swoje oszczędności</span>
+      <h2 class="text-3xl md:text-4xl font-extrabold text-white mt-2">
+        Kalkulator uratowanego jedzenia
+      </h2>
+      <p class="mt-3 text-sand-100/80">
+        Sprawdź, ile pieniędzy i zasobów naturalnych możesz uratować, ograniczając wyrzucanie żywności.
+      </p>
+    </div>
+
+    <div class="card-surface bg-white text-coal-900 p-6 md:p-10 max-w-4xl mx-auto">
+      <label for="mealsSlider" class="block text-sm font-semibold text-coal-900 mb-4">
+        Ile posiłków tygodniowo ratujesz przed wyrzuceniem?
+      </label>
+
+      <input
+        type="range"
+        id="mealsSlider"
+        min="0" max="21" step="1" value="3"
+        aria-valuemin="0" aria-valuemax="21" aria-valuenow="3"
+        aria-label="Liczba uratowanych posiłków tygodniowo"
+      />
+
+      <div class="flex justify-between items-center mt-4 mb-8">
+        <span class="text-xs text-coal-500">0 posiłków</span>
+        <div class="text-center">
+          <div class="text-4xl md:text-5xl font-extrabold text-brand-600" id="mealsCount">3</div>
+          <div class="text-sm text-coal-500 mt-1">posiłków / tydzień</div>
+        </div>
+        <span class="text-xs text-coal-500">21 posiłków</span>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-4 md:gap-6">
+        <div class="bg-sand-50 rounded-2xl p-6 border border-sand-200 text-center">
+          <div class="w-12 h-12 bg-accent-500/15 text-accent-500 rounded-xl flex items-center justify-center mx-auto mb-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <div class="text-3xl md:text-4xl font-extrabold text-brand-600"><span id="plnYear">3 900</span> zł</div>
+          <div class="text-sm text-coal-500 mt-2">oszczędności rocznie</div>
+          <div class="text-xs text-coal-700 mt-3 leading-snug">Przy średniej cenie 25 zł za posiłek, który nie trafia do kosza.</div>
+        </div>
+        <div class="bg-sand-50 rounded-2xl p-6 border border-sand-200 text-center">
+          <div class="w-12 h-12 bg-brand-500/15 text-brand-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+          </div>
+          <div class="text-3xl md:text-4xl font-extrabold text-brand-600"><span id="waterYear">23 400</span> l</div>
+          <div class="text-sm text-coal-500 mt-2">zaoszczędzonej wody rocznie</div>
+          <div class="text-xs text-coal-700 mt-3 leading-snug">Średnio 150 l wody śladu wodnego na jeden uratowany posiłek.</div>
+        </div>
+        <div class="bg-sand-50 rounded-2xl p-6 border border-sand-200 text-center">
+          <div class="w-12 h-12 bg-accent-400/15 text-accent-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 20A7 7 0 0 1 4 13c0-4 4-9 7-12 3 3 7 8 7 12a7 7 0 0 1-7 7z"/></svg>
+          </div>
+          <div class="text-3xl md:text-4xl font-extrabold text-brand-600"><span id="co2Year">187</span> kg</div>
+          <div class="text-sm text-coal-500 mt-2">mniej CO₂ rocznie</div>
+          <div class="text-xs text-coal-700 mt-3 leading-snug">Mniejsze emisje dzięki unikaniu produkcji i transportu nowej żywności.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== -->
+<!-- ============= BAZA WIEDZY ZERO-WASTE ================= -->
+<!-- ====================================================== -->
+<section id="knowledge" class="py-16 md:py-24">
+  <div class="max-w-7xl mx-auto px-4 md:px-8">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <span class="caption text-brand-600">3. Ucz się z nami</span>
+      <h2 class="text-3xl md:text-4xl font-extrabold text-coal-900 mt-2">
+        Baza wiedzy i triki Zero-Waste
+      </h2>
+      <p class="mt-3 text-coal-700">
+        Cztery sprawdzone porady, które pomogą Ci marnować mniej żywności każdego dnia.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-4 md:gap-6 max-w-5xl mx-auto">
+      <!-- 1 -->
+      <details class="card-surface p-5 md:p-6 group">
+        <summary class="flex items-start gap-4">
+          <div class="w-12 h-12 bg-brand-600/10 text-brand-600 rounded-xl flex items-center justify-center flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 20A7 7 0 0 1 4 13V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v7a7 7 0 0 1-7 7h-2z"/><path d="M9 2v4M15 2v4"/></svg>
+          </div>
+          <div class="flex-1">
+            <h3 class="font-bold text-lg text-coal-900">Jak prawidłowo przechowywać zioła i warzywa liściaste?</h3>
+            <p class="text-sm text-coal-500 mt-1">Świeżość nawet przez 2 tygodnie.</p>
+          </div>
+          <svg class="chev flex-shrink-0 text-coal-500" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <div class="mt-4 pt-4 border-t border-sand-200 text-sm text-coal-700 leading-relaxed space-y-2">
+          <p><strong>Krok 1:</strong> Opłucz i dokładnie osusz liście ręcznikiem papierowym lub w suszarce do sałaty.</p>
+          <p><strong>Krok 2:</strong> Włóż do pojemnika wyłożonego suchym ręcznikiem papierowym – chłonie nadmiar wilgoci, która jest głównym winowajcą psucia.</p>
+          <p><strong>Krok 3:</strong> Zamknij szczelnie i przechowuj w lodówce (nie w drzwiach – tam jest cieplej!). Zioła z łodygami (pietruszka, kolendra) postaw jak bukiet w słoiku z 2 cm wody i przykryj woreczkiem.</p>
+          <p class="text-xs text-brand-600 font-semibold pt-2">💡 Tip: Liście jarmużu, szpinak i rukolę przechowuj zawsze z dala od jabłek i bananów – wydzielają etylen!</p>
+        </div>
+      </details>
+
+      <!-- 2 -->
+      <details class="card-surface p-5 md:p-6 group">
+        <summary class="flex items-start gap-4">
+          <div class="w-12 h-12 bg-accent-500/10 text-accent-500 rounded-xl flex items-center justify-center flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><path d="M9 14h6"/></svg>
+          </div>
+          <div class="flex-1">
+            <h3 class="font-bold text-lg text-coal-900">Zamrażalnik Twoim przyjacielem: co można mrozić?</h3>
+            <p class="text-sm text-coal-500 mt-1">Lista produktów, które zaskoczą Cię swoją mrozoodpornością.</p>
+          </div>
+          <svg class="chev flex-shrink-0 text-coal-500" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <div class="mt-4 pt-4 border-t border-sand-200 text-sm text-coal-700 leading-relaxed space-y-2">
+          <p><strong>Mroź bez obaw:</strong> chleb (pokrojony!), masło, starty ser, dojrzałe banany (idealne do smoothies), jogurt naturalny, zupy i sosy, ugotowane strączki, blanszowane warzywa (groszek, fasolka szparagowa).</p>
+          <p><strong>Unikaj mrożenia:</strong> surowych warzyw bogatych w wodę (ogórki, sałata, rzodkiewka), jajek w skorupkach, śmietany kremówki (straci teksturę, ale nadal nadaje się do gotowania).</p>
+          <p><strong>Złota zasada:</strong> mroź w porcjach i opisuj datą – zamrożone jedzenie też się psuje, tylko wolniej. Zazwyczaj 3–6 miesięcy to bezpieczny limit.</p>
+        </div>
+      </details>
+
+      <!-- 3 -->
+      <details class="card-surface p-5 md:p-6 group">
+        <summary class="flex items-start gap-4">
+          <div class="w-12 h-12 bg-brand-600/10 text-brand-600 rounded-xl flex items-center justify-center flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11h18M5 11V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v5M5 11v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>
+          </div>
+          <div class="flex-1">
+            <h3 class="font-bold text-lg text-coal-900">Drugie życie czerstwego pieczywa</h3>
+            <p class="text-sm text-coal-500 mt-1">Nigdy więcej nie wyrzucaj suchego chleba.</p>
+          </div>
+          <svg class="chev flex-shrink-0 text-coal-500" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <div class="mt-4 pt-4 border-t border-sand-200 text-sm text-coal-700 leading-relaxed space-y-2">
+          <p><strong>Grzanki i groszek:</strong> pokrój w kostkę, wymieszaj z oliwą, solą i czosnkiem. Piecz 15 min w 180°C – idealne do sałatek i zup.</p>
+          <p><strong>Bułka tarta domowej roboty:</strong> zblenduj lub zetrzyj – smakuje nieporównywalnie lepiej niż sklepową, a dodatkowo zero plastiku.</p>
+          <p><strong>Chlebowa zapiekanka i pudding:</strong> pokruszony chleb zalany masą jajeczno-mleczną z owocami lub warzywami to klasyk kuchni anti-waste.</p>
+          <p><strong>Bruschetta i grzanki:</strong> czerstwy chleb po opieczeniu odzyskuje chrupkość – lepiej niż świeży w wielu zastosowaniach!</p>
+        </div>
+      </details>
+
+      <!-- 4 -->
+      <details class="card-surface p-5 md:p-6 group">
+        <summary class="flex items-start gap-4">
+          <div class="w-12 h-12 bg-accent-500/10 text-accent-500 rounded-xl flex items-center justify-center flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8"  y1="2" x2="8"  y2="6"/><line x1="3"  y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div class="flex-1">
+            <h3 class="font-bold text-lg text-coal-900">Oznaczenia na opakowaniach: „Należy spożyć do” vs „Najlepiej spożyć przed”</h3>
+            <p class="text-sm text-coal-500 mt-1">Kluczowa różnica, która ratuje tony żywności.</p>
+          </div>
+          <svg class="chev flex-shrink-0 text-coal-500" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <div class="mt-4 pt-4 border-t border-sand-200 text-sm text-coal-700 leading-relaxed space-y-2">
+          <p><strong>„Należy spożyć do”</strong> – to data bezpieczeństwa. Po jej upływie produkt może być niebezpieczny (dotyczy mięsa, ryb, nabiału świeżego). Nie jedz po terminie.</p>
+          <p><strong>„Najlepiej spożyć przed”</strong> – to data jakości, a nie bezpieczeństwa! Oznacza, że po tym dniu produkt może stracić na smaku/chrupkości, ale nadal jest bezpieczny do spożycia.</p>
+          <p><strong>Zaufaj zmysłom:</strong> sprawdź zapach, wygląd i smak. Jogurt, makaron, mąka, konserwy, dżemy – wszystko z oznaczeniem „najlepiej spożyć przed” możesz spożywać długo po terminie.</p>
+          <p class="text-xs text-brand-600 font-semibold pt-2">📊 W Polsce wyrzucamy 4,8 mln ton żywności rocznie. Zrozumienie dat to pierwszy krok do zmiany!</p>
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ====================================================== -->
+<!-- ======================= FOOTER ======================= -->
+<!-- ====================================================== -->
+<footer class="bg-coal-900 text-sand-100 pt-16 pb-8">
+  <div class="max-w-7xl mx-auto px-4 md:px-8">
+    <!-- Newsletter -->
+    <div class="bg-brand-600 rounded-3xl p-6 md:p-10 mb-12 relative overflow-hidden">
+      <div class="absolute -top-10 -right-10 w-48 h-48 bg-accent-400/20 rounded-full blur-3xl"></div>
+      <div class="relative grid md:grid-cols-2 gap-6 items-center">
+        <div>
+          <h3 class="text-2xl md:text-3xl font-extrabold text-white">Tygodniowy jadłospis Zero Waste</h3>
+          <p class="text-sand-100/80 mt-2">Dołącz do 12 000+ czytelników. Co tydzień przepisy, porady i sezonowe inspiracje prosto na Twoją skrzynkę.</p>
+        </div>
+        <form id="newsletterForm" class="flex flex-col sm:flex-row gap-3" onsubmit="event.preventDefault(); this.querySelector('button').textContent='Dziękujemy! 🌱';">
+          <label class="sr-only" for="newsletterEmail">Twój adres e-mail</label>
+          <input
+            type="email"
+            id="newsletterEmail"
+            required
+            placeholder="twoj@email.pl"
+            class="flex-1 px-4 py-3 rounded-xl bg-white text-coal-900 placeholder-coal-500 focus:ring-2 focus:ring-accent-400 outline-none"
+          />
+          <button type="submit" class="btn btn-accent">Zapisuję się</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Linki + copyright -->
+    <div class="grid md:grid-cols-4 gap-8 pb-8 border-b border-white/10">
+      <div class="md:col-span-2">
+        <div class="flex items-center gap-2 mb-3">
+          <div class="w-10 h-10 bg-brand-500 rounded-xl flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 20A7 7 0 0 1 4 13V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v7a7 7 0 0 1-7 7h-2z"/><path d="M2 12h20"/></svg>
+          </div>
+          <span class="font-extrabold text-lg">Anti-Waste Kitchen</span>
+        </div>
+        <p class="text-sand-100/70 text-sm max-w-md">
+          Tworzymy narzędzia, które pomagają marnować mniej żywności. Bo każdy uratowany składnik to mała rewolucja.
+        </p>
+      </div>
+
+      <div>
+        <h4 class="font-bold text-white mb-3 text-sm">Nawigacja</h4>
+        <ul class="space-y-2 text-sm text-sand-100/70">
+          <li><a href="#hero" class="hover:text-white transition">Strona Główna</a></li>
+          <li><a href="#search" class="hover:text-white transition">Wyszukiwarka</a></li>
+          <li><a href="#calculator" class="hover:text-white transition">Kalkulator</a></li>
+          <li><a href="#knowledge" class="hover:text-white transition">Porady</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-bold text-white mb-3 text-sm">Informacje</h4>
+        <ul class="space-y-2 text-sm text-sand-100/70">
+          <li><a href="#" class="hover:text-white transition">Regulamin</a></li>
+          <li><a href="#" class="hover:text-white transition">Polityka prywatności</a></li>
+          <li><a href="#" class="hover:text-white transition">RODO</a></li>
+          <li><a href="#" class="hover:text-white transition">Kontakt</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="flex flex-col md:flex-row items-center justify-between gap-4 pt-6 text-sm text-sand-100/60">
+      <div>© 2026 Anti-Waste Kitchen. Wszystkie prawa zastrzeżone. Gotuj mądrze. 🌍</div>
+      <div class="flex items-center gap-3">
+        <a href="#" aria-label="Instagram" class="w-9 h-9 rounded-full bg-white/10 hover:bg-brand-500 transition flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a href="#" aria-label="Facebook" class="w-9 h-9 rounded-full bg-white/10 hover:bg-brand-500 transition flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </a>
+        <a href="#" aria-label="YouTube" class="w-9 h-9 rounded-full bg-white/10 hover:bg-brand-500 transition flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg>
+        </a>
+        <a href="#" aria-label="Pinterest" class="w-9 h-9 rounded-full bg-white/10 hover:bg-brand-500 transition flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 12l4-8M10 20l2-8M14 8c2 0 4 1 4 3s-2 4-4 4-2-2-4-2"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ====================================================== -->
+<!-- ====================== JAVASCRIPT ==================== -->
+<!-- ====================================================== -->
+<script>
+/* =========================================================
+   ANTI-WASTE KITCHEN – logika aplikacji
+   Stan: ingredients[], activeFilters{}, recipes[]
+   ========================================================= */
+
+// ---- 1. Stan aplikacji ------------------------------------
+const ingredients = []; // {id, name, priority: 'normal'|'urgent'|'critical'}
+
+const filters = {
+  time:   'any',
+  diet:   'any',
+  type:   'any',
+  device: 'any',
+};
+
+// ---- 2. Baza popularnych składników (auto-suggest) -------
+const popularIngredients = [
+  'pomidory','śmietana 18%','czerstwy chleb','banany','pieczarki',
+  'marchew','cebula','czosnek','ziemniaki','jajka','mleko','ser żółty',
+  'mozzarella','jogurt naturalny','szpinak','brokuł','kalafior','papryka',
+  'cukinia','bakłażan','kurczak','łosoś','tofu','fasola','ciecierzyca',
+  'ryż','makaron','sałata','rukola','bazylia','pietruszka','koperek',
+  'masło','twaróg','jabłka','gruszki','cytryna','awokado','imbir'
+];
+
+// ---- 3. Baza przepisów ------------------------------------
+const recipes = [
+  {
+    id: 1,
+    title: 'Zapiekanka „Resztkowa Frittata” z warzyw i sera',
+    img: 'https://images.unsplash.com/photo-1625944525533-473d0b4f4ea1?w=800&q=80',
+    time: 20,
+    difficulty: 'Łatwa',
+    calories: 380,
+    co2: 1.2,
+    type: 'zapiek',
+    diet: ['weget','bez-glut'],
+    device: 'piekarnik',
+    ingredients: ['jajka','ziemniaki','pieczarki','cebula','ser żółty','szpinak','papryka'],
+    substitutes: { 'śmietana 18%': 'jogurt naturalny lub mleko kokosowe', 'ser żółty': 'feta lub parmezan' },
+    steps: [
+      'Rozgrzej piekarnik do 180°C (termoobieg).',
+      'Na patelni podsmaż pokrojoną cebulę, pieczarki i paprykę przez 5 minut.',
+      'W misce roztrzep 6 jajek ze szczyptą soli i pieprzu. Wmieszaj szpinak.',
+      'Dodaj ugotowane i pokrojone w kostkę ziemniaki oraz podsmażone warzywa.',
+      'Wlej masę do formy wysmarowanej masłem, posyp startym serem.',
+      'Piecz 20 minut, aż wierzch się zarumieni. Podawaj z sałatką.'
+    ],
+    usedLabel: 'jajka, ziemniaki, pieczarki'
+  },
+  {
+    id: 2,
+    title: 'Kremowy chlebowy pudding ze spóźnionych owoców',
+    img: 'https://images.unsplash.com/photo-1623341213819-1b49d36d7e43?w=800&q=80',
+    time: 45,
+    difficulty: 'Łatwa',
+    calories: 420,
+    co2: 0.9,
+    type: 'przek',
+    diet: ['weget'],
+    device: 'piekarnik',
+    ingredients: ['czerstwy chleb','banany','jabłka','jajka','mleko','cynamon','miód'],
+    substitutes: { 'mleko': 'napój roślinny (owsiany, sojowy)', 'miód': 'cukier lub syrop klonowy' },
+    steps: [
+      'Pokrój chleb w kostkę, a owoce w plasterki.',
+      'W misce wymieszaj 3 jajka, 400 ml mleka, 2 łyżki miodu i łyżeczkę cynamonu.',
+      'W naczyniu żaroodpornym ułóż warstwy: chleb – owoce – chleb.',
+      'Zalej wszystko masą jajeczną i odstaw na 10 minut, żeby chleb nasiąkł.',
+      'Piecz 35–40 minut w 180°C, aż pudding się zetnie i zarumieni.',
+      'Podawaj ciepły z kleksem jogurtu lub gałką lodów waniliowych.'
+    ],
+    usedLabel: 'czerstwy chleb, banany'
+  },
+  {
+    id: 3,
+    title: 'Aromatyczny Bulion Resztkowy z obierek i końcówek warzyw',
+    img: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=800&q=80',
+    time: 90,
+    difficulty: 'Łatwa',
+    calories: 60,
+    co2: 2.1,
+    type: 'zupa',
+    diet: ['wegan','bez-glut','bez-lak'],
+    device: 'garnek',
+    ingredients: ['marchew','cebula','czosnek','pietruszka','ziemniaki','imbir'],
+    substitutes: { 'korzeń pietruszki': 'seler lub pasternak', 'liść laurowy': 'tymianek' },
+    steps: [
+      'Zbieraj przez tydzień w zamrażalniku obierki, końcówki i łodygi warzyw (marchew, cebula, seler, pietruszka, por).',
+      'Wrzuć zawartość do dużego garnka, dodaj 2 listki laurowe, kilka ziaren pieprzu i gałązkę tymianku.',
+      'Zalej zimną wodą (ok. 3 l) i doprowadź do wrzenia.',
+      'Gotuj na bardzo małym ogniu 1–1,5 godziny, nie przykrywając całkowicie.',
+      'Przecedź przez sito. Bulion jest gotowy jako baza do zup, risotto czy sosów.',
+      'Rozlewaj do słoików lub foremek na kostki i mroź do 3 miesięcy.'
+    ],
+    usedLabel: 'obierki, marchew, cebula'
+  },
+  {
+    id: 4,
+    title: 'Pesto ze zwiędłych ziół i naci marchewki',
+    img: 'https://images.unsplash.com/photo-1598142982901-df4cec0948cb?w=800&q=80',
+    time: 10,
+    difficulty: 'Bardzo łatwa',
+    calories: 180,
+    co2: 0.7,
+    type: 'przek',
+    diet: ['weget','bez-glut'],
+    device: 'any',
+    ingredients: ['bazylia','pietruszka','koperek','czosnek','orzechy','oliwa','marchew'],
+    substitutes: { 'orzeszki piniowe': 'orzechy włoskie, słonecznik, pestki dyni', 'parmezan': 'płatki drożdżowe (wersja wegańska)' },
+    steps: [
+      'Dokładnie umyj zioła oraz liście naci marchewki (możesz dodać też liście rzodkiewki czy buraka).',
+      'Wrzuć do blendera 2 ząbki czosnku, 50 g orzechów i garść startego parmezanu.',
+      'Dodaj zioła i wlej powoli 150 ml dobrej oliwy z oliwek, miksując na gładką pastę.',
+      'Dopraw solą, pieprzem i sokiem z cytryny do smaku.',
+      'Przełóż do czystego słoiczka, na wierzch wylej warstwę oliwy – przechowa się do tygodnia.',
+      'Świetne do makaronu, na kanapki, do sałatek i jako dip do warzyw.'
+    ],
+    usedLabel: 'bazylia, pietruszka, nać marchewki'
+  },
+  {
+    id: 5,
+    title: 'Zupa krem z dojrzewających pomidorów i papryki',
+    img: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=800&q=80',
+    time: 30,
+    difficulty: 'Łatwa',
+    calories: 240,
+    co2: 0.8,
+    type: 'zupa',
+    diet: ['wegan','bez-glut','bez-lak'],
+    device: 'garnek',
+    ingredients: ['pomidory','papryka','cebula','czosnek','ziemniaki','śmietana 18%'],
+    substitutes: { 'śmietana 18%': 'jogurt kokosowy lub mleczko kokosowe', 'bulion': 'woda z warzywami' },
+    steps: [
+      'Na łyżce oliwy podsmaż pokrojoną cebulę i czosnek.',
+      'Dodaj pokrojone pomidory, paprykę i ziemniaka, smaż 3 minuty.',
+      'Zalej bulionem (ok. 1 l) i gotuj 20 minut do miękkości.',
+      'Zmiksuj blenderem na gładki krem.',
+      'Dopraw solą, pieprzem i bazylią.',
+      'Podawaj z łyżką śmietany lub jogurtu i grzankami z czerstwego chleba.'
+    ],
+    usedLabel: 'pomidory, papryka'
+  },
+  {
+    id: 6,
+    title: 'Szybkie placuszki bananowe (2 składniki!)',
+    img: 'https://images.unsplash.com/photo-1528207776546-36cbb1e82721?w=800&q=80',
+    time: 15,
+    difficulty: 'Bardzo łatwa',
+    calories: 290,
+    co2: 0.5,
+    type: 'śniad',
+    diet: ['weget','bez-glut'],
+    device: 'patelnia',
+    ingredients: ['banany','jajka','cynamon','miód'],
+    substitutes: { 'jajka': '1 łyżka siemienia lnianego + 3 łyżki wody', 'mąka': 'płatki owsiane' },
+    steps: [
+      'Rozgnieć widelcem 2 dojrzałe banany na gładką masę.',
+      'Wbij 2 jajka, dodaj szczyptę cynamonu i wymieszaj.',
+      'Rozgrzej patelnię z odrobiną masła lub oleju kokosowego.',
+      'Nakładaj łyżką porcje ciasta, smaż po 2 minuty z każdej strony.',
+      'Podawaj z jogurtem, owocami i odrobiną miodu.',
+      'Idealne szybkie śniadanie lub przekąska – ratuje nawet bardzo brązowe banany!'
+    ],
+    usedLabel: 'dojrzałe banany'
+  }
+];
+
+// ---- 4. Elementy DOM --------------------------------------
+const $input       = document.getElementById('ingredientInput');
+const $addBtn      = document.getElementById('addBtn');
+const $suggestions = document.getElementById('suggestionsList');
+const $tagsCont    = document.getElementById('tagsContainer');
+const $emptyHint   = document.getElementById('emptyHint');
+const $ingCount    = document.getElementById('ingCount');
+const $findBtn     = document.getElementById('findRecipesBtn');
+const $grid        = document.getElementById('recipesGrid');
+const $resultsHint = document.getElementById('resultsHints');
+const $menuBtn     = document.getElementById('menuBtn');
+const $mobileMenu  = document.getElementById('mobileMenu');
+const $slider      = document.getElementById('mealsSlider');
+const $mealsCount  = document.getElementById('mealsCount');
+const $plnYear     = document.getElementById('plnYear');
+const $waterYear   = document.getElementById('waterYear');
+const $co2Year     = document.getElementById('co2Year');
+const $savedToday  = document.getElementById('savedToday');
+
+// ---- 5. Auto-suggest --------------------------------------
+let activeSuggestion = -1;
+
+$input.addEventListener('input', (e) => {
+  const val = e.target.value.trim().toLowerCase();
+  activeSuggestion = -1;
+  if (!val) { closeSuggestions(); return; }
+
+  const matches = popularIngredients
+    .filter(i => i.includes(val) && !ingredients.some(x => x.name.toLowerCase() === i))
+    .slice(0, 8);
+
+  if (!matches.length) { closeSuggestions(); return; }
+
+  $suggestions.innerHTML = matches.map((m, idx) => `
+    <li class="suggestion-item" data-name="${m}" role="option" tabindex="0">
+      <span class="font-medium">${highlight(m, val)}</span>
+    </li>
+  `).join('');
+
+  $suggestions.classList.add('open');
+  $input.setAttribute('aria-expanded', 'true');
+
+  $suggestions.querySelectorAll('.suggestion-item').forEach(el => {
+    el.addEventListener('click', () => {
+      addIngredient(el.dataset.name);
+      closeSuggestions();
+    });
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { addIngredient(el.dataset.name); closeSuggestions(); }
+    });
+  });
+});
+
+function highlight(text, query) {
+  const idx = text.toLowerCase().indexOf(query);
+  if (idx === -1) return text;
+  return text.slice(0, idx) + '<strong class="text-brand-600">' + text.slice(idx, idx + query.length) + '</strong>' + text.slice(idx + query.length);
+}
+
+$input.addEventListener('keydown', (e) => {
+  const items = [...$suggestions.querySelectorAll('.suggestion-item')];
+  if (e.key === 'ArrowDown' && items.length) {
+    e.preventDefault();
+    activeSuggestion = Math.min(activeSuggestion + 1, items.length - 1);
+    items.forEach((it, i) => it.classList.toggle('active', i === activeSuggestion));
+    items[activeSuggestion]?.scrollIntoView({ block: 'nearest' });
+  } else if (e.key === 'ArrowUp' && items.length) {
+    e.preventDefault();
+    activeSuggestion = Math.max(activeSuggestion - 1, 0);
+    items.forEach((it, i) => it.classList.toggle('active', i === activeSuggestion));
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    if (activeSuggestion >= 0 && items[activeSuggestion]) {
+      addIngredient(items[activeSuggestion].dataset.name);
+      closeSuggestions();
+    } else {
+      addIngredient($input.value.trim());
+    }
+  } else if (e.key === 'Escape') {
+    closeSuggestions();
+  }
+});
+
+function closeSuggestions() {
+  $suggestions.classList.remove('open');
+  $suggestions.innerHTML = '';
+  $input.setAttribute('aria-expanded', 'false');
+  activeSuggestion = -1;
+}
+document.addEventListener('click', (e) => {
+  if (!$input.contains(e.target) && !$suggestions.contains(e.target)) closeSuggestions();
+});
+
+// ---- 6. Dodawanie / usuwanie składników -------------------
+function addIngredient(name) {
+  if (!name) return;
+  const normalizedName = name.toLowerCase();
+  if (ingredients.some(i => i.name.toLowerCase() === normalizedName)) {
+    flashInput('Ten składnik już jest na liście!');
+    return;
+  }
+  ingredients.push({
+    id: Date.now() + Math.random(),
+    name: name,
+    priority: 'normal',
+  });
+  $input.value = '';
+  closeSuggestions();
+  renderTags();
+  updateCount();
+}
+
+function flashInput(msg) {
+  const original = $input.placeholder;
+  $input.placeholder = msg;
+  $input.style.borderColor = '#D94A3D';
+  setTimeout(() => {
+    $input.placeholder = original;
+    $input.style.borderColor = '';
+  }, 1800);
+}
+
+$addBtn.addEventListener('click', () => {
+  addIngredient($input.value.trim());
+});
+
+function renderTags() {
+  if (!ingredients.length) {
+    $tagsCont.innerHTML = '<span id="emptyHint" class="text-sm text-coal-500 italic">Jeszcze nic nie dodałaś/eś. Zacznij pisać powyżej...</span>';
+    return;
+  }
+  $tagsCont.innerHTML = ingredients.map(i => {
+    const prioClass = i.priority === 'critical' ? 'priority-critical'
+                    : i.priority === 'urgent'  ? 'priority-urgent'
+                    : 'priority-normal';
+    const prioText = i.priority === 'critical' ? 'Krytyczny – zużyj dziś'
+                   : i.priority === 'urgent'  ? 'Urgent – 2 dni'
+                   : 'Świeży';
+    return `
+      <div class="ingredient-pill" data-id="${i.id}">
+        <span class="font-medium text-coal-900 text-sm">${escapeHtml(i.name)}</span>
+        <button type="button"
+                class="priority-badge ${prioClass}"
+                data-action="priority"
+                aria-label="Zmień priorytet: ${prioText}"
+                title="Kliknij, aby zmienić priorytet świeżości">
+          ${prioText}
+        </button>
+        <button type="button"
+                class="remove-btn"
+                data-action="remove"
+                aria-label="Usuń ${escapeHtml(i.name)}"
+                title="Usuń składnik">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+    `;
+  }).join('');
+
+  // Bind events
+  $tagsCont.querySelectorAll('.ingredient-pill').forEach(pill => {
+    const id = parseFloat(pill.dataset.id);
+    pill.querySelector('[data-action="remove"]').addEventListener('click', () => {
+      const idx = ingredients.findIndex(i => i.id === id);
+      if (idx > -1) { ingredients.splice(idx, 1); renderTags(); updateCount(); }
+    });
+    pill.querySelector('[data-action="priority"]').addEventListener('click', (e) => {
+      const ing = ingredients.find(i => i.id === id);
+      if (!ing) return;
+      const order = ['normal','urgent','critical'];
+      ing.priority = order[(order.indexOf(ing.priority) + 1) % order.length];
+      renderTags();
+    });
+  });
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function updateCount() {
+  const n = ingredients.length;
+  $ingCount.textContent = n;
+  $findBtn.disabled = n === 0;
+  $findBtn.classList.toggle('opacity-60', n === 0);
+}
+
+// ---- 7. Filtry -------------------------------------------
+document.querySelectorAll('[data-filter]').forEach(group => {
+  group.addEventListener('click', (e) => {
+    const btn = e.target.closest('.filter-chip');
+    if (!btn) return;
+    const key = group.dataset.filter;
+    const val = btn.dataset.value;
+    filters[key] = val;
+    group.querySelectorAll('.filter-chip').forEach(b => b.classList.toggle('active', b === btn));
+  });
+});
+
+document.getElementById('resetFilters').addEventListener('click', () => {
+  Object.keys(filters).forEach(k => filters[k] = 'any');
+  document.querySelectorAll('[data-filter]').forEach(group => {
+    group.querySelectorAll('.filter-chip').forEach((b, i) => b.classList.toggle('active', i === 0));
+  });
+});
+
+// ---- 8. Wyszukiwanie i renderowanie przepisów ------------
+$findBtn.addEventListener('click', () => {
+  if (!ingredients.length) return;
+  searchRecipes();
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+
+function showSkeletons() {
+  const skel = Array.from({length: 6}).map(() => `
+    <div class="card-surface overflow-hidden">
+      <div class="skeleton h-48 w-full"></div>
+      <div class="p-5 space-y-3">
+        <div class="skeleton h-4 w-32"></div>
+        <div class="skeleton h-6 w-full"></div>
+        <div class="skeleton h-4 w-3/4"></div>
+        <div class="flex gap-2 pt-2">
+          <div class="skeleton h-8 w-20"></div>
+          <div class="skeleton h-8 w-20"></div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  $grid.innerHTML = skel;
+}
+
+function searchRecipes() {
+  showSkeletons();
+  $resultsHint.textContent = 'Szukamy najlepszych przepisów...';
+
+  setTimeout(() => {
+    const userIng = ingredients.map(i => i.name.toLowerCase());
+    const critCount = ingredients.filter(i => i.priority === 'critical').length;
+    const urgCount  = ingredients.filter(i => i.priority === 'urgent').length;
+
+    // Obliczanie dopasowania
+    const scored = recipes.map(r => {
+      const rIngLower = r.ingredients.map(x => x.toLowerCase());
+      const matched = rIngLower.filter(ri => userIng.some(ui => ri.includes(ui) || ui.includes(ri)));
+      const score = matched.length * 10
+                  + rIngLower.filter(ri => userIng.some(ui => ri === ui)).length * 5
+                  + (critCount && matched.length ? critCount * 3 : 0);
+      return { recipe: r, matched: matched.length, total: rIngLower.length, score };
+    })
+    .filter(x => x.matched > 0)
+    .filter(x => filterMatch(x.recipe))
+    .sort((a, b) => b.score - a.score);
+
+    renderRecipes(scored);
+    if (scored.length) {
+      $resultsHint.textContent = `Znaleziono ${scored.length} ${scored.length === 1 ? 'przepis' : (scored.length < 5 ? 'przepisy' : 'przepisów')} dopasowanych do Twoich składników.`;
+    } else {
+      $resultsHint.textContent = 'Brak dokładnych dopasowań – pokazujemy nasze najlepsze propozycje anti-waste.';
+      const fallback = recipes.slice(0, 4).map(r => ({ recipe: r, matched: 0, total: r.ingredients.length, score: 0 }));
+      renderRecipes(fallback);
+    }
+  }, 900);
+}
+
+function filterMatch(r) {
+  if (filters.time !== 'any' && r.time > parseInt(filters.time)) return false;
+  if (filters.diet !== 'any' && !r.diet.includes(filters.diet)) return false;
+  if (filters.type !== 'any' && r.type !== filters.type) return false;
+  if (filters.device !== 'any' && r.device !== 'any' && r.device !== filters.device) return false;
+  return true;
+}
+
+function renderRecipes(list) {
+  if (!list.length) {
+    $grid.innerHTML = `
+      <div class="md:col-span-2 xl:col-span-3 card-surface p-10 text-center">
+        <div class="text-5xl mb-3">🥺</div>
+        <h3 class="text-xl font-bold text-coal-900 mb-2">Brak wyników dla wybranych filtrów</h3>
+        <p class="text-coal-700">Spróbuj rozluźnić kryteria lub dodać inne składniki.</p>
+      </div>
+    `;
+    return;
+  }
+  $grid.innerHTML = list.map((item, idx) => {
+    const r = item.recipe;
+    const usedCount = item.matched;
+    const totalUser = ingredients.length;
+    const substitutes = Object.entries(r.substitutes).map(([k,v]) =>
+      `<li><strong>${escapeHtml(k)}:</strong> ${escapeHtml(v)}</li>`
+    ).join('');
+    const mainIng = r.ingredients.slice(0, 5).map(i => `<li>• ${escapeHtml(i)}</li>`).join('');
+    const steps = r.steps.map((s, i) =>
+      `<div class="flex gap-3">
+         <span class="flex-shrink-0 w-7 h-7 rounded-full bg-brand-600 text-white text-xs font-bold flex items-center justify-center">${i+1}</span>
+         <p class="text-sm text-coal-700 leading-relaxed">${escapeHtml(s)}</p>
+       </div>`
+    ).join('');
+
+    return `
+    <article class="card-surface overflow-hidden flex flex-col animate-fade-in" style="animation-delay:${idx * 0.08}s">
+      <div class="relative">
+        <img src="${r.img}" alt="${escapeHtml(r.title)}" class="w-full h-48 object-cover" loading="lazy" onerror="this.style.background='#F4F1EA';this.alt='Brak zdjęcia';"/>
+        <div class="absolute top-3 left-3 bg-white/95 backdrop-blur rounded-full px-3 py-1.5 text-xs font-bold text-brand-600 shadow">
+          Wykorzystuje ${usedCount > 0 ? `${usedCount} z ${totalUser}` : 'wiele'} Twoich składników
+        </div>
+        ${usedCount >= 2 ? `<div class="absolute top-3 right-3 bg-accent-500 text-white rounded-full px-3 py-1 text-xs font-bold shadow">🔥 Top match</div>` : ''}
+      </div>
+
+      <div class="p-5 flex-1 flex flex-col">
+        <h3 class="font-bold text-lg text-coal-900 leading-snug mb-3">${escapeHtml(r.title)}</h3>
+
+        <div class="flex flex-wrap gap-2 mb-4 text-xs">
+          <span class="px-2 py-1 bg-sand-100 rounded-full text-coal-700 flex items-center gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            ${r.time} min
+          </span>
+          <span class="px-2 py-1 bg-sand-100 rounded-full text-coal-700">${r.difficulty}</span>
+          <span class="px-2 py-1 bg-sand-100 rounded-full text-coal-700">${r.calories} kcal</span>
+        </div>
+
+        <div class="eco-score mb-4 self-start">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 20A7 7 0 0 1 4 13V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v7a7 7 0 0 1-7 7h-2z"/></svg>
+          −${r.co2} kg CO₂ e
+        </div>
+
+        <button class="btn btn-ghost text-sm self-start mb-3" onclick="toggleRecipeDetails(this)" aria-expanded="false">
+          <span class="label">Pokaż szczegóły</span>
+          <svg class="chev-btn" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+
+        <div class="recipe-details border-t border-sand-200 space-y-4">
+          <div>
+            <h4 class="font-bold text-sm text-coal-900 mb-2">🥕 Składniki główne</h4>
+            <ul class="text-sm text-coal-700 space-y-1">${mainIng}</ul>
+          </div>
+          ${substitutes ? `<div>
+            <h4 class="font-bold text-sm text-coal-900 mb-2">🔄 Składniki zamienne</h4>
+            <ul class="text-sm text-coal-700 space-y-1">${substitutes}</ul>
+          </div>` : ''}
+          <div>
+            <h4 class="font-bold text-sm text-coal-900 mb-2">👩‍🍳 Instrukcja krok po kroku</h4>
+            <div class="space-y-3">${steps}</div>
+          </div>
+        </div>
+
+        <div class="mt-auto pt-4 border-t border-sand-200 flex gap-2">
+          <button class="btn btn-primary flex-1 text-sm" onclick="cookThis(this)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            Gotuję to!
+          </button>
+          <button class="btn btn-ghost text-sm" onclick="saveRecipe(this)" aria-label="Zapisz przepis">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          </button>
+        </div>
+      </div>
+    </article>
+    `;
+  }).join('');
+}
+
+// Toggle szczegóły przepisu
+function toggleRecipeDetails(btn) {
+  const details = btn.parentElement.querySelector('.recipe-details');
+  const isOpen = details.classList.toggle('open');
+  btn.setAttribute('aria-expanded', isOpen);
+  btn.querySelector('.label').textContent = isOpen ? 'Ukryj szczegóły' : 'Pokaż szczegóły';
+  btn.querySelector('.chev-btn').style.transform = isOpen ? 'rotate(180deg)' : '';
+}
+
+function cookThis(btn) {
+  const original = btn.innerHTML;
+  btn.innerHTML = '✓ Dodano do planu!';
+  btn.disabled = true;
+  btn.classList.remove('btn-primary');
+  btn.classList.add('btn-accent');
+  bumpSavedCounter();
+  setTimeout(() => { btn.innerHTML = original; btn.disabled = false; btn.classList.remove('btn-accent'); btn.classList.add('btn-primary'); }, 2500);
+}
+
+function saveRecipe(btn) {
+  btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>';
+  btn.classList.add('text-brand-600');
+}
+
+// ---- 9. Kalkulator ----------------------------------------
+$slider.addEventListener('input', updateCalculator);
+function updateCalculator() {
+  const n = parseInt($slider.value);
+  $slider.setAttribute('aria-valuenow', n);
+  $mealsCount.textContent = n;
+
+  const perWeek = n;
+  const perYear = perWeek * 52;
+  const pln   = perYear * 25;           // 25 zł/posiłek
+  const water = perYear * 150;          // 150 l/posiłek
+  const co2   = Math.round(perYear * 0.8); // 0.8 kg CO₂/posiłek
+
+  $plnYear.textContent   = formatNumber(pln);
+  $waterYear.textContent = formatNumber(water);
+  $co2Year.textContent   = formatNumber(co2);
+}
+function formatNumber(n) {
+  return n.toLocaleString('pl-PL').replace(/,/g, ' ');
+}
+updateCalculator();
+
+// ---- 10. Licznik uratowanych kg (live) -------------------
+let savedCounter = 1420;
+function bumpSavedCounter() {
+  savedCounter += 2; // symulujemy, że "Gotuję to!" dodaje 2 kg uratowanego jedzenia
+  $savedToday.textContent = formatNumber(savedCounter);
+}
+setInterval(() => {
+  savedCounter += 1; // co 10 sek +1 kg w globalnym liczniku
+  $savedToday.textContent = formatNumber(savedCounter);
+}, 10000);
+
+// ---- 11. Mobile menu --------------------------------------
+$menuBtn.addEventListener('click', () => {
+  const open = $mobileMenu.classList.toggle('open');
+  $menuBtn.setAttribute('aria-expanded', open);
+});
+$mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+  $mobileMenu.classList.remove('open');
+  $menuBtn.setAttribute('aria-expanded', 'false');
+}));
+
+// ---- 12. Init ---------------------------------------------
+renderTags();
+updateCount();
+
+// Początkowe podpowiedzi
+setTimeout(() => {
+  $resultsHint.textContent = 'Dodaj składniki i kliknij „Znajdź Przepisy”, aby zobaczyć wyniki.';
+}, 100);
+</script>
+</body>
+        </html>
