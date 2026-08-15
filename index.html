@@ -1,1095 +1,583 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Dziennik Nostalgiczny — interaktywna kapsuła czasu. Muzyka, technologia, ceny i wydarzenia z Twojego roku.">
-    <title>Dziennik Nostalgiczny — Kapsuła Czasu</title>
-    <style>
-        /* ===== RESET & ZMIENNE ===== */
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+// SPDX-License-Identifier: EUPL-1.2
+// SPDX-FileCopyrightText: 2025 Damian Fajfer <damian@fajfer.org>
+// ==UserScript==
+// @name         mObywatel Code Gallery Downloader
+// @namespace    http://tampermonkey.net/
+// @version      1.0
+// @description  Download source code files from mObywatel code gallery
+// @author       Damian Fajfer
+// @license      EUPL-1.2
+// @match        https://mobywatel.gov.pl/*
+// @match        https://www.mobywatel.gov.pl/*
+// @grant        GM_download
+// @grant        GM_xmlhttpRequest
+// ==/UserScript==
 
-        :root {
-            --neon-purple: #a855f7;
-            --neon-cyan: #06b6d4;
-            --neon-gold: #f59e0b;
-            --neon-pink: #ec4899;
-            --neon-green: #34d399;
-            --bg-dark: #050510;
-            --bg-card: rgba(255, 255, 255, 0.03);
-            --bg-card-hover: rgba(255, 255, 255, 0.07);
-            --border-glass: rgba(255, 255, 255, 0.09);
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --text-muted: #64748b;
-            --font-main: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            --radius: 20px;
-            --radius-sm: 12px;
-            --shadow-glow: 0 0 40px rgba(168, 85, 247, 0.18);
+(function() {
+    'use strict';
+
+    // Function to get iframe document
+    function getIframeDocument() {
+        const iframe = document.querySelector('iframe[mogpblockcopy]');
+        if (iframe && iframe.contentDocument) {
+            return iframe.contentDocument;
         }
+        return null;
+    }
 
-        html { scroll-behavior: smooth; }
-
-        body {
-            font-family: var(--font-main);
-            background: var(--bg-dark);
-            color: var(--text-primary);
-            min-height: 100vh;
-            overflow-x: hidden;
-            line-height: 1.6;
-        }
-
-        /* ===== TŁO ===== */
-        body::before {
-            content: '';
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background:
-                radial-gradient(ellipse at 15% 15%, rgba(168, 85, 247, 0.1) 0%, transparent 50%),
-                radial-gradient(ellipse at 85% 85%, rgba(6, 182, 212, 0.08) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 50%, rgba(245, 158, 11, 0.04) 0%, transparent 70%);
-            pointer-events: none; z-index: 0;
-        }
-
-        .orb { position: fixed; border-radius: 50%; filter: blur(90px); opacity: 0.3; pointer-events: none; z-index: 0; animation: float 25s infinite ease-in-out; }
-        .orb-1 { width: 400px; height: 400px; background: var(--neon-purple); top: -150px; left: -150px; }
-        .orb-2 { width: 350px; height: 350px; background: var(--neon-cyan); bottom: -100px; right: -100px; animation-delay: -8s; }
-        .orb-3 { width: 250px; height: 250px; background: var(--neon-gold); top: 40%; left: 60%; animation-delay: -16s; opacity: 0.15; }
-
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(40px, -40px) scale(1.05); }
-            66% { transform: translate(-30px, 30px) scale(0.95); }
-        }
-
-        .container { position: relative; z-index: 1; max-width: 1240px; margin: 0 auto; padding: 0 24px; }
-
-        /* ===== HERO ===== */
-        .hero { text-align: center; padding: 90px 20px 50px; }
-        .hero__badge {
-            display: inline-flex; align-items: center; gap: 8px; padding: 8px 20px;
-            background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.3);
-            border-radius: 50px; font-size: 0.8rem; color: var(--neon-purple); margin-bottom: 28px;
-            letter-spacing: 1.5px; text-transform: uppercase; font-weight: 600;
-        }
-        .hero__title {
-            font-size: clamp(2.8rem, 9vw, 5.5rem); font-weight: 900; line-height: 1.05; margin-bottom: 24px;
-            background: linear-gradient(135deg, var(--neon-purple) 0%, var(--neon-cyan) 50%, var(--neon-gold) 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-            animation: gradientShift 10s ease infinite; background-size: 200% 200%;
-        }
-        @keyframes gradientShift { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
-        .hero__subtitle { font-size: clamp(1.05rem, 2.5vw, 1.3rem); color: var(--text-secondary); max-width: 660px; margin: 0 auto 50px; font-weight: 300; line-height: 1.7; }
-
-        /* ===== PANEL ===== */
-        .control-panel {
-            display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 20px;
-            padding: 28px; background: var(--bg-card); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-            border: 1px solid var(--border-glass); border-radius: var(--radius);
-            max-width: 660px; margin: 0 auto 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.25);
-        }
-        .control-panel__label { font-size: 0.95rem; color: var(--text-muted); font-weight: 600; }
-        .year-select {
-            appearance: none; -webkit-appearance: none; padding: 14px 48px 14px 20px;
-            background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.4);
-            border-radius: var(--radius-sm); color: var(--text-primary); font-size: 1.2rem; font-weight: 800;
-            cursor: pointer; transition: all 0.3s ease; min-width: 150px; text-align: center;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%23a855f7' viewBox='0 0 16 16'%3E%3Cpath d='M8 12L2 6h12z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat; background-position: right 16px center;
-        }
-        .year-select:hover, .year-select:focus { border-color: var(--neon-purple); box-shadow: 0 0 25px rgba(168, 85, 247, 0.3); outline: none; }
-        .year-select option { background: #0f172a; color: var(--text-primary); padding: 10px; }
-
-        .btn-capsule {
-            display: inline-flex; align-items: center; gap: 10px; padding: 16px 32px;
-            background: linear-gradient(135deg, var(--neon-purple), var(--neon-cyan));
-            border: none; border-radius: var(--radius-sm); color: #fff; font-size: 1.05rem; font-weight: 700;
-            cursor: pointer; transition: all 0.3s cubic-bezier(0.4,0,0.2,1); position: relative; overflow: hidden;
-        }
-        .btn-capsule::before { content:''; position:absolute; top:0; left:-100%; width:100%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.25),transparent); transition:left .6s ease; }
-        .btn-capsule:hover::before { left:100%; }
-        .btn-capsule:hover { transform: translateY(-3px); box-shadow: 0 12px 35px rgba(168,85,247,0.4); }
-        .btn-capsule:active { transform: translateY(-1px); }
-
-        /* Suwak lat */
-        .year-slider-wrap { max-width: 660px; margin: 0 auto 70px; padding: 0 10px; }
-        .year-slider-labels { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px; }
-        input[type="range"].year-slider {
-            width: 100%; appearance: none; -webkit-appearance: none; height: 6px; border-radius: 3px;
-            background: linear-gradient(90deg, var(--neon-purple), var(--neon-cyan), var(--neon-gold));
-            outline: none; cursor: pointer;
-        }
-        input[type="range"].year-slider::-webkit-slider-thumb {
-            appearance: none; -webkit-appearance: none; width: 26px; height: 26px; border-radius: 50%;
-            background: #fff; border: 4px solid var(--neon-purple); box-shadow: 0 0 20px rgba(168,85,247,0.6);
-            cursor: pointer; transition: transform 0.2s ease;
-        }
-        input[type="range"].year-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
-        input[type="range"].year-slider::-moz-range-thumb {
-            width: 26px; height: 26px; border-radius: 50%; background: #fff; border: 4px solid var(--neon-purple);
-            box-shadow: 0 0 20px rgba(168,85,247,0.6); cursor: pointer;
-        }
-
-        /* ===== KAPSUŁA ===== */
-        .capsule { opacity: 0; transform: translateY(40px); transition: all 0.7s cubic-bezier(0.4,0,0.2,1); }
-        .capsule.active { opacity: 1; transform: translateY(0); }
-        .capsule__year-display { text-align: center; margin-bottom: 48px; }
-        .capsule__year-display span {
-            font-size: clamp(4rem, 12vw, 8rem); font-weight: 900; color: transparent;
-            -webkit-text-stroke: 2px rgba(245,158,11,0.4); opacity: 0.5; display: block; line-height: 1;
-            text-shadow: 0 0 60px rgba(245,158,11,0.1);
-        }
-        .capsule__year-display p { color: var(--text-muted); font-size: 0.95rem; margin-top: 12px; letter-spacing: 2px; text-transform: uppercase; }
-
-        .cards-grid { display: grid; grid-template-columns: 1fr; gap: 28px; margin-bottom: 90px; }
-        @media (min-width: 900px) { .cards-grid { grid-template-columns: repeat(2, 1fr); } }
-        .card--wide { grid-column: 1 / -1; }
-
-        /* ===== KARTA ===== */
-        .card {
-            background: var(--bg-card); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-            border: 1px solid var(--border-glass); border-radius: var(--radius); padding: 30px;
-            transition: all 0.4s cubic-bezier(0.4,0,0.2,1); position: relative; overflow: hidden;
-        }
-        .card::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-            background: linear-gradient(90deg, var(--neon-purple), var(--neon-cyan), var(--neon-gold));
-            opacity: 0; transition: opacity 0.4s ease;
-        }
-        .card:hover { background: var(--bg-card-hover); transform: translateY(-6px); box-shadow: var(--shadow-glow); border-color: rgba(168,85,247,0.25); }
-        .card:hover::before { opacity: 1; }
-
-        .card__header { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
-        .card__icon { width: 48px; height: 48px; display:flex; align-items:center; justify-content:center; border-radius:14px; font-size:1.5rem; flex-shrink:0; }
-        .card--music .card__icon { background: rgba(168,85,247,0.15); }
-        .card--tech .card__icon { background: rgba(6,182,212,0.15); }
-        .card--prices .card__icon { background: rgba(245,158,11,0.15); }
-        .card--events .card__icon { background: rgba(52,211,153,0.15); }
-        .card--ad .card__icon { background: rgba(236,72,153,0.15); }
-        .card--trend .card__icon { background: rgba(99,102,241,0.15); }
-        .card__title { font-size: 1.15rem; font-weight: 800; color: var(--text-primary); letter-spacing: -0.02em; }
-        .card__subtitle { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; margin-top: 2px; }
-
-        /* ===== MUZYKA: lista klikalna ===== */
-        .music-layout { display: flex; flex-direction: column; gap: 22px; }
-        @media (min-width: 640px) { .music-layout { flex-direction: row; align-items: stretch; } .music-list { flex: 1; } .music-player { flex: 1.1; } }
-
-        .song-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-        .song-item {
-            display: flex; align-items: center; gap: 12px; padding: 10px 12px;
-            border-radius: var(--radius-sm); cursor: pointer; border: 1px solid transparent;
-            transition: all 0.25s ease; background: rgba(255,255,255,0.02);
-        }
-        .song-item:hover { background: rgba(168,85,247,0.12); border-color: rgba(168,85,247,0.3); transform: translateX(4px); }
-        .song-item.playing { background: rgba(168,85,247,0.18); border-color: var(--neon-purple); box-shadow: 0 0 20px rgba(168,85,247,0.15); }
-        .song-item__thumb { width: 56px; height: 42px; border-radius: 8px; object-fit: cover; flex-shrink: 0; background:#1e293b; border:1px solid var(--border-glass); }
-        .song-item__info { flex: 1; min-width: 0; }
-        .song-item__title { font-size: 0.9rem; font-weight: 700; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .song-item__artist { font-size: 0.8rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .song-item__play {
-            width: 30px; height: 30px; border-radius: 50%; display:flex; align-items:center; justify-content:center;
-            background: rgba(168,85,247,0.2); color: var(--neon-purple); font-size: 0.7rem; flex-shrink: 0; transition: all 0.25s ease;
-        }
-        .song-item.playing .song-item__play { background: var(--neon-purple); color: #fff; animation: pulse 1.6s infinite; }
-        @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(168,85,247,0.5);} 50% { box-shadow: 0 0 0 8px rgba(168,85,247,0);} }
-
-        .music-player { display: flex; flex-direction: column; gap: 14px; }
-        .video-wrapper { position: relative; width: 100%; padding-bottom: 56.25%; border-radius: var(--radius-sm); overflow: hidden; background:#000; border:1px solid var(--border-glass); }
-        .video-wrapper iframe { position:absolute; top:0; left:0; width:100%; height:100%; border:none; }
-        .video-placeholder {
-            position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px;
-            color: var(--text-muted); font-size: 0.9rem; background: #0b0b1a;
-        }
-        .now-playing { font-size: 0.85rem; color: var(--text-secondary); text-align:center; }
-        .now-playing b { color: var(--neon-gold); }
-
-        .pl-accent {
-            margin-top: 6px; padding: 14px 16px; background: rgba(245,158,11,0.06);
-            border: 1px dashed rgba(245,158,11,0.35); border-radius: var(--radius-sm);
-            display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
-        }
-        .pl-accent__label { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--neon-gold); }
-        .pl-accent__text { font-size: 0.9rem; color: var(--text-primary); flex: 1; min-width: 150px; }
-        .pl-accent__link {
-            font-size: 0.8rem; font-weight: 700; color: var(--neon-cyan); text-decoration: none;
-            padding: 6px 12px; border: 1px solid rgba(6,182,212,0.4); border-radius: 8px; transition: all 0.25s ease;
-        }
-        .pl-accent__link:hover { background: rgba(6,182,212,0.15); transform: translateY(-1px); }
-
-        /* ===== TECH ===== */
-        .tech-display { text-align: center; }
-        .tech-display__symbol { font-size: 4rem; margin-bottom: 14px; display: block; animation: bob 4s infinite ease-in-out; }
-        @keyframes bob { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-8px);} }
-        .tech-display__name {
-            font-size: 1.55rem; font-weight: 900;
-            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 14px;
-        }
-        .tech-display__desc { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.75; text-align: left; margin-bottom: 18px; }
-        .tech-display__fact {
-            padding: 16px; background: rgba(6,182,212,0.05); border-left: 4px solid var(--neon-cyan);
-            border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-size: 0.9rem; color: var(--text-primary); font-style: italic; text-align: left; line-height: 1.6;
-        }
-
-        /* ===== CENY ===== */
-        .prices-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-        .price-item {
-            display: flex; align-items: center; gap: 14px; padding: 18px;
-            background: rgba(245,158,11,0.04); border: 1px solid rgba(245,158,11,0.1);
-            border-radius: var(--radius-sm); transition: all 0.3s ease;
-        }
-        .price-item:hover { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.3); transform: scale(1.03); }
-        .price-item__icon { font-size: 1.8rem; }
-        .price-item__details { flex: 1; }
-        .price-item__name { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
-        .price-item__value { font-size: 1.25rem; font-weight: 900; color: var(--neon-gold); margin-top: 4px; }
-
-        /* ===== WYDARZENIA ===== */
-        .events-list { list-style: none; display: flex; flex-direction: column; gap: 14px; }
-        .events-list li {
-            display: flex; gap: 14px; align-items: flex-start; padding: 14px 16px;
-            background: rgba(52,211,153,0.04); border: 1px solid rgba(52,211,153,0.12);
-            border-radius: var(--radius-sm); transition: all 0.25s ease;
-        }
-        .events-list li:hover { background: rgba(52,211,153,0.09); transform: translateX(4px); }
-        .events-list__emoji { font-size: 1.4rem; flex-shrink: 0; }
-        .events-list__text { font-size: 0.92rem; color: var(--text-secondary); line-height: 1.6; }
-        .events-list__text b { color: var(--text-primary); }
-
-        /* ===== REKLAMA ===== */
-        .ad-box { text-align: center; padding: 10px 0; }
-        .ad-box__emoji { font-size: 3.5rem; display: block; margin-bottom: 14px; }
-        .ad-box__title { font-size: 1.2rem; font-weight: 800; color: var(--neon-pink); margin-bottom: 12px; }
-        .ad-box__desc { font-size: 0.92rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 20px; }
-        .btn-yt {
-            display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px;
-            background: rgba(255,0,0,0.12); border: 1px solid rgba(255,0,0,0.35); border-radius: var(--radius-sm);
-            color: #ff6b6b; font-weight: 700; font-size: 0.9rem; text-decoration: none; transition: all 0.25s ease;
-        }
-        .btn-yt:hover { background: rgba(255,0,0,0.2); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255,0,0,0.15); }
-
-        /* ===== TREND ===== */
-        .trend-box { text-align: center; padding: 10px 0; }
-        .trend-box__emoji { font-size: 3.5rem; display: block; margin-bottom: 14px; animation: bob 3s infinite ease-in-out; }
-        .trend-box__name { font-size: 1.25rem; font-weight: 900; color: #818cf8; margin-bottom: 12px; }
-        .trend-box__desc { font-size: 0.92rem; color: var(--text-secondary); line-height: 1.7; }
-
-        /* ===== SHARE & FOOTER ===== */
-        .share-section { text-align: center; padding: 70px 20px; border-top: 1px solid var(--border-glass); }
-        .share-section__title { font-size: 1.5rem; font-weight: 800; margin-bottom: 12px; }
-        .share-section__subtitle { color: var(--text-muted); font-size: 1rem; margin-bottom: 30px; }
-        .btn-share {
-            display: inline-flex; align-items: center; gap: 10px; padding: 18px 36px;
-            background: linear-gradient(135deg, var(--neon-gold), #d97706); border: none; border-radius: var(--radius-sm);
-            color: #0f172a; font-size: 1.05rem; font-weight: 800; cursor: pointer; transition: all 0.3s ease;
-        }
-        .btn-share:hover { transform: translateY(-3px); box-shadow: 0 12px 35px rgba(245,158,11,0.35); }
-        .footer { text-align: center; padding: 40px 20px 60px; border-top: 1px solid var(--border-glass); }
-        .footer__text { color: var(--text-muted); font-size: 0.85rem; }
-        .footer__slogan { margin-top: 10px; color: var(--text-secondary); font-size: 1rem; font-style: italic; opacity: 0.8; }
-
-        /* ===== TOAST ===== */
-        .toast {
-            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(120px);
-            background: rgba(16,185,129,0.95); backdrop-filter: blur(12px); color: #fff;
-            padding: 16px 32px; border-radius: var(--radius-sm); font-size: 0.95rem; font-weight: 700;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.4); transition: transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
-            z-index: 1000; pointer-events: none; white-space: nowrap;
-        }
-        .toast.visible { transform: translateX(-50%) translateY(0); }
-
-        /* ===== ANIMACJE WEJŚCIA ===== */
-        .slide-up { animation: slideUp 0.6s cubic-bezier(0.4,0,0.2,1) forwards; opacity: 0; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        .card:nth-child(1) { animation-delay: 0.05s; }
-        .card:nth-child(2) { animation-delay: 0.15s; }
-        .card:nth-child(3) { animation-delay: 0.25s; }
-        .card:nth-child(4) { animation-delay: 0.35s; }
-        .card:nth-child(5) { animation-delay: 0.45s; }
-        .card:nth-child(6) { animation-delay: 0.55s; }
-
-        /* ===== SCROLLBAR ===== */
-        ::-webkit-scrollbar { width: 10px; }
-        ::-webkit-scrollbar-track { background: var(--bg-dark); }
-        ::-webkit-scrollbar-thumb { background: rgba(168,85,247,0.3); border-radius: 5px; border: 2px solid var(--bg-dark); }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(168,85,247,0.6); }
-
-        @media (max-width: 600px) {
-            .hero { padding: 60px 16px 40px; }
-            .control-panel { flex-direction: column; gap: 16px; padding: 24px; }
-            .year-select, .btn-capsule, .btn-share { width: 100%; justify-content: center; }
-            .prices-grid { grid-template-columns: 1fr; }
-            .card { padding: 24px; }
-        }
-    </style>
-</head>
-<body>
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
-
-    <div class="container">
-        <header class="hero">
-            <div class="hero__badge"><span>⏳</span><span>Interaktywna podróż w czasie</span></div>
-            <h1 class="hero__title">Dziennik Nostalgiczny</h1>
-            <p class="hero__subtitle">
-                Otwórz kapsułę czasu i wróć do lat, gdy Gadu-Gadu stukało w tle, kasety się przewijało,
-                a każdy hit brzmiał inaczej. Wybierz rok, kliknij piosenkę i przeżyj to jeszcze raz.
-            </p>
-
-            <div class="control-panel">
-                <span class="control-panel__label">Wybierz rok:</span>
-                <select class="year-select" id="yearSelect"></select>
-                <button class="btn-capsule" id="btnOpenCapsule">
-                    <span>🚀</span><span>Otwórz Kapsułę Czasu</span>
-                </button>
-            </div>
-
-            <div class="year-slider-wrap">
-                <div class="year-slider-labels"><span id="sliderMin">1998</span><span id="sliderVal" style="color:var(--neon-gold);font-weight:800;">2004</span><span id="sliderMax">2017</span></div>
-                <input type="range" class="year-slider" id="yearSlider" min="1998" max="2017" step="1" value="2004">
-            </div>
-        </header>
-
-        <main class="capsule active" id="capsule">
-            <div class="capsule__year-display">
-                <span id="yearDisplay">2004</span>
-                <p>Kapsuła otwarta — witaj w przeszłości</p>
-            </div>
-            <div class="cards-grid" id="cardsGrid"></div>
-        </main>
-
-        <section class="share-section">
-            <h2 class="share-section__title">Podziel się nostalgią</h2>
-            <p class="share-section__subtitle">Wyślij znajomym i sprawdź, czy też to pamiętają</p>
-            <button class="btn-share" id="btnShare">
-                <span>📤</span><span id="shareText">Udostępnij moją kapsułę z roku 2004</span>
-            </button>
-        </section>
-
-        <footer class="footer">
-            <p class="footer__text">© 2026 Dziennik Nostalgiczny. Wszystkie wspomnienia zastrzeżone.</p>
-            <p class="footer__slogan">„Czas mija, ale melodia zostaje na zawsze..."</p>
-        </footer>
-    </div>
-
-    <div class="toast" id="toast">✓ Link skopiowany do schowka!</div>
-
-    <script>
-        'use strict';
-
-        // ============================================================
-        // BAZA DANYCH — 14 LAT (1998–2017)
-        // Każda piosenka ma własny film (klikalny). Polskie hity i
-        // reklamy są linkami do YouTube, żeby nic nigdy się nie psuło.
-        // ============================================================
-        const ytSearch = q => 'https://www.youtube.com/results?search_query=' + encodeURIComponent(q);
-
-        const ARCHIVE = {
-            1998: {
-                songs: [
-                    { t: '...Baby One More Time', a: 'Britney Spears', v: 'C-u5WLJ9Yk4', type: 'int' },
-                    { t: 'I Want It That Way', a: 'Backstreet Boys', v: '4fndeDfaWCg', type: 'int' },
-                    { t: 'Wannabe', a: 'Spice Girls', v: 'gjtvukHK4AI', type: 'int' }
-                ],
-                plAccent: { t: 'Prawy do lewego', a: 'Kayah & Goran Bregović' },
-                tech: {
-                    name: 'ICQ & Windows 98', icon: '💾',
-                    desc: 'Internet to głównie pikselowe strony i modem, który piszczy przy łączeniu. Króluje ICQ z kultowym „Uh oh!", a w Polsce właśnie rodzi się Gadu-Gadu. Na dysku królują dyskietki, a Winamp „whips the llama\'s ass".',
-                    fact: 'Ciekawostka: W 1998 r. w Polsce było ok. 2 mln użytkowników internetu, a godzinne połączenie potrafiło kosztować fortunę. Dlatego „siedziało się" nocą, w tańszej taryfie.'
-                },
-                prices: [
-                    { item: 'Chleb', price: '1,10 zł', icon: '🍞' },
-                    { item: 'Mleko 1L', price: '1,40 zł', icon: '🥛' },
-                    { item: 'Benzyna 95 (1L)', price: '2,60 zł', icon: '⛽' },
-                    { item: 'Bilet do kina', price: '9,00 zł', icon: '🎬' }
-                ],
-                events: [
-                    { e: '🔍', t: 'Larry Page i Sergey Brin zakładają <b>Google</b> — świat jeszcze o tym nie wie, ale właśnie zmienia się wszystko.' },
-                    { e: '🎬', t: 'Do polskich kin wchodzi <b>„Titanic"</b> — bilety wyprzedane, wszyscy płaczą na końcu.' },
-                    { e: '🖥️', t: 'Premiera systemu <b>Windows 98</b> — „start" już nigdy nie będzie taki sam.' },
-                    { e: '🇵🇱', t: 'Polska kończy negocjacje akcesyjne z <b>Unią Europejską</b> — marzenie o Europie staje się realne.' }
-                ],
-                ad: { emoji: '📼', title: 'Reklamy z kaset VHS', desc: 'Zanim YouTube, reklamy oglądało się w blokach TVP i Polsatu. Kultowe hasła lat 90. — „Serce jak dzwon", proszki do prania i pierwsze telekomy — wryły się w pamięć całego pokolenia.', query: 'kultowe polskie reklamy lat 90' },
-                trend: { emoji: '🐣', name: 'Tamagotchi', desc: 'Małe plastikowe jajko z ekranikiem, o które trzeba było dbać jak o prawdziwego zwierzaka. Karmienie, sprzątanie, zabawa — a gdy padło, łzy były prawdziwe.' }
-            },
-
-            1999: {
-                songs: [
-                    { t: 'I Want It That Way', a: 'Backstreet Boys', v: '4fndeDfaWCg', type: 'int' },
-                    { t: 'Wannabe', a: 'Spice Girls', v: 'gjtvukHK4AI', type: 'int' },
-                    { t: '...Baby One More Time', a: 'Britney Spears', v: 'C-u5WLJ9Yk4', type: 'int' }
-                ],
-                plAccent: { t: 'Dmuchawce, latawce, wiatr', a: 'Urszula (powrót na listy)' },
-                tech: {
-                    name: 'Gadu-Gadu startuje', icon: '💬',
-                    desc: 'Łukasz Foltyn tworzy komunikator, który za chwilę połączy całą Polskę. Numerek GG staje się wizytówką, a charakterystyczne „pukanie" — dźwiękiem pokolenia. Modem dalej piszczy, ale warto.',
-                    fact: 'Ciekawostka: Pierwsza wersja Gadu-Gadu powstała błyskawicznie i ważyła zaledwie kilka megabajtów. Status „niedostępny" i tak wszyscy znali na pamięć.'
-                },
-                prices: [
-                    { item: 'Chleb', price: '1,20 zł', icon: '🍞' },
-                    { item: 'Mleko 1L', price: '1,50 zł', icon: '🥛' },
-                    { item: 'Benzyna 95 (1L)', price: '3,00 zł', icon: '⛽' },
-                    { item: 'Bilet do kina', price: '10,00 zł', icon: '🎬' }
-                ],
-                events: [
-                    { e: '💬', t: 'Powstaje <b>Gadu-Gadu</b> — polski komunikator, który zdefiniuje całą dekadę.' },
-                    { e: '🎬', t: 'Premiera <b>„Matrixa"</b> — wszyscy próbują robić „bullet time" na podwórku.' },
-                    { e: '💶', t: 'W Europie pojawia się <b>euro</b> (na razie wirtualnie) — świat szykuje się na nowy wiek.' },
-                    { e: '🇵🇱', t: 'Polska wstępuje do <b>NATO</b> — historyczny moment dla bezpieczeństwa kraju.' }
-                ],
-                ad: { emoji: '📺', title: 'Bloki reklamowe pełne magii', desc: 'Koniec lat 90. to złota era polskiej reklamy: pierwsze dżingle, zabawne spoty operatorów i obietnice „nowego millennium". Wszystko oglądane na kineskopowym telewizorze.', query: 'polskie reklamy 1999' },
-                trend: { emoji: '💿', name: 'Nagrywanie płyt CD', desc: 'Każdy miał swoją „składankę" nagraną na płytę CD-R. Podpisywało się ją markerem, a przegrywanie od znajomego było najwyższą formą przyjaźni.' }
-            },
-
-            2004: {
-                songs: [
-                    { t: 'Yeah!', a: 'Usher ft. Lil Jon, Ludacris', v: 'GxBSyx85KII', type: 'int' },
-                    { t: 'Toxic', a: 'Britney Spears', v: 'LOZuxwVk7TU', type: 'int' },
-                    { t: 'Where Is The Love?', a: 'Black Eyed Peas', v: 'WpYeekQcuAd', type: 'int' }
-                ],
-                plAccent: { t: 'Nie mogę Cię zapomnieć', a: 'Ania Dąbrowska' },
-                tech: {
-                    name: 'Grono.net & Gadu-Gadu', icon: '🌐',
-                    desc: 'Pierwszy polski serwis społecznościowy właśnie rusza — zakładasz profil, dodajesz zdjęcia z wakacji i szukasz ludzi ze swojej klasy. W tle cały czas stuka Gadu-Gadu, a Neostrada pozwala wreszcie „być online" bez blokowania telefonu.',
-                    fact: 'Ciekawostka: W 2004 r. „podglądanie" statusów na GG i sprawdzanie, kto jest dostępny, było codziennym rytuałem. Opisy ze śmiesznymi cytatami to była sztuka.'
-                },
-                prices: [
-                    { item: 'Chleb', price: '1,80 zł', icon: '🍞' },
-                    { item: 'Mleko 1L', price: '2,20 zł', icon: '🥛' },
-                    { item: 'Benzyna 95 (1L)', price: '3,50 zł', icon: '⛽' },
-                    { item: 'Bilet do kina', price: '14,00 zł', icon: '🎬' }
-                ],
-                events: [
-                    { e: '🇪🇺', t: '<b>1 maja Polska wstępuje do Unii Europejskiej!</b> Granice się otwierają, zaczyna się era wyjazdów „na zmywak" do Londynu.' },
-                    { e: '🏊', t: 'Igrzyska w Atenach — <b>Otylia Jędrzejczak</b> zdobywa złoto i staje się bohaterką narodową.' },
-                    { e: '👤', t: 'Mark Zuckerberg zakłada <b>Facebooka</b> w akademiku — na razie tylko dla studentów Harvarda.' },
-                    { e: '📧', t: 'Startuje <b>Gmail</b> — z 1 GB miejsca, co wtedy wydaje się kosmosem.' }
-                ],
-                ad: { emoji: '🦊', title: 'Heyah i era „czerwonej ręki"', desc: 'Heyah zdefiniowała reklamę młodzieżową w Polsce — zabawna, absurdalna, pełna charakterystycznych postaci. „Masz już swój numer?" znał każdy, kto miał pierwszą komórkę.', query: 'reklama heyah' },
-                trend: { emoji: '📝', name: 'Blogi i Fotka', desc: 'Pisanie pamiętnika internetowego na Onecie lub Blox-ie było jak dzisiejszy Instagram. Każdy miał swój blog z czarnym tłem i kolorową czcionką.' }
-            },
-
-            2007: {
-                songs: [
-                    { t: 'Apologize', a: 'OneRepublic', v: 'ZSM3w1v-A_Y', type: 'int' },
-                    { t: 'Umbrella', a: 'Rihanna ft. Jay-Z', v: 'CvBfDwUxHI8', type: 'int' },
-                    { t: 'Beautiful Girls', a: 'Sean Kingston', v: 'MrTz5xjmzBg', type: 'int' }
-                ],
-                plAccent: { t: 'Katharsis', a: 'Doda' },
-                tech: {
-                    name: 'Nasza-Klasa rośnie', icon: '🎓',
-                    desc: 'Serwis, który połączył całą Polskę — szukasz kolegów z podstawówki, oglądasz stare zdjęcia klasowe i piszesz na „tablicy". Wszyscy mają konto, od uczniów po babcie. GG dalej stuka, ale NK wygrywa.',
-                    fact: 'Ciekawostka: W szczytowym momencie Nasza-Klasa miała ponad 13 mln użytkowników. Zaproszenie od kogoś, kogo nie znasz, było jednocześnie ekscytujące i podejrzane.'
-                },
-                prices: [
-                    { item: 'Chleb', price: '2,40 zł', icon: '🍞' },
-                    { item: 'Mleko 1L', price: '2,60 zł', icon: '🥛' },
-                    { item: 'Benzyna 95 (1L)', price: '4,20 zł', icon: '⛽' },
-                    { item: 'Bilet do kina', price: '17,00 zł', icon: '🎬' }
-                ],
-                events: [
-                    { e: '📱', t: 'Steve Jobs pokazuje pierwszego <b>iPhone\'a</b> — świat mobile właśnie zmienia się na zawsze.' },
-                    { e: '🇵🇱', t: 'Polska w <b>strefie Schengen</b> — można podróżować po Europie bez kontroli na granicach.' },
-                    { e: '⚽', t: 'Polska przygotowuje się do organizacji <b>EURO 2012</b> — wielkie plany i budowy.' },
-                    { e: '🎬', t: 'W Polsce rośnie popularność <b>YouTube</b> — „śmieszne filmiki" stają się codziennością.' }
-                ],
-                ad: { emoji: '🤠', title: 'Era zabawnych spotów', desc: 'Połowa lat 2000. to czas, gdy reklamy telekomów i banków stawiały na humor i zapadające w pamięć postacie. Wiele z tych haseł do dziś krąży w rozmowach.', query: 'polskie reklamy 2007' },
-                trend: { emoji: '🎮', name: 'Gry przeglądarkowe', desc: 'Zanim szybki internet stał się normą, cała Polska grała w proste gry online i „hodowle" w przeglądarce. Czekało się na nie godzinami.' }
-            },
-
-            2008: {
-                songs: [
-                    { t: 'Poker Face', a: 'Lady Gaga', v: 'bESGLojNYSo', type: 'int' },
-                    { t: 'Viva La Vida', a: 'Coldplay', v: 'dvgZkm1xWPE', type: 'int' },
-                    { t: 'Single Ladies', a: 'Beyoncé', v: '4m48GqaOz90', type: 'int' }
-                ],
-                plAccent: { t: 'A gdy jest już ciemno', a: 'Feel' },
-                tech: {
-                    name: 'Nasza-Klasa u szczytu', icon: '📸',
-                    desc: 'Absolutny dominator polskiego internetu. „Śledzik", zdjęcia klasowe i pisanie na tablicy to codzienność milionów. Zanim Facebook podbił kraj, całe życie towarzyskie toczyło się właśnie tutaj.',
-                    fact: 'Ciekawostka: W 2008 r. „znajomi" z Naszej-Klasy potrafili mieć po kilkaset kontaktów — dodawało się każdego, kogo się choć raz widziało. Liczba znajomych była miarą popularności.'
-                },
-                prices: [
-                    { item: 'Chleb', price: '2,80 zł', icon: '🍞' },
-                    { item: 'Mleko 1L', price: '2,80 zł', icon: '🥛' },
-                    { item: 'Benzyna 95 (1L)', price: '4,50 zł', icon: '⛽' },
-                    { item: 'Bilet do kina', price: '18,00 zł', icon: '🎬' }
-                ],
-                events: [
-                    { e: '⚽', t: '<b>EURO 2008</b> — Polska po raz pierwszy gra na Mistrzostwach Europy! Cały kraj w biało-czerwonych barwach.' },
-                    { e: '🏅', t: 'Igrzyska w Pekinie — <b>Tomasz Majewski</b> zdobywa złoto w pchnięciu kulą.' },
-                    { e: '📉', t: 'Wybucha <b>światowy kryzys finansowy</b> — banki upadają, świat się zmienia.' },
-                    { e: '🇺🇸', t: '<b>Barack Obama</b> zostaje prezydentem USA — historyczny moment.' }
-                ],
-                ad: { emoji: '🎭', title: 'Kabaret w reklamie', desc: 'Plus i Era zatrudniały kabarety, tworząc spoty, które cytowano przy rodzinnym stole. Mumio i spółka udowodnili, że reklama może być prawdziwą sztuką komediową.', query: 'kabaret mumio reklama plus' },
-                trend: { emoji: '🐱', name: 'Śmieszne koty', desc: 'Internet opanowały filmiki z kotami. „I Can Has Cheezburger" i pierwsze memy stały się uniwersalnym językiem sieci.' }
-            },
-
-            2009: {
-                songs: [
-                    { t: 'I Gotta Feeling', a: 'Black Eyed Peas', v: 'uSD1vB2zUBc', type: 'int' },
-                    { t: 'Bad Romance', a: 'Lady Gaga', v: 'QRpvWYxw7Xo', type: 'int' },
-                    { t: 'Hot N Cold', a: 'Katy Perry', v: 'Rmp6zUlXu4o', type: 'int' }
-                ],
-                plAccent: { t: 'Tam gdzie nie ma dróg', a: 'Ewa Farna' },
-                tech: {
-                    name: 'Facebook wchodzi do gry', icon: '👤',
-                    desc: 'Facebook zaczyna podbijać Polskę — zakładasz konto, dodajesz zdjęcie profilowe i „lajkujesz" wszystko. Nasza-Klasa powoli traci, ale wciąż ma miliony. GG się zmienia, a świat przyspiesza.',
-                    fact: 'Ciekawostka: „Poke" (szturchnięcie) na Facebookie był tajemniczą formą flirtu — nikt do końca nie wiedział, co oznacza, ale każdy go używał.'
-                },
-                prices: [
-                    { item: 'Chleb', price: '2,90 zł', icon: '🍞' },
-                    { item: 'Mleko 1L', price: '2,90 zł', icon: '🥛' },
-                    { item: 'Benzyna 95 (1L)', price: '4,30 zł', icon: '⛽' },
-                    { item: 'Bilet do kina', price: '19,00 zł', icon: '🎬' }
-                ],
-                events: [
-                    { e: '🚄', t: 'Polska modernizuje się przed <b>EURO 2012</b> — ruszają wielkie budowy dróg i stadionów.' },
-                    { e: '🎮', t: 'Premiera <b>„Avatara"</b> Jamesa Camerona — kino 3D wchodzi na salony.' },
-                    { e: '🇵🇱', t: '<b>Donald Tusk</b> kontynuuje kadencję premiera — Polska w czasach „zielonej wyspy".' },
-                    { e: '📱', t: 'Smartfony stają się coraz popularniejsze — początek końca zwykłych komórek.' }
-                ],
-                ad: { emoji: '💪', title: 'Reklamy, które się cytuje', desc: 'Rok 2009 to era memogennych reklam — spoty, które stawały się częścią popkultury i były parodiowane w nieskończoność.', query: 'najlepsze reklamy 2009' },
-                trend: { emoji: '🎵', name: 'Słuchawki „nauszne"', desc: 'Duże, kolorowe słuchawki Beats i ich odpowiedniki stały się symbolem stylu. Muzyka z odtwarzacza MP3 towarzyszyła wszędzie.' }
-            },
-
-            2010: {
-                songs: [
-                    { t: 'Waka Waka (This Time for Africa)', a: 'Shakira', v: 'pRpeEdMmmQ0', type: 'int' },
-                    { t: 'Firework', a: 'Katy Perry', v: 'QGJuMBdaIvc', type: 'int' },
-                    { t: 'Just The Way You Are', a: 'Bruno Mars', v: 'LjhCEhWiKXk', type: 'int' }
-                ],
-                plAccent: { t: 'Milion dolarów', a: 'Mrozu' },
-                tech: {
-                    name: 'Facebook & smartfony', icon: '📱',
-                    desc: 'Facebook staje się centrum życia towarzyskiego, a pierwsze smartfony zmieniają sposób, w jaki korzystamy z sieci. „Lajki", statusy i zdjęcia z filtrami — zaczyna się era, którą znamy dziś.',
-                    fact: 'Ciekawostka: W 2010 r. „check-in" (meldowanie się) w różnych miejscach był hitem — każdy oznaczał się w kawiarni, szkole czy na przystanku.'
-                },
-                prices: [
-                    { item: 'Chleb', price: '3,00 zł', icon: '🍞' },
-                    { item: 'Mleko 1L', price: '2,90 zł', icon: '🥛' },
-                    { item: 'Benzyna 95 (1L)', price: '4,70 zł', icon: '⛽' },
-                    { item: 'Bilet do kina', price: '20,00 zł', icon: '🎬' }
-                ],
-                events: [
-                    { e: '🕯️', t: '<b>Katastrofa smoleńska</b> — 10 kwietnia ginie prezydent Lech Kaczyński i 95 osób. Polska w żałobie.' },
-                    { e: '🌊', t: 'Polskę dotyka <b>wielka powódź</b> — ewakuacje i pomoc dla poszkodowanych.' },
-                    { e: '📟', t: 'Apple prezentuje pierwszego <b>iPada</b> — tablety wchodzą do codzienności.' },
-                    { e: '⚽', t: 'Mundial w RPA — Polska kibicuje, choć sama nie gra.' }
-                ],
-                ad: { emoji: '🚿', title: 'Old Spice „The Man Your Man Could Smell Like"', desc: 'Jedna z najbardziej kultowych reklam wszech czasów. Absurdalny humor i zapadający w pamięć bohater sprawili, że spot stał się światowym fenomenem i memem.', query: 'old spice the man your man could smell like' },
-                trend: { emoji: '📷', name: 'Instagram startuje', desc: 'Nowa aplikacja do dzielenia się zdjęciami z filtrami właśnie powstaje. Nikt jeszcze nie wie, że za chwilę zmieni sposób, w jaki pokazujemy świat.' }
-            },
-
-            2011: {
-                songs: [
-                    { t: 'Rolling in the Deep', a: 'Adele', v: 'rYEDA3JcQqw', type: 'int' },
-                    { t: 'Party Rock Anthem', a: 'LMFAO', v: 'KQ6zr6kCPj8', type: 'int' },
-                    { t: 'On The Floor', a: 'Jennifer Lopez ft. Pitbull', v: 't4H_Zoh7G5A', type: 'int' }
-                ],
-                plAccent: { t: 'Skrzydlate ręce', a: 'Enej' },
-                tech: {
-                    name: 'Era mobilna', icon: '📲',
-                    desc: 'Smartfony z Androidem i iOS stają się powszechne. Internet w kieszeni to już norma — sprawdzasz Facebooka w autobusie, a YouTube działa bez kabla. Świat staje się „always online".',
-                    fact: 'Ciekawostka: W 2011 r. „darmowe Wi-Fi" było na wagę złota — każdy znał miejsca, gdzie można się podłączyć bez hasła.'
-                },
-                prices: [
-                    { item: 'Chleb', price: '3,10 zł', icon: '🍞' },
-                    { item: 'Mleko 1L', price: '3,00 zł', icon: '🥛' },
-                    { item: 'Benzyna 95 (1L)', price: '5,00 zł', icon: '⛽' },
-                    { item: 'Bilet do kina', price: '21,00 zł', icon: '🎬' }
-                ],
-                events: [
-                    { e: '⚽', t: 'Polska kończy przygotowania do <b>EURO 2012</b> — stadiony gotowe, kraj w oczekiwaniu.' },
-                    { e: '📱', t: 'Umiera <b>Steve Jobs</b> — świat żegna wizjonera Apple.' },
-                    { e: '💃', t: '<b>Enej</b> wygrywa „Must Be The Music" i staje się głosem pokolenia.' },
-                    { e: '🌍', t: 'Świat w erze portali społecznościowych — Twitter i Facebook relacjonują wydarzenia na żywo.' }
-                ],
-                ad: { emoji: '🎬', title: 'Reklamy jak filmowe trailery', desc: 'Marki zaczęły tworzyć reklamy, które wyglądały jak produkcje filmowe — z budżetami i rozmachem. Era zwykłych spotów powoli się kończyła.', query: 'najlepsze reklamy 2011' },
-                trend: { emoji: '🕺', name: 'Shuffle i Harlem Shake (początki)', desc: 'Taniec „shuffle" z klipów LMFAO opanował szkolne dyskoteki. Każdy próbował powtórzyć słynne kroki.' }
-            },
-
-            2012: {
-                songs: [
-                    { t: 'Gangnam Style', a: 'PSY', v: '9bZkp7q19f0', type: 'int' },
-                    { t: 'Somebody That I Used To Know', a: 'Gotye ft. Kimbra', v: '8UVNT4wvIGY', type: 'int' },
-                    { t: 'Call Me Maybe', a: 'Carly Rae Jepsen', v: 'fWNaR-txAic', type: 'int' }
-                ],
-                plAccent: { t: 'Skrzydlate ręce', a: 'Enej' },
-                tech: {
-                    name: 'Rok internetu mobilnego', icon: '🌐',
-                    desc: 'Internet mobilny staje się standardem, a LTE zaczyna działać w Polsce. YouTube to już główne źródło muzyki i rozrywki — teledyski ogląda się na telefonie, nie w telewizji.',
-                    fact: 'Ciekawostka: „Gangnam Style" był pierwszym filmem w historii YouTube, który osiągnął miliard wyświetleń. Licznik musiał zostać przeprojektowany, żeby to pomieścić.'
-                },
-                prices: [
-                    { item: 'Chleb', price: '3,20 zł', icon: '🍞' },
-                    { item: 'Mleko 1L', price: '3,10 zł', icon: '🥛' },
-                    { item: 'Benzyna 95 (1L)', price: '5,60 zł', icon: '⛽' },
-                    { item: 'Bilet do kina', price: '22,00 zł', icon: '🎬' }
-                ],
-                events: [
-                    { e: '⚽', t: '<b>UEFA EURO 2012 w Polsce!</b> Historyczny turniej, nowe stadiony i miliony kibiców — mimo że kadra odpadła w grupie, był to sukces organizacyjny.' },
-                    { e: '🏅', t: 'Igrzyska w Londynie — <b>Anita Włodarczyk</b> i <b>Adrian Zieliński</b> zdobywają złoto.' },
-                    { e: '🚇', t: 'Warszawa otwiera kolejne stacje <b>métro</b> — miasto się zmienia.' },
-                    { e: '🎬', t: 'Polskie kino rośnie w siłę — rodzime produkcje biją rekordy oglądalności.' }
-                ],
-                ad: { emoji: '🐴', title: 'Reklamy z humorem', desc: 'Rok EURO 2012 to wysyp spotów sportowych i telekomów. Marki prześcigały się w pomysłach, żeby trafić do kibiców.', query: 'polskie reklamy euro 2012' },
-                trend: { emoji: '🕶️', name: 'Gangnam Style wszędzie', desc: 'Słynny taniec na niewidzialnym koniu wykonywano na weselach, studniówkach i szkolnych apelach. Cały świat znał „Oppan Gangnam Style".' }
-            },
-
-            2013: {
-                songs: [
-                    { t: 'Wake Me Up', a: 'Avicii', v: 'IcrbM1l_BoI', type: 'int' },
-                    { t: 'Happy', a: 'Pharrell Williams', v: 'ZbZSe6N_BXs', type: 'int' },
-                    { t: 'Roar', a: 'Katy Perry', v: 'CevxZvSJLk8', type: 'int' }
-                ],
-                plAccent: { t: 'Trójkąty i kwadraty', a: 'Dawid Podsiadło' },
-                tech: {
-                    name: 'Streaming przejmuje władzę', icon: '🎧',
-                    desc: 'Spotify i Deezer wchodzą do Polski — muzyka na życzenie, bez pobierania. Kasety i płyty to już wspomnienie, a „playlisty" zastępują albumy. Zaczyna się era streamingu.',
-                    fact: 'Ciekawostka: W 2013 r. „pobieranie mp3" zaczęło być passé — młodzi ludzie woleli mieć dostęp do milionów piosenek online niż posiadać pliki.'
-                },
-                prices: [
-                    { item: 'Chleb', price: '3,30 zł', icon: '🍞' },
-                    { item: 'Mleko 1L', price: '3,20 zł', icon: '🥛' },
-                    { item: 'Benzyna 95 (1L)', price: '5,50 zł', icon: '⛽' },
-                    { item: 'Bilet do kina', price: '23,00 zł', icon: '🎬' }
-                ],
-                events: [
-                    { e: '⛪', t: '<b>Papież Franciszek</b> zostaje głową Kościoła — nowy rozdział dla katolików.' },
-                    { e: '🎤', t: '<b>Dawid Podsiadło</b> wydaje debiutancką płytę i szturmem zdobywa Polskę.' },
-                    { e: '🛰️', t: 'Rosną polskie ambicje technologiczne — rodzime start-upy zdobywają uznanie.' },
-                    { e: '🌪️', t: 'Świat w erze viralowych filmików — każdy może stać się sławny w jedną noc.' }
-                ],
-                ad: { emoji: '🎶', title: 'Reklamy z muzyką na pierwszym planie', desc: 'Marki zaczęły tworzyć spoty, które działały jak teledyski — z wpadającą w ucho muzyką i emocjonalnym przekazem.', query: 'najlepsze reklamy 2013' },
-                trend: { emoji: '😂', name: 'Harlem Shake', desc: 'Kilka sekund chaosu w rytm jednej piosenki. Nagrywali to wszyscy — szkoły, firmy, a nawet wojsko.' }
-            },
-
-            2014: {
-                songs: [
-                    { t: 'Uptown Funk', a: 'Mark Ronson ft. Bruno Mars', v: 'OPf0YbXqDm0', type: 'int' },
-                    { t: 'Shake It Off', a: 'Taylor Swift', v: 'nfWlot6h_JM', type: 'int' },
-                    { t: 'All About That Bass', a: 'Meghan Trainor', v: '7PCkvCPvDXk', type: 'int' }
-                ],
-                plAccent: { t: 'Trójkąty i kwadraty', a: 'Dawid Podsiadło' },
-                tech: {
-                    name: 'Selfie i Instagram', icon: '🤳',
-                    desc: 'Instagram staje się główną platformą do dzielenia się życiem. Selfie to już oficjalny fenomen — słowo roku w wielu językach. Filtry, hashtagi i „perfect life" w kwadracie.',
-                    fact: 'Ciekawostka: W 2014 r. „selfie stick" stał się jednym z najpopularniejszych gadżetów. Wszyscy robili sobie zdjęcia z wyciągniętej ręki — i nikt się tego nie wstydził.'
-                },
-                prices: [
-                    { item: 'Chleb', price: '3,40 zł', icon: '🍞' },
-                    { item: 'Mleko 1L', price: '3,30 zł', icon: '🥛' },
-                    { item: 'Benzyna 95 (1L)', price: '5,20 zł', icon: '⛽' },
-                    { item: 'Bilet do kina', price: '24,00 zł', icon: '🎬' }
-                ],
-                events: [
-                    { e: '⛷️', t: 'Igrzyska w Soczi — <b>Kamil Stoch</b> zdobywa dwa złote medale i zostaje bohaterem narodowym.' },
-                    { e: '🇵🇱', t: 'Polska świętuje <b>25 lat wolności</b> — wielkie obchody i refleksja nad drogą od 1989 r.' },
-                    { e: '🗳️', t: 'Wybory samorządowe i europejskie — Polska aktywna politycznie.' },
-                    { e: '🎮', t: 'Polska branża gier rośnie w siłę — zapowiedź wielkich premier.' }
-                ],
-                ad: { emoji: '🧊', title: 'Ice Bucket Challenge', desc: 'Choć to akcja charytatywna, działała jak najlepsza kampania wirusowa — miliony ludzi oblewały się lodowatą wodą i nominowały znajomych. Wirusowość w najczystszej postaci.', query: 'ice bucket challenge' },
-                trend: { emoji: '🪣', name: 'Ice Bucket Challenge', desc: 'Wiadro lodowatej wody na głowie w słusznej sprawie. Wyzwanie opanowało świat — od celebrytów po zwykłych ludzi.' }
-            },
-
-            2015: {
-                songs: [
-                    { t: 'Hello', a: 'Adele', v: 'YQHsXMglC9A', type: 'int' },
-                    { t: 'See You Again', a: 'Wiz Khalifa ft. Charlie Puth', v: 'RgKAFK5djSk', type: 'int' },
-                    { t: 'Faded', a: 'Alan Walker', v: '60ItHLz5WEA', type: 'int' }
-                ],
-                plAccent: { t: 'W dobrą stronę', a: 'Dawid Podsiadło' },
-                tech: {
-                    name: 'Snapchat i live', icon: '👻',
-                    desc: 'Snapchat podbija Polskę — znikające zdjęcia i filtry z psem to nowa forma komunikacji. Relacje „na żywo" stają się codziennością, a świat zaczyna żyć w trybie „story".',
-                    fact: 'Ciekawostka: W 2015 r. „snap" był szybszy niż SMS — młodzi ludzie komunikowali się głównie przez znikające zdjęcia, których rodzice nie rozumieli.'
-                },
-                prices: [
-                    { item: 'Chleb', price: '3,50 zł', icon: '🍞' },
-                    { item: 'Mleko 1L', price: '3,40 zł', icon: '🥛' },
-                    { item: 'Benzyna 95 (1L)', price: '4,70 zł', icon: '⛽' },
-                    { item: 'Bilet do kina', price: '25,00 zł', icon: '🎬' }
-                ],
-                events: [
-                    { e: '🗳️', t: '<b>Andrzej Duda</b> wygrywa wybory prezydenckie — nowa era w polskiej polityce.' },
-                    { e: '🎮', t: 'Premiera <b>„Wiedźmina 3: Dziki Gon"</b> — polska gra podbija świat i staje się narodową dumą.' },
-                    { e: '🌍', t: 'Europa mierzy się z <b>kryzysem migracyjnym</b> — wielkie zmiany na kontynencie.' },
-                    { e: '🎬', t: 'Polskie kino święci triumfy — rodzime produkcje doceniane na festiwalach.' }
-                ],
-                ad: { emoji: '🎮', title: 'Reklamy inspirowane grami', desc: 'Sukces Wiedźmina sprawił, że marki zaczęły sięgać po estetykę gier wideo. Polska jako „kraj gier" stała się rozpoznawalna na świecie.', query: 'wiedzmin 3 trailer' },
-                trend: { emoji: '🗡️', name: 'Wiedźmin 3', desc: 'Gra roku z Polski. Każdy znał kogoś, kto „właśnie przechodził Wiedźmina". Biało-czerwona duma eksportowa.' }
-            },
-
-            2016: {
-                songs: [
-                    { t: 'Closer', a: 'The Chainsmokers ft. Halsey', v: 'PT2_F-1esPk', type: 'int' },
-                    { t: 'Cheap Thrills', a: 'Sia', v: 'nYh-n7EOtMA', type: 'int' },
-                    { t: 'Faded', a: 'Alan Walker', v: '60ItHLz5WEA', type: 'int' }
-                ],
-                plAccent: { t: 'Cool Me Down', a: 'Margaret' },
-                tech: {
-                    name: 'Era aplikacji i VR', icon: '🥽',
-                    desc: 'Świat oszalał na punkcie Pokémon GO — rzeczywistość rozszerzona wchodzi do codzienności. Ludzie łapią wirtualne stworki na ulicach, w parkach i kościołach. VR staje się nową zabawką.',
-                    fact: 'Ciekawostka: Latem 2016 r. w parkach pełno było ludzi wpatrzonych w telefony, „łapiących" Pokémony. Gra połączyła pokolenia jak żadna inna.'
-                },
-                prices: [
-                    { item: 'Chleb', price: '3,60 zł', icon: '🍞' },
-                    { item: 'Mleko 1L', price: '3,50 zł', icon: '🥛' },
-                    { item: 'Benzyna 95 (1L)', price: '4,60 zł', icon: '⛽' },
-                    { item: 'Bilet do kina', price: '26,00 zł', icon: '🎬' }
-                ],
-                events: [
-                    { e: '✝️', t: '<b>Światowe Dni Młodzieży w Krakowie</b> — papież Franciszek odwiedza Polskę, miliony pielgrzymów.' },
-                    { e: '🦋', t: '<b>„Pokémon GO"</b> podbija świat — także Polskę. Wszyscy łapią stworki.' },
-                    { e: '🏆', t: 'Polska reprezentacja w piłce nożnej gra na <b>EURO 2016</b> i dociera do ćwierćfinału — wielki sukces!' },
-                    { e: '📺', t: 'Szczyt NATO w Warszawie — ważne wydarzenie dla bezpieczeństwa kraju.' }
-                ],
-                ad: { emoji: '📱', title: 'Reklamy mobile-first', desc: 'Marki przeniosły budżety do internetu — reklamy projektowane pod telefon stały się ważniejsze niż te telewizyjne. Era „scrollowania" w pełni.', query: 'najlepsze reklamy 2016' },
-                trend: { emoji: '🕹️', name: 'Pokémon GO', desc: 'Łapanie wirtualnych stworków w realnym świecie. Latem 2016 r. nie było osoby, która nie znałaby Pikachu.' }
-            },
-
-            2017: {
-                songs: [
-                    { t: 'Despacito', a: 'Luis Fonsi ft. Daddy Yankee', v: 'kJQP7kiw5Fk', type: 'int' },
-                    { t: 'Shape of You', a: 'Ed Sheeran', v: 'JGwWNGJdvx8', type: 'int' },
-                    { t: 'Something Just Like This', a: 'The Chainsmokers & Coldplay', v: 'FM7MFYoylVs', type: 'int' }
-                ],
-                plAccent: { t: 'Małomiasteczkowy', a: 'Dawid Podsiadło' },
-                tech: {
-                    name: 'Instagram Stories & TikTok (początki)', icon: '📸',
-                    desc: 'Instagram Stories dominuje — relacje znikające po 24h to nowa forma dzielenia się życiem. Musical.ly (późniejszy TikTok) zaczyna zdobywać pierwszych fanów. Świat wideo pionowego rośnie.',
-                    fact: 'Ciekawostka: W 2017 r. „story" stało się sposobem na życie — ludzie relacjonowali każdy posiłek, podróż i kawę. Hashtagi były wszędzie.'
-                },
-                prices: [
-                    { item: 'Chleb', price: '3,80 zł', icon: '🍞' },
-                    { item: 'Mleko 1L', price: '3,60 zł', icon: '🥛' },
-                    { item: 'Benzyna 95 (1L)', price: '4,80 zł', icon: '⛽' },
-                    { item: 'Bilet do kina', price: '27,00 zł', icon: '🎬' }
-                ],
-                events: [
-                    { e: '🎹', t: '<b>Dawid Podsiadło</b> zapowiada wielki powrót — polska scena muzyczna rośnie w siłę.' },
-                    { e: '🌪️', t: 'Polska doświadcza <b>gwałtownych nawałnic</b> — wielka solidarność w pomocy poszkodowanym.' },
-                    { e: '🚀', t: 'Polski sektor kosmiczny i technologiczny rozwija się — rodzime firmy zdobywają rynki.' },
-                    { e: '🎬', t: 'Polskie produkcje serialowe zyskują międzynarodową popularność.' }
-                ],
-                ad: { emoji: '🌍', title: 'Reklamy z przekazem', desc: 'Marki zaczęły stawiać na wartości i emocje — spoty z przesłaniem społecznym stały się trendem. Reklama przestała być tylko sprzedażą.', query: 'najlepsze reklamy 2017' },
-                trend: { emoji: '🌀', name: 'Fidget spinner', desc: 'Mała zabawka, która kręciła się w każdej dłoni. W szkołach zakazana, na podwórkach kultowa. Każdy miał co najmniej trzy.' }
+    // Function to get the current filename
+    function getCurrentFileName() {
+        // First try to get from iframe
+        const iframeDoc = getIframeDocument();
+        if (iframeDoc) {
+            const title = iframeDoc.querySelector('title');
+            if (title && title.textContent) {
+                return title.textContent.trim();
             }
+        }
+        
+        // Try multiple selectors for filename in main document
+        const selectors = [
+            "body > table > tbody > tr > td > center > font",
+            "h1",
+            ".file-name",
+            ".filename",
+            "title",
+            "h2",
+            ".code-header",
+            ".file-header"
+        ];
+        
+        for (const selector of selectors) {
+            const element = document.querySelector(selector);
+            if (element) {
+                const text = element.innerText || element.textContent;
+                if (text && text.trim().length > 0) {
+                    return text.trim();
+                }
+            }
+        }
+        return "unknown-file.txt";
+    }
+
+    // Function to get file content (handles both code in <pre> and SVG)
+    function getFileContent() {
+        // First try to get from iframe
+        const iframeDoc = getIframeDocument();
+        if (iframeDoc) {
+            // Check for SVG content first - can be root element or in body
+            let svg = iframeDoc.querySelector('svg');
+            if (!svg && iframeDoc.documentElement && iframeDoc.documentElement.tagName.toLowerCase() === 'svg') {
+                svg = iframeDoc.documentElement;
+            }
+            if (svg) {
+                console.log('Found SVG content in iframe');
+                // Serialize the SVG properly
+                const serializer = new XMLSerializer();
+                const svgString = serializer.serializeToString(svg);
+                // Add XML declaration for proper SVG file
+                return '<?xml version="1.0" encoding="UTF-8"?>\n' + svgString;
+            }
+            
+            // Check for pre tag (code files)
+            const pre = iframeDoc.querySelector('pre');
+            if (pre && pre.textContent) {
+                console.log('Found content in iframe <pre> tag, length:', pre.textContent.length);
+                return pre.textContent;
+            }
+            
+            // Check for other content types (images as base64, etc)
+            const img = iframeDoc.querySelector('img');
+            if (img && img.src) {
+                console.log('Found image in iframe');
+                return img.src; // Return the image source/data URL
+            }
+            
+            // Fallback: get full HTML if nothing else matched (might be an HTML file)
+            const html = iframeDoc.documentElement;
+            if (html) {
+                const serializer = new XMLSerializer();
+                const htmlString = serializer.serializeToString(html);
+                if (htmlString && htmlString.length > 50) {
+                    console.log('Found HTML content in iframe, length:', htmlString.length);
+                    return htmlString;
+                }
+            }
+        }
+        
+        // Try to find the code/content in common structures in main document
+        const possibleSelectors = [
+            "pre",
+            "code",
+            ".code-content",
+            "#code-content",
+            ".source-code",
+            ".file-content",
+            "body > table > tbody > tr > td > pre",
+            "body > table > tbody > tr > td",
+            ".highlight",
+            ".syntax-highlight",
+            "[class*='code']",
+            "[class*='source']"
+        ];
+
+        for (const selector of possibleSelectors) {
+            const elements = document.querySelectorAll(selector);
+            for (const element of elements) {
+                const text = element.innerText || element.textContent;
+                if (text && text.trim().length > 100) { // Only consider substantial content
+                    return text.trim();
+                }
+            }
+        }
+        
+        // Fallback: try to get all text content from the main content area
+        const mainContent = document.querySelector("main, .content, .main, #main, .container");
+        if (mainContent) {
+            const text = mainContent.innerText || mainContent.textContent;
+            if (text && text.trim().length > 100) {
+                return text.trim();
+            }
+        }
+        
+        return null;
+    }
+
+    // Function to determine MIME type based on filename
+    function getMimeType(filename) {
+        const ext = filename.split('.').pop().toLowerCase();
+        const mimeTypes = {
+            'svg': 'image/svg+xml',
+            'xml': 'application/xml',
+            'json': 'application/json',
+            'html': 'text/html',
+            'htm': 'text/html',
+            'css': 'text/css',
+            'js': 'text/javascript',
+            'ts': 'text/typescript',
+            'kt': 'text/x-kotlin',
+            'java': 'text/x-java',
+            'swift': 'text/x-swift',
+            'py': 'text/x-python',
+            'rb': 'text/x-ruby',
+            'go': 'text/x-go',
+            'rs': 'text/x-rust',
+            'c': 'text/x-c',
+            'cpp': 'text/x-c++',
+            'h': 'text/x-c',
+            'm': 'text/x-objc',
+            'dart': 'text/x-dart',
+            'php': 'text/x-php',
+            'gradle': 'text/x-gradle',
+            'md': 'text/markdown',
+            'txt': 'text/plain',
+            'yml': 'text/yaml',
+            'yaml': 'text/yaml',
+            'properties': 'text/plain',
+            'ini': 'text/plain',
+            'conf': 'text/plain'
         };
+        return mimeTypes[ext] || 'text/plain';
+    }
 
-        // ============================================================
-        // ELEMENTY DOM
-        // ============================================================
-        const yearSelect = document.getElementById('yearSelect');
-        const yearSlider = document.getElementById('yearSlider');
-        const sliderVal = document.getElementById('sliderVal');
-        const sliderMin = document.getElementById('sliderMin');
-        const sliderMax = document.getElementById('sliderMax');
-        const btnOpenCapsule = document.getElementById('btnOpenCapsule');
-        const capsule = document.getElementById('capsule');
-        const yearDisplay = document.getElementById('yearDisplay');
-        const cardsGrid = document.getElementById('cardsGrid');
-        const btnShare = document.getElementById('btnShare');
-        const shareText = document.getElementById('shareText');
-        const toast = document.getElementById('toast');
+    // Function to download file with proper MIME type
+    function downloadFile(filename, content) {
+        const mimeType = getMimeType(filename);
+        const blob = new Blob([content], { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        console.log(`Downloaded: ${filename} (${mimeType})`);
+    }
 
-        let currentYear = 2004;
-        let currentSongIndex = 0;
+    // Function to download file with directory structure (uses path as filename)
+    function downloadFileWithPath(filepath, content) {
+        // Replace path separators with a safe character for filename
+        // This creates files like: "src__main__java__com__example__App.java"
+        const safeFilename = filepath.replace(/\//g, '__');
+        const mimeType = getMimeType(filepath);
+        const blob = new Blob([content], { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = safeFilename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        console.log(`Downloaded: ${safeFilename} (original path: ${filepath})`);
+        return safeFilename;
+    }
 
-        // ============================================================
-        // GENEROWANIE LISTY LAT
-        // ============================================================
-        const years = Object.keys(ARCHIVE).map(Number).sort((a, b) => a - b);
-        const minY = Math.min(...years), maxY = Math.max(...years);
-        yearSlider.min = minY; yearSlider.max = maxY;
-        sliderMin.textContent = minY; sliderMax.textContent = maxY;
-
-        years.forEach(y => {
-            const opt = document.createElement('option');
-            opt.value = y; opt.textContent = y;
-            if (y === 2004) opt.selected = true;
-            yearSelect.appendChild(opt);
-        });
-
-        // ============================================================
-        // POMOCNICZE
-        // ============================================================
-        const thumbUrl = (id, i) => `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
-
-        function buildSongList(yearData) {
-            return yearData.songs.map((s, i) => {
-                const isPl = s.type === 'pl';
-                return `
-                <li class="song-item ${i === currentSongIndex ? 'playing' : ''}" data-index="${i}" role="button" tabindex="0" aria-label="Odtwórz ${s.t}">
-                    <img class="song-item__thumb" src="${thumbUrl(s.v, i)}" alt="" loading="lazy" onerror="this.style.display='none'">
-                    <div class="song-item__info">
-                        <div class="song-item__title">${s.t}</div>
-                        <div class="song-item__artist">${s.a}</div>
-                    </div>
-                    <span class="song-item__play">${i === currentSongIndex ? '▶' : '♪'}</span>
-                </li>`;
-            }).join('');
+    // Function to extract all file links from the tree view with full paths
+    function getAllFileLinks() {
+        const files = [];
+        const codeExtensions = ['.kt', '.swift', '.java', '.xml', '.gradle', '.json', '.m', '.h', '.cpp', '.c', '.py', '.js', '.ts', '.dart', '.php', '.rb', '.go', '.rs', '.svg', '.png', '.jpg', '.gif', '.txt', '.md', '.yml', '.yaml', '.ini', '.conf', '.properties', '.plist', '.strings', '.storyboard', '.xib', '.html'];
+        
+        // Find the mat-tree element
+        const matTree = document.querySelector('mat-tree');
+        if (!matTree) {
+            console.log('No mat-tree found, falling back to link search');
+            return getAllFileLinksFromLinks();
         }
-
-        function playerHTML(yearData) {
-            const s = yearData.songs[currentSongIndex];
-            return `
-                <div class="video-wrapper">
-                    <iframe
-                        src="https://www.youtube.com/embed/${s.v}?rel=0&modestbranding=1&autoplay=0"
-                        title="${s.t} — ${s.a}"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowfullscreen loading="lazy"></iframe>
-                </div>
-                <div class="now-playing">🎵 Teraz odtwarzane: <b>${s.t}</b> — ${s.a}</div>
-            `;
-        }
-
-        // ============================================================
-        // GŁÓWNY RENDER
-        // ============================================================
-        function renderYear(year) {
-            const data = ARCHIVE[year];
-            if (!data) return;
-            currentYear = year;
-            currentSongIndex = 0;
-
-            capsule.classList.remove('active');
-
-            setTimeout(() => {
-                yearDisplay.textContent = year;
-                shareText.textContent = `Udostępnij moją kapsułę z roku ${year}`;
-
-                const pl = data.plAccent;
-                const plUrl = ytSearch(pl.t + ' ' + pl.a);
-
-                cardsGrid.innerHTML = `
-                    <!-- MUZYKA (szeroka) -->
-                    <article class="card card--music card--wide slide-up">
-                        <div class="card__header">
-                            <div class="card__icon">🎵</div>
-                            <div>
-                                <h2 class="card__title">Co grało w głośnikach?</h2>
-                                <p class="card__subtitle">Kliknij piosenkę, aby ją odtworzyć</p>
-                            </div>
-                        </div>
-                        <div class="music-layout">
-                            <ul class="song-list" id="songList">${buildSongList(data)}</ul>
-                            <div class="music-player" id="musicPlayer">${playerHTML(data)}</div>
-                        </div>
-                        <div class="pl-accent">
-                            <span class="pl-accent__label">🇵🇱 Polski akcent</span>
-                            <span class="pl-accent__text"><b>${pl.t}</b> — ${pl.a}</span>
-                            <a class="pl-accent__link" href="${plUrl}" target="_blank" rel="noopener">▶ Odtwórz na YouTube</a>
-                        </div>
-                    </article>
-
-                    <!-- TECH -->
-                    <article class="card card--tech slide-up">
-                        <div class="card__header">
-                            <div class="card__icon">💻</div>
-                            <div>
-                                <h2 class="card__title">Kultowy Świat Cyfrowy</h2>
-                                <p class="card__subtitle">Symbol epoki</p>
-                            </div>
-                        </div>
-                        <div class="tech-display">
-                            <span class="tech-display__symbol">${data.tech.icon}</span>
-                            <h3 class="tech-display__name">${data.tech.name}</h3>
-                            <p class="tech-display__desc">${data.tech.desc}</p>
-                            <div class="tech-display__fact">💡 ${data.tech.fact}</div>
-                        </div>
-                    </article>
-
-                    <!-- CENY -->
-                    <article class="card card--prices slide-up">
-                        <div class="card__header">
-                            <div class="card__icon">💰</div>
-                            <div>
-                                <h2 class="card__title">Ile to wtedy kosztowało?</h2>
-                                <p class="card__subtitle">Koszyk wspomnień</p>
-                            </div>
-                        </div>
-                        <div class="prices-grid">
-                            ${data.prices.map(p => `
-                                <div class="price-item">
-                                    <span class="price-item__icon">${p.icon}</span>
-                                    <div class="price-item__details">
-                                        <div class="price-item__name">${p.item}</div>
-                                        <div class="price-item__value">${p.price}</div>
-                                    </div>
-                                </div>`).join('')}
-                        </div>
-                    </article>
-
-                    <!-- WYDARZENIA -->
-                    <article class="card card--events slide-up">
-                        <div class="card__header">
-                            <div class="card__icon">📅</div>
-                            <div>
-                                <h2 class="card__title">Wydarzenia Roku</h2>
-                                <p class="card__subtitle">Co wtedy żyło w Polsce i na świecie</p>
-                            </div>
-                        </div>
-                        <ul class="events-list">
-                            ${data.events.map(ev => `
-                                <li>
-                                    <span class="events-list__emoji">${ev.e}</span>
-                                    <span class="events-list__text">${ev.t}</span>
-                                </li>`).join('')}
-                        </ul>
-                    </article>
-
-                    <!-- REKLAMA -->
-                    <article class="card card--ad slide-up">
-                        <div class="card__header">
-                            <div class="card__icon">📺</div>
-                            <div>
-                                <h2 class="card__title">Przerwa na reklamę</h2>
-                                <p class="card__subtitle">Kultowy spot tamtych lat</p>
-                            </div>
-                        </div>
-                        <div class="ad-box">
-                            <span class="ad-box__emoji">${data.ad.emoji}</span>
-                            <h3 class="ad-box__title">${data.ad.title}</h3>
-                            <p class="ad-box__desc">${data.ad.desc}</p>
-                            <a class="btn-yt" href="${ytSearch(data.ad.query)}" target="_blank" rel="noopener">▶ Zobacz na YouTube</a>
-                        </div>
-                    </article>
-
-                    <!-- TREND -->
-                    <article class="card card--trend slide-up">
-                        <div class="card__header">
-                            <div class="card__icon">✨</div>
-                            <div>
-                                <h2 class="card__title">Trend Roku</h2>
-                                <p class="card__subtitle">Co było wtedy wszędzie</p>
-                            </div>
-                        </div>
-                        <div class="trend-box">
-                            <span class="trend-box__emoji">${data.trend.emoji}</span>
-                            <h3 class="trend-box__name">${data.trend.name}</h3>
-                            <p class="trend-box__desc">${data.trend.desc}</p>
-                        </div>
-                    </article>
-                `;
-
-                attachSongHandlers(data);
-                capsule.classList.add('active');
-            }, 350);
-        }
-
-        // ============================================================
-        // PRZEŁĄCZANIE PIOSENEK
-        // ============================================================
-        function attachSongHandlers(yearData) {
-            const list = document.getElementById('songList');
-            const player = document.getElementById('musicPlayer');
-            if (!list || !player) return;
-
-            const selectSong = (index) => {
-                currentSongIndex = index;
-                // odśwież aktywną piosenkę
-                list.querySelectorAll('.song-item').forEach((li, i) => {
-                    li.classList.toggle('playing', i === index);
-                    const playBtn = li.querySelector('.song-item__play');
-                    if (playBtn) playBtn.textContent = i === index ? '▶' : '♪';
-                });
-                // odśwież odtwarzacz
-                player.innerHTML = playerHTML(yearData);
-            };
-
-            list.querySelectorAll('.song-item').forEach(li => {
-                li.addEventListener('click', () => selectSong(parseInt(li.dataset.index, 10)));
-                li.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        selectSong(parseInt(li.dataset.index, 10));
+        
+        // Get all tree nodes
+        const treeNodes = matTree.querySelectorAll('mat-tree-node');
+        
+        // Build the tree structure by tracking the path at each level
+        const pathStack = []; // Stack to track folder path at each level
+        
+        treeNodes.forEach((node, index) => {
+            const level = parseInt(node.getAttribute('aria-level') || '1');
+            const button = node.querySelector('gds-button button');
+            if (!button) return;
+            
+            const ariaLabel = button.getAttribute('aria-label');
+            const buttonText = button.textContent.trim();
+            
+            // Check if this is a folder (has "Toggle" in aria-label) or a file
+            const isFolder = ariaLabel && ariaLabel.startsWith('Toggle ');
+            const name = isFolder ? ariaLabel.replace('Toggle ', '') : buttonText;
+            
+            // Update path stack to current level
+            while (pathStack.length >= level) {
+                pathStack.pop();
+            }
+            
+            if (isFolder) {
+                // Add folder to path stack
+                pathStack.push(name);
+            } else {
+                // This is a file - construct full path
+                // Remove .html suffix from filename (they add .html to all files)
+                let filename = name;
+                if (filename.endsWith('.html') && !filename.endsWith('.json.html')) {
+                    // Check if it's a double extension like .swift.html
+                    const withoutHtml = filename.slice(0, -5);
+                    if (codeExtensions.some(ext => withoutHtml.endsWith(ext))) {
+                        filename = withoutHtml;
                     }
+                } else if (filename.endsWith('.json.html')) {
+                    filename = filename.slice(0, -5); // Remove just .html, keep .json
+                }
+                
+                const fullPath = [...pathStack, filename].join('/');
+                
+                // Check if it has a recognizable file extension
+                const hasCodeExtension = codeExtensions.some(ext => filename.toLowerCase().endsWith(ext));
+                
+                if (hasCodeExtension || filename.includes('.')) {
+                    files.push({
+                        element: button,
+                        node: node,
+                        filename: filename,
+                        fullPath: fullPath,
+                        level: level
+                    });
+                }
+            }
+        });
+        
+        console.log('Found files from tree view:', files);
+        return files;
+    }
+    
+    // Fallback function to get links from <a> elements
+    function getAllFileLinksFromLinks() {
+        const links = [];
+        const codeExtensions = ['.kt', '.swift', '.java', '.xml', '.gradle', '.json', '.m', '.h', '.cpp', '.c', '.py', '.js', '.ts', '.dart', '.php', '.rb', '.go', '.rs', '.svg', '.png', '.jpg', '.gif', '.txt', '.md', '.yml', '.yaml', '.ini', '.conf', '.properties', '.plist', '.strings', '.storyboard', '.xib'];
+        
+        const allLinks = document.querySelectorAll('a');
+        allLinks.forEach(link => {
+            const href = link.getAttribute('href');
+            const text = (link.innerText || link.textContent || '').trim();
+            
+            const isCodeFile = codeExtensions.some(ext => {
+                return (href && href.toLowerCase().endsWith(ext)) || 
+                       (text && text.toLowerCase().endsWith(ext));
+            });
+            
+            if (isCodeFile && href) {
+                links.push({
+                    url: link.href,
+                    text: text,
+                    fullPath: text,
+                    filename: text
                 });
+            }
+        });
+        
+        return links;
+    }
+
+    // Create download button
+    function createDownloadButton() {
+        const button = document.createElement('button');
+        button.innerText = '💾 Download Current File';
+        button.style.cssText = `
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 10000;
+            padding: 10px 20px;
+            background-color: #0052a5;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        `;
+        button.className = 'mobywatel-downloader';
+        button.addEventListener('click', () => {
+            const filename = getCurrentFileName();
+            const content = getFileContent();
+            
+            if (filename && content) {
+                downloadFile(filename, content);
+                alert(`File "${filename}" downloaded successfully!`);
+            } else {
+                alert('Could not extract filename or content. Check console for details.');
+                console.log('Filename:', filename);
+                console.log('Content:', content);
+            }
+        });
+        document.body.appendChild(button);
+    }
+
+    // Create download all button
+    function createDownloadAllButton() {
+        const button = document.createElement('button');
+        button.innerText = '📦 Download All Files';
+        button.style.cssText = `
+            position: fixed;
+            top: 50px;
+            right: 10px;
+            z-index: 10000;
+            padding: 10px 20px;
+            background-color: #0c5aa9;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        `;
+        button.className = 'mobywatel-downloader';
+        
+        button.addEventListener('click', async () => {
+            const files = getAllFileLinks();
+            if (files.length === 0) {
+                alert('No files found in the tree view.\n\nMake sure you are on a page with a file tree (mogp-tree-view).');
+                return;
+            }
+            
+            const confirmDownload = confirm(`Found ${files.length} files in tree view.\n\nStart downloading all files?\n\nFiles will be saved with directory structure preserved in the filename (e.g., "Sources__Components__Button.swift")`);
+            if (!confirmDownload) return;
+            
+            // Create a progress indicator
+            const progressDiv = document.createElement('div');
+            progressDiv.className = 'mobywatel-downloader';
+            progressDiv.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                z-index: 10001;
+                padding: 20px;
+                background-color: rgba(0, 82, 165, 0.95);
+                color: white;
+                border-radius: 10px;
+                font-size: 14px;
+                text-align: center;
+                min-width: 300px;
+            `;
+            document.body.appendChild(progressDiv);
+            
+            const downloadedFiles = [];
+            const failedFiles = [];
+            
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                progressDiv.innerHTML = `<strong>Downloading...</strong><br><br>File ${i + 1} of ${files.length}<br><br><small>${file.fullPath}</small>`;
+                
+                try {
+                    // Click on the file button to load it
+                    if (file.element) {
+                        file.element.click();
+                    }
+                    
+                    // Wait for iframe content to load
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    
+                    // Get the content
+                    const content = getFileContent();
+                    
+                    if (content && content.length > 0) {
+                        // Download with path in filename
+                        downloadFileWithPath(file.fullPath, content);
+                        downloadedFiles.push(file.fullPath);
+                    } else {
+                        console.log(`No content found for: ${file.fullPath}`);
+                        failedFiles.push(file.fullPath);
+                    }
+                    
+                    // Small delay between downloads
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    
+                } catch (err) {
+                    console.error(`Error downloading ${file.fullPath}:`, err);
+                    failedFiles.push(file.fullPath);
+                }
+            }
+            
+            // Create and download manifest
+            const manifest = createDirectoryManifest(downloadedFiles, failedFiles);
+            downloadFile('_DIRECTORY_STRUCTURE.txt', manifest);
+            
+            progressDiv.remove();
+            
+            alert(`Download complete!\n\n✅ Downloaded: ${downloadedFiles.length} files\n❌ Failed: ${failedFiles.length} files\n\nA manifest file (_DIRECTORY_STRUCTURE.txt) was created with the directory structure.`);
+        });
+        
+        document.body.appendChild(button);
+    }
+    
+    // Function to create a directory structure manifest
+    function createDirectoryManifest(downloadedFiles, failedFiles) {
+        let manifest = "# mObywatel Source Code - Directory Structure\n";
+        manifest += "# Downloaded on: " + new Date().toISOString() + "\n\n";
+        manifest += "Files are named with path separators replaced by '__'\n";
+        manifest += "To restore the original structure, rename files replacing '__' with '/'\n\n";
+        manifest += "## Successfully Downloaded Files:\n\n";
+        
+        downloadedFiles.forEach(path => {
+            const safeName = path.replace(/\//g, '__');
+            manifest += `${safeName}\n  → Original path: ${path}\n\n`;
+        });
+        
+        if (failedFiles.length > 0) {
+            manifest += "\n## Failed Downloads:\n\n";
+            failedFiles.forEach(path => {
+                manifest += `- ${path}\n`;
             });
         }
+        
+        return manifest;
+    }
 
-        // ============================================================
-        // ZDARZENIA
-        // ============================================================
-        function openCapsule() {
-            const year = parseInt(yearSelect.value, 10);
-            renderYear(year);
-            yearSlider.value = year;
-            sliderVal.textContent = year;
-            if (window.innerWidth < 768) capsule.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            btnOpenCapsule.style.transform = 'scale(0.95)';
-            setTimeout(() => { btnOpenCapsule.style.transform = ''; }, 150);
+    // Create manual trigger button
+    function createManualTriggerButton() {
+        const button = document.createElement('button');
+        button.innerText = '� Refresh Downloader';
+        button.style.cssText = `
+            position: fixed;
+            top: 90px;
+            right: 10px;
+            z-index: 10000;
+            padding: 10px 20px;
+            background-color: #1963ae;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        `;
+        button.addEventListener('click', () => {
+            // Remove existing buttons and panels
+            document.querySelectorAll('.mobywatel-downloader').forEach(el => el.remove());
+            
+            // Re-initialize
+            setTimeout(() => {
+                const filename = getCurrentFileName();
+                const fileLinks = getAllFileLinks();
+                const content = getFileContent();
+                
+                createDownloadButton();
+                createDownloadAllButton();
+                createInfoPanel();
+                
+                alert(`Refreshed!\nFilename: ${filename}\nFiles found: ${fileLinks.length}\nContent: ${content ? content.length + ' chars' : 'none'}`);
+            }, 500);
+        });
+        button.className = 'mobywatel-downloader';
+        document.body.appendChild(button);
+    }
+
+    // Create info panel
+    function createInfoPanel() {
+        const panel = document.createElement('div');
+        panel.style.cssText = `
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            z-index: 10000;
+            padding: 10px;
+            background-color: rgba(0, 82, 165, 0.9);
+            color: white;
+            border-radius: 5px;
+            font-size: 12px;
+            max-width: 300px;
+            font-family: monospace;
+        `;
+        
+        const filename = getCurrentFileName();
+        const fileLinks = getAllFileLinks();
+        const content = getFileContent();
+        
+        const treeFilesInfo = fileLinks.length > 0 ? 
+            `<br><small>First: ${fileLinks[0].fullPath}</small>` : '';
+        
+        panel.innerHTML = `
+            <strong>mObywatel Downloader</strong><br>
+            Current file: ${filename || 'N/A'}<br>
+            Files in tree: ${fileLinks.length}${treeFilesInfo}<br>
+            Content: ${content ? content.length + ' chars' : 'No iframe content'}<br>
+            <button onclick="console.log('=== DEBUG INFO ==='); console.log('Filename:', '${filename}'); console.log('Content length:', ${content ? content.length : 0}); console.log('Files found:', ${fileLinks.length}); console.log('Files:', JSON.parse('${JSON.stringify(fileLinks).replace(/'/g, "\\'")}'));">Debug Info</button>
+        `;
+        panel.className = 'mobywatel-downloader';
+        document.body.appendChild(panel);
+    }
+    function init() {
+        // Wait for page to be fully loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+            return;
         }
-
-        btnOpenCapsule.addEventListener('click', openCapsule);
-
-        yearSelect.addEventListener('change', () => {
-            const y = parseInt(yearSelect.value, 10);
-            yearSlider.value = y;
-            sliderVal.textContent = y;
-            renderYear(y);
-        });
-
-        yearSlider.addEventListener('input', () => {
-            sliderVal.textContent = yearSlider.value;
-        });
-        yearSlider.addEventListener('change', () => {
-            // znajdź najbliższy dostępny rok
-            const val = parseInt(yearSlider.value, 10);
-            const nearest = years.reduce((prev, curr) => Math.abs(curr - val) < Math.abs(prev - val) ? curr : prev);
-            yearSelect.value = nearest;
-            renderYear(nearest);
-        });
-
-        // ============================================================
-        // UDOSTĘPNIANIE
-        // ============================================================
-        async function handleShare() {
-            const shareData = {
-                title: `Dziennik Nostalgiczny — Rok ${currentYear}`,
-                text: `Otworzyłem kapsułę czasu z roku ${currentYear}! Sprawdź, co grało, co kosztowało i jak wyglądał świat. 🚀✨`,
-                url: window.location.href.split('?')[0]
-            };
-            try {
-                if (navigator.share) {
-                    await navigator.share(shareData);
-                } else {
-                    await navigator.clipboard.writeText(`${shareData.text}\n\n${shareData.url}`);
-                    showToast('✓ Skopiowano do schowka! Podziel się z innymi.');
-                }
-            } catch (err) {
-                if (err.name !== 'AbortError') fallbackCopy(`${shareData.text}\n\n${shareData.url}`);
+        
+        // For SPAs, wait a bit more for dynamic content
+        setTimeout(() => {
+            const filename = getCurrentFileName();
+            const fileLinks = getAllFileLinks();
+            const content = getFileContent();
+            
+            // Only show if we found some content or are on a code page
+            if (filename !== 'unknown-file.txt' || fileLinks.length > 0 || content) {
+                createDownloadButton();
+                createDownloadAllButton();
+                createManualTriggerButton();
+                createInfoPanel();
+                console.log('mObywatel Code Gallery Downloader initialized');
+                console.log('Found filename:', filename);
+                console.log('Found file links:', fileLinks.length);
+                console.log('Content length:', content ? content.length : 0);
+            } else {
+                console.log('mObywatel Downloader: No code content detected yet. Will retry...');
+                // Show manual trigger even if no content detected
+                createManualTriggerButton();
+                createInfoPanel();
+                // Retry after another delay for slow-loading content
+                setTimeout(init, 3000);
             }
-        }
+        }, 2000);
+    }
 
-        function fallbackCopy(text) {
-            const ta = document.createElement('textarea');
-            ta.value = text;
-            ta.style.position = 'fixed'; ta.style.opacity = '0'; ta.style.left = '-9999px';
-            document.body.appendChild(ta);
-            ta.select();
-            try {
-                const ok = document.execCommand('copy');
-                showToast(ok ? '✓ Skopiowano do schowka!' : '⚠ Nie udało się skopiować');
-            } catch (e) { showToast('⚠ Twoja przeglądarka nie obsługuje kopiowania'); }
-            document.body.removeChild(ta);
-        }
-
-        function showToast(msg) {
-            toast.textContent = msg;
-            toast.classList.add('visible');
-            setTimeout(() => toast.classList.remove('visible'), 3500);
-        }
-
-        btnShare.addEventListener('click', handleShare);
-
-        // ============================================================
-        // START
-        // ============================================================
-        renderYear(2004);
-    </script>
-</body>
-    </html>
+    // Start the script
+    init();
+})();
