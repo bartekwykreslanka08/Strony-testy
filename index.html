@@ -7,6 +7,7 @@
 <title>Zgadnij Miasto 🌍</title>
 
 <style>
+
 * {
     box-sizing: border-box;
 }
@@ -82,7 +83,9 @@ main {
     padding: 0 15px 50px;
 }
 
-/* START */
+/* =========================
+   START SCREEN
+========================= */
 
 .start-screen {
     background: var(--card);
@@ -137,11 +140,20 @@ main {
     cursor: pointer;
 }
 
-.start-btn:hover {
-    transform: translateY(-1px);
+.reset-btn {
+    display: block;
+    margin: 15px auto 0;
+    background: transparent;
+    border: none;
+    color: #667085;
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: underline;
 }
 
-/* GAME */
+/* =========================
+   GAME
+========================= */
 
 .game-card {
     background: white;
@@ -228,7 +240,9 @@ main {
     z-index: 3;
 }
 
-/* TIMER */
+/* =========================
+   TIMER
+========================= */
 
 .timer {
     height: 6px;
@@ -242,7 +256,9 @@ main {
     transition: width 1s linear;
 }
 
-/* CONTENT */
+/* =========================
+   CONTENT
+========================= */
 
 .content {
     padding: 27px;
@@ -373,7 +389,9 @@ button:disabled {
     color: #111827;
 }
 
-/* MOBILE */
+/* =========================
+   MOBILE
+========================= */
 
 @media(max-width: 650px) {
 
@@ -429,7 +447,9 @@ button:disabled {
     .image-placeholder .big {
         font-size: 55px;
     }
+
 }
+
 </style>
 </head>
 
@@ -466,20 +486,28 @@ button:disabled {
 
 <main>
 
-    <!-- START -->
+    <!-- =========================
+         START
+    ========================== -->
 
-    <section id="startScreen" class="start-screen">
+    <section
+        id="startScreen"
+        class="start-screen"
+    >
 
         <div class="start-icon">
             🌍
         </div>
 
-        <h1>Zgadnij Miasto</h1>
+        <h1>
+            Zgadnij Miasto
+        </h1>
 
         <p>
             Zobacz zdjęcie, przeczytaj podpowiedzi
             i zgadnij, jakie miasto ukrywa się za pytaniem!
         </p>
+
 
         <div class="mode-select">
 
@@ -501,6 +529,7 @@ button:disabled {
 
         </div>
 
+
         <button
             class="start-btn"
             onclick="startGame()"
@@ -508,10 +537,20 @@ button:disabled {
             🎮 ROZPOCZNIJ GRĘ
         </button>
 
+
+        <button
+            class="reset-btn"
+            onclick="resetProgress()"
+        >
+            Wyzeruj mój wynik
+        </button>
+
     </section>
 
 
-    <!-- GAME -->
+    <!-- =========================
+         GAME
+    ========================== -->
 
     <section
         id="game"
@@ -525,6 +564,7 @@ button:disabled {
                 id="cityImage"
                 alt="Zdjęcie miasta"
             >
+
 
             <div
                 id="imagePlaceholder"
@@ -594,11 +634,13 @@ button:disabled {
                     id="hint1"
                     class="hint"
                 >
+
                     <span class="hint-number">
                         💡 1.
                     </span>
 
                     <span class="hint-text"></span>
+
                 </div>
 
 
@@ -606,11 +648,13 @@ button:disabled {
                     id="hint2"
                     class="hint"
                 >
+
                     <span class="hint-number">
                         💡 2.
                     </span>
 
                     <span class="hint-text"></span>
+
                 </div>
 
 
@@ -618,11 +662,13 @@ button:disabled {
                     id="hint3"
                     class="hint"
                 >
+
                     <span class="hint-number">
                         💡 3.
                     </span>
 
                     <span class="hint-text"></span>
+
                 </div>
 
             </div>
@@ -692,7 +738,7 @@ button:disabled {
 
 /*
 ==================================================
-  TUTAJ WKLEJ ADRES SWOJEGO CLOUDFLARE WORKERA
+  CLOUDFLARE WORKER
 ==================================================
 */
 
@@ -700,11 +746,31 @@ const WORKER_URL =
     "https://zgadnij-miasto-api.papierzowyroblox.workers.dev";
 
 
+/*
+==================================================
+  ZMIENNE GRY
+
+  Wynik i seria są pobierane z localStorage.
+==================================================
+*/
+
+let score =
+    Number(
+        localStorage.getItem(
+            "zgadnijMiasto_score"
+        )
+    ) || 0;
+
+
+let streak =
+    Number(
+        localStorage.getItem(
+            "zgadnijMiasto_streak"
+        )
+    ) || 0;
+
+
 let currentCity = null;
-
-let score = 0;
-
-let streak = 0;
 
 let hintsUsed = 0;
 
@@ -782,21 +848,45 @@ function normalize(text) {
 
 /*
 ==================================================
-  START
+  ZAPIS POSTĘPU
+==================================================
+*/
+
+function saveProgress() {
+
+    localStorage.setItem(
+        "zgadnijMiasto_score",
+        String(score)
+    );
+
+    localStorage.setItem(
+        "zgadnijMiasto_streak",
+        String(streak)
+    );
+
+}
+
+
+/*
+==================================================
+  START GRY
+
+  UWAGA:
+  Nie zerujemy tutaj score/streak.
 ==================================================
 */
 
 async function startGame() {
 
-    score = 0;
-
-    streak = 0;
+    saveProgress();
 
     updateStats();
 
-    startScreen.style.display = "none";
+    startScreen.style.display =
+        "none";
 
-    game.style.display = "block";
+    game.style.display =
+        "block";
 
     await loadCity();
 
@@ -819,81 +909,90 @@ async function loadCity() {
 
     hintsUsed = 0;
 
-    loading.style.display = "flex";
+
+    loading.style.display =
+        "flex";
+
 
     loading.innerHTML = `
         <div class="spinner"></div>
         <div>Losowanie miasta...</div>
     `;
 
-    result.className = "result";
 
-    result.innerHTML = "";
+    result.className =
+        "result";
 
-    nextBtn.style.display = "none";
+    result.innerHTML =
+        "";
 
-    backBtn.style.display = "none";
 
-    checkBtn.disabled = true;
+    nextBtn.style.display =
+        "none";
 
-    hintBtn.disabled = true;
+    backBtn.style.display =
+        "none";
 
-    answer.value = "";
+
+    checkBtn.disabled =
+        true;
+
+    hintBtn.disabled =
+        true;
+
+
+    answer.value =
+        "";
+
 
     /*
-      Ukrywanie podpowiedzi
+      Podpowiedzi
     */
 
     for(let i = 1; i <= 3; i++) {
 
         const hint =
-            document.getElementById("hint" + i);
+            document.getElementById(
+                "hint" + i
+            );
 
-        hint.classList.remove("visible");
+        hint.classList.remove(
+            "visible"
+        );
 
-        hint.querySelector(".hint-text")
-            .innerText = "";
+        hint.querySelector(
+            ".hint-text"
+        ).innerText = "";
 
     }
 
 
     /*
-      Reset zdjęcia
+      Zdjęcie
     */
 
-    cityImage.style.display = "none";
+    cityImage.style.display =
+        "none";
 
-    cityImage.removeAttribute("src");
+    cityImage.removeAttribute(
+        "src"
+    );
 
-    imagePlaceholder.style.display = "flex";
+    imagePlaceholder.style.display =
+        "flex";
 
-    credit.style.display = "none";
+    credit.style.display =
+        "none";
 
 
     /*
-      Pobranie trybu
+      Tryb
     */
 
     const mode =
-        document.getElementById("mode").value;
-
-
-    /*
-      Sprawdzenie adresu Workera
-    */
-
-    if(
-        !WORKER_URL ||
-        WORKER_URL.includes("TU_WKLEJ")
-    ) {
-
-        showApiError(
-            "Nie ustawiono adresu Cloudflare Workera."
-        );
-
-        return;
-
-    }
+        document.getElementById(
+            "mode"
+        ).value;
 
 
     try {
@@ -905,10 +1004,13 @@ async function loadCity() {
                 encodeURIComponent(mode),
                 {
                     method: "GET",
+
                     headers: {
                         "Accept":
                             "application/json"
-                    }
+                    },
+
+                    cache: "no-store"
                 }
             );
 
@@ -926,10 +1028,6 @@ async function loadCity() {
         const data =
             await response.json();
 
-
-        /*
-          Sprawdzamy odpowiedź API
-        */
 
         if(!data.ok) {
 
@@ -954,7 +1052,8 @@ async function loadCity() {
         }
 
 
-        currentCity = data;
+        currentCity =
+            data;
 
 
         /*
@@ -969,11 +1068,13 @@ async function loadCity() {
             .innerText =
             data.hints[0];
 
+
         document
             .getElementById("hint2")
             .querySelector(".hint-text")
             .innerText =
             data.hints[1];
+
 
         document
             .getElementById("hint3")
@@ -990,40 +1091,50 @@ async function loadCity() {
 
         if(data.image) {
 
-            cityImage.src = data.image;
+            cityImage.src =
+                data.image;
 
-            cityImage.style.display = "block";
+            cityImage.style.display =
+                "block";
 
-            imagePlaceholder.style.display = "none";
+            imagePlaceholder.style.display =
+                "none";
 
             credit.innerText =
                 data.credit ||
                 "Wikimedia Commons";
 
-            credit.style.display = "block";
+            credit.style.display =
+                "block";
 
         } else {
 
-            /*
-              Brak zdjęcia NIE jest błędem.
-            */
+            cityImage.style.display =
+                "none";
 
-            cityImage.style.display = "none";
-
-            imagePlaceholder.style.display = "flex";
+            imagePlaceholder.style.display =
+                "flex";
 
         }
 
 
-        loading.style.display = "none";
+        loading.style.display =
+            "none";
 
-        checkBtn.disabled = false;
 
-        hintBtn.disabled = false;
+        checkBtn.disabled =
+            false;
 
-        gameRunning = true;
+        hintBtn.disabled =
+            false;
+
+
+        gameRunning =
+            true;
+
 
         answer.focus();
+
 
         startTimer();
 
@@ -1034,6 +1145,7 @@ async function loadCity() {
             "Błąd gry:",
             error
         );
+
 
         showApiError(
             error.message ||
@@ -1053,7 +1165,9 @@ async function loadCity() {
 
 function showApiError(message) {
 
-    loading.style.display = "flex";
+    loading.style.display =
+        "flex";
+
 
     loading.innerHTML = `
         <div style="
@@ -1094,11 +1208,15 @@ function showApiError(message) {
         </button>
     `;
 
-    checkBtn.disabled = true;
 
-    hintBtn.disabled = true;
+    checkBtn.disabled =
+        true;
 
-    gameRunning = false;
+    hintBtn.disabled =
+        true;
+
+    gameRunning =
+        false;
 
 }
 
@@ -1133,23 +1251,30 @@ function showHint() {
         return;
     }
 
+
     if(hintsUsed >= 3) {
         return;
     }
 
+
     hintsUsed++;
+
 
     const hint =
         document.getElementById(
             "hint" + hintsUsed
         );
 
-    hint.classList.add("visible");
+
+    hint.classList.add(
+        "visible"
+    );
 
 
     if(hintsUsed >= 3) {
 
-        hintBtn.disabled = true;
+        hintBtn.disabled =
+            true;
 
     }
 
@@ -1168,8 +1293,11 @@ function checkAnswer() {
         return;
     }
 
+
     const userAnswer =
-        normalize(answer.value);
+        normalize(
+            answer.value
+        );
 
 
     if(!userAnswer) {
@@ -1182,10 +1310,15 @@ function checkAnswer() {
 
 
     const correctAnswer =
-        normalize(currentCity.city);
+        normalize(
+            currentCity.city
+        );
 
 
-    if(userAnswer === correctAnswer) {
+    if(
+        userAnswer ===
+        correctAnswer
+    ) {
 
         correctAnswerHandler();
 
@@ -1206,9 +1339,13 @@ function checkAnswer() {
 
 function correctAnswerHandler() {
 
-    gameRunning = false;
+    gameRunning =
+        false;
 
-    clearInterval(timerInterval);
+
+    clearInterval(
+        timerInterval
+    );
 
 
     let points = 100;
@@ -1218,9 +1355,11 @@ function correctAnswerHandler() {
         points = 75;
     }
 
+
     if(hintsUsed === 2) {
         points = 50;
     }
+
 
     if(hintsUsed === 3) {
         points = 25;
@@ -1228,7 +1367,7 @@ function correctAnswerHandler() {
 
 
     /*
-      Bonus za czas
+      Bonus za szybkie odgadnięcie
     */
 
     if(timeLeft >= 45) {
@@ -1247,6 +1386,13 @@ function correctAnswerHandler() {
     streak++;
 
 
+    /*
+      Zapis od razu po zdobyciu punktów
+    */
+
+    saveProgress();
+
+
     updateStats();
 
 
@@ -1257,19 +1403,26 @@ function correctAnswerHandler() {
     result.innerHTML = `
         🎉 <strong>Brawo!</strong><br>
         To było miasto:
-        <strong>${escapeHtml(currentCity.city)}</strong>
+        <strong>
+            ${escapeHtml(currentCity.city)}
+        </strong>
         <br>
         +${points} punktów!
     `;
 
 
-    checkBtn.disabled = true;
+    checkBtn.disabled =
+        true;
 
-    hintBtn.disabled = true;
+    hintBtn.disabled =
+        true;
 
-    nextBtn.style.display = "block";
 
-    backBtn.style.display = "block";
+    nextBtn.style.display =
+        "block";
+
+    backBtn.style.display =
+        "block";
 
 }
 
@@ -1283,6 +1436,9 @@ function correctAnswerHandler() {
 function wrongAnswerHandler() {
 
     streak = 0;
+
+
+    saveProgress();
 
     updateStats();
 
@@ -1308,38 +1464,48 @@ function wrongAnswerHandler() {
 
 function startTimer() {
 
-    clearInterval(timerInterval);
+    clearInterval(
+        timerInterval
+    );
+
 
     timeLeft = 60;
 
-    timerBar.style.width = "100%";
+
+    timerBar.style.width =
+        "100%";
+
 
     updateStats();
 
 
-    timerInterval = setInterval(() => {
+    timerInterval =
+        setInterval(() => {
 
-        if(!gameRunning) {
-            return;
-        }
-
-        timeLeft--;
-
-        updateStats();
+            if(!gameRunning) {
+                return;
+            }
 
 
-        timerBar.style.width =
-            (timeLeft / 60 * 100) +
-            "%";
+            timeLeft--;
 
 
-        if(timeLeft <= 0) {
+            updateStats();
 
-            timeOut();
 
-        }
+            timerBar.style.width =
+                (
+                    timeLeft / 60 * 100
+                ) + "%";
 
-    }, 1000);
+
+            if(timeLeft <= 0) {
+
+                timeOut();
+
+            }
+
+        }, 1000);
 
 }
 
@@ -1352,11 +1518,19 @@ function startTimer() {
 
 function timeOut() {
 
-    gameRunning = false;
+    gameRunning =
+        false;
 
-    clearInterval(timerInterval);
+
+    clearInterval(
+        timerInterval
+    );
+
 
     streak = 0;
+
+
+    saveProgress();
 
     updateStats();
 
@@ -1368,17 +1542,24 @@ function timeOut() {
     result.innerHTML = `
         ⏰ <strong>Koniec czasu!</strong><br>
         Poprawna odpowiedź:
-        <strong>${escapeHtml(currentCity.city)}</strong>
+        <strong>
+            ${escapeHtml(currentCity.city)}
+        </strong>
     `;
 
 
-    checkBtn.disabled = true;
+    checkBtn.disabled =
+        true;
 
-    hintBtn.disabled = true;
+    hintBtn.disabled =
+        true;
 
-    nextBtn.style.display = "block";
 
-    backBtn.style.display = "block";
+    nextBtn.style.display =
+        "block";
+
+    backBtn.style.display =
+        "block";
 
 
     /*
@@ -1388,8 +1569,12 @@ function timeOut() {
     for(let i = 1; i <= 3; i++) {
 
         document
-            .getElementById("hint" + i)
-            .classList.add("visible");
+            .getElementById(
+                "hint" + i
+            )
+            .classList.add(
+                "visible"
+            );
 
     }
 
@@ -1417,13 +1602,27 @@ async function nextRound() {
 
 function backToStart() {
 
-    clearInterval(timerInterval);
+    clearInterval(
+        timerInterval
+    );
 
-    gameRunning = false;
 
-    game.style.display = "none";
+    gameRunning =
+        false;
 
-    startScreen.style.display = "block";
+
+    saveProgress();
+
+
+    game.style.display =
+        "none";
+
+
+    startScreen.style.display =
+        "block";
+
+
+    updateStats();
 
 }
 
@@ -1436,14 +1635,58 @@ function backToStart() {
 
 function updateStats() {
 
-    document.getElementById("score")
-        .innerText = score;
+    document.getElementById(
+        "score"
+    ).innerText =
+        score;
 
-    document.getElementById("streak")
-        .innerText = streak;
 
-    document.getElementById("time")
-        .innerText = timeLeft;
+    document.getElementById(
+        "streak"
+    ).innerText =
+        streak;
+
+
+    document.getElementById(
+        "time"
+    ).innerText =
+        timeLeft;
+
+}
+
+
+/*
+==================================================
+  RESET WYNIKU
+==================================================
+*/
+
+function resetProgress() {
+
+    const confirmation =
+        confirm(
+            "Czy na pewno chcesz wyzerować wynik i serię?"
+        );
+
+
+    if(!confirmation) {
+        return;
+    }
+
+
+    score = 0;
+
+    streak = 0;
+
+
+    saveProgress();
+
+    updateStats();
+
+
+    alert(
+        "Wynik został wyzerowany."
+    );
 
 }
 
@@ -1458,7 +1701,10 @@ answer.addEventListener(
     "keydown",
     function(event) {
 
-        if(event.key === "Enter") {
+        if(
+            event.key ===
+            "Enter"
+        ) {
 
             event.preventDefault();
 
@@ -1472,7 +1718,7 @@ answer.addEventListener(
 
 /*
 ==================================================
-  OBSŁUGA BŁĘDU ZDJĘCIA
+  BŁĄD ZDJĘCIA
 ==================================================
 */
 
@@ -1480,11 +1726,14 @@ cityImage.addEventListener(
     "error",
     function() {
 
-        cityImage.style.display = "none";
+        cityImage.style.display =
+            "none";
 
-        imagePlaceholder.style.display = "flex";
+        imagePlaceholder.style.display =
+            "flex";
 
-        credit.style.display = "none";
+        credit.style.display =
+            "none";
 
     }
 );
@@ -1492,7 +1741,7 @@ cityImage.addEventListener(
 
 /*
 ==================================================
-  OBSŁUGA POPRAWNEGO ZDJĘCIA
+  POPRAWNE ZDJĘCIE
 ==================================================
 */
 
@@ -1500,12 +1749,23 @@ cityImage.addEventListener(
     "load",
     function() {
 
-        cityImage.style.display = "block";
+        cityImage.style.display =
+            "block";
 
-        imagePlaceholder.style.display = "none";
+        imagePlaceholder.style.display =
+            "none";
 
     }
 );
+
+
+/*
+==================================================
+  WŁĄCZENIE STRONY
+==================================================
+*/
+
+updateStats();
 
 </script>
 
