@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#050505">
+<title>WTP • System Informacji Pasażerskiej</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="logo">WTP</div>
+  <div>
+    <b>SYSTEM INFORMACJI PASAŻERSKIEJ</b>
+    <small>Warszawski Transport Publiczny</small>
+  </div>
+  <button id="fs">⛶</button>
+</header>
+
+<main>
+  <section class="intro">
+    <span>WARSZAWA • DANE MIEJSKIE</span>
+    <h1>Wybierz linię</h1>
+    <p>Trasy są pobierane automatycznie z API Warszawy.</p>
+    <div class="search">
+      <input id="search" placeholder="Numer linii, np. 180, 17, 105..." autocomplete="off">
+      <select id="filter">
+        <option value="all">Wszystkie</option>
+        <option value="bus">Autobusy</option>
+        <option value="tram">Tramwaje</option>
+        <option value="metro">Metro</option>
+        <option value="other">Pozostałe</option>
+      </select>
+    </div>
+  </section>
+  <div class="status"><span><i></i><span id="status">Łączenie...</span></span><span id="clock"></span></div>
+
+  <section>
+    <div class="heading"><h2>Linie</h2><small id="count">0</small></div>
+    <div id="lines" class="lines"><div class="loading">Pobieranie danych...</div></div>
+  </section>
+</main>
+
+<div id="modal" class="modal hidden">
+  <div class="backdrop" data-close></div>
+  <div class="window">
+    <button class="close" data-close>×</button>
+    <div class="route-head">
+      <div id="badge" class="badge">---</div>
+      <div><small>LINIA</small><h2 id="title">---</h2></div>
+    </div>
+    <div id="dirs" class="dirs"></div>
+    <div class="display">
+      <div class="display-head"><strong id="displayLine">---</strong><span id="displayClock"></span></div>
+      <div class="display-body"><small>PRZEBIEG TRASY</small><div id="stops" class="stops"></div></div>
+    </div>
+    <div class="footer">
+      <div>KIERUNEK: <b id="destination">---</b></div>
+      <button id="vehicles">POJAZDY NA ŻYWO</button>
+    </div>
+    <div id="vehicleBox" class="vehicle hidden"></div>
+  </div>
+</div>
+<script>
+/*
+  Wklej tutaj adres wdrożonego Cloudflare Workera.
+  Przykład: https://wtp-api.twojanazwa.workers.dev
+*/
+const API_BASE = "WKLEJ_TUTAJ_ADRES_WORKERA";
+</script>
+<script src="app.js"></script>
+</body>
+</html>
