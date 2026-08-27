@@ -1,1773 +1,2117 @@
 <!DOCTYPE html>
 <html lang="pl">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
 
 <title>Zgadnij Miasto 🌍</title>
 
+
 <style>
 
-* {
-    box-sizing: border-box;
-}
+/* =====================================================
+   MOTYW
+===================================================== */
 
 :root {
-    --bg: #f4f6f8;
-    --card: #ffffff;
-    --text: #111827;
-    --muted: #667085;
-    --border: #e5e7eb;
-    --dark: #111827;
-    --blue: #2563eb;
-    --green: #16a34a;
-    --red: #dc2626;
+
+  --bg: #f3f5f7;
+
+  --card: #ffffff;
+
+  --text: #111827;
+
+  --muted: #667085;
+
+  --border: #e4e7ec;
+
+  --input: #ffffff;
+
+  --soft: #f2f4f7;
+
+  --button: #111827;
+
+  --buttonText: #ffffff;
+
+  --successBg: #dcfce7;
+
+  --successText: #166534;
+
+  --errorBg: #fee2e2;
+
+  --errorText: #991b1b;
+
 }
+
+
+body.dark {
+
+  --bg: #0b0f14;
+
+  --card: #151a21;
+
+  --text: #f3f4f6;
+
+  --muted: #9ca3af;
+
+  --border: #29313d;
+
+  --input: #10151c;
+
+  --soft: #202731;
+
+  --button: #f3f4f6;
+
+  --buttonText: #111827;
+
+  --successBg: #12351f;
+
+  --successText: #86efac;
+
+  --errorBg: #3b1717;
+
+  --errorText: #fca5a5;
+
+}
+
+
+* {
+
+  box-sizing: border-box;
+
+}
+
 
 body {
-    margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
-    background: var(--bg);
-    color: var(--text);
+
+  margin: 0;
+
+  background: var(--bg);
+
+  color: var(--text);
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  transition:
+    background .25s,
+    color .25s;
+
 }
 
-button,
-input,
-select {
-    font-family: inherit;
-}
+
+/* =====================================================
+   HEADER
+===================================================== */
 
 header {
-    background: rgba(255,255,255,.96);
-    border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    backdrop-filter: blur(10px);
+
+  position: sticky;
+
+  top: 0;
+
+  z-index: 100;
+
+  background:
+    color-mix(
+      in srgb,
+      var(--card) 94%,
+      transparent
+    );
+
+  backdrop-filter:
+    blur(12px);
+
+  border-bottom:
+    1px solid var(--border);
+
 }
+
 
 .header-inner {
-    max-width: 1000px;
-    margin: auto;
-    padding: 15px 18px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 15px;
+
+  max-width: 1000px;
+
+  margin: auto;
+
+  padding:
+    12px 16px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 10px;
+
 }
+
 
 .logo {
-    font-size: 21px;
-    font-weight: 900;
-    white-space: nowrap;
+
+  font-size: 20px;
+
+  font-weight: 900;
+
 }
+
+
+.header-right {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+}
+
 
 .stats {
-    display: flex;
-    gap: 7px;
+
+  display: flex;
+
+  gap: 5px;
+
 }
+
 
 .stat {
-    background: #f1f3f5;
-    border-radius: 12px;
-    padding: 8px 10px;
-    font-size: 13px;
-    font-weight: 800;
-    white-space: nowrap;
+
+  background: var(--soft);
+
+  border: 1px solid var(--border);
+
+  padding:
+    7px 9px;
+
+  border-radius: 11px;
+
+  font-size: 12px;
+
+  font-weight: 900;
+
 }
+
+
+.theme-btn {
+
+  border: 1px solid var(--border);
+
+  background: var(--soft);
+
+  color: var(--text);
+
+  width: 38px;
+
+  height: 38px;
+
+  border-radius: 11px;
+
+  cursor: pointer;
+
+  font-size: 18px;
+
+}
+
+
+/* =====================================================
+   MAIN
+===================================================== */
 
 main {
-    width: 100%;
-    max-width: 950px;
-    margin: 25px auto;
-    padding: 0 15px 50px;
+
+  max-width: 950px;
+
+  margin:
+    25px auto;
+
+  padding:
+    0 15px 50px;
+
 }
 
-/* =========================
-   START SCREEN
-========================= */
 
-.start-screen {
-    background: var(--card);
-    border-radius: 25px;
-    padding: 55px 25px;
-    text-align: center;
-    box-shadow: 0 12px 35px rgba(0,0,0,.07);
+/* =====================================================
+   START
+===================================================== */
+
+.start {
+
+  background: var(--card);
+
+  border:
+    1px solid var(--border);
+
+  border-radius: 25px;
+
+  padding:
+    55px 25px;
+
+  text-align: center;
+
+  box-shadow:
+    0 15px 45px
+    rgba(0,0,0,.06);
+
 }
+
 
 .start-icon {
-    font-size: 65px;
-    margin-bottom: 10px;
+
+  font-size: 65px;
+
 }
 
-.start-screen h1 {
-    margin: 0;
-    font-size: 42px;
-    font-weight: 900;
+
+.start h1 {
+
+  font-size: 42px;
+
+  margin:
+    10px 0;
+
 }
 
-.start-screen p {
-    max-width: 550px;
-    margin: 15px auto 30px;
-    color: var(--muted);
-    line-height: 1.6;
+
+.start p {
+
+  color: var(--muted);
+
+  max-width: 560px;
+
+  margin:
+    0 auto 25px;
+
+  line-height: 1.6;
+
 }
 
-.mode-select {
-    width: 100%;
-    max-width: 320px;
-    margin: 0 auto 18px;
+
+select {
+
+  width: 100%;
+
+  max-width: 320px;
+
+  padding: 14px;
+
+  border:
+    1px solid var(--border);
+
+  border-radius: 13px;
+
+  background: var(--input);
+
+  color: var(--text);
+
+  font-size: 15px;
+
 }
 
-.mode-select select {
-    width: 100%;
-    border: 2px solid var(--border);
-    background: white;
-    border-radius: 14px;
-    padding: 14px;
-    font-size: 16px;
-    outline: none;
+
+.start-button {
+
+  margin-top: 15px;
+
+  padding:
+    15px 25px;
+
+  border: 0;
+
+  border-radius: 14px;
+
+  background: var(--button);
+
+  color: var(--buttonText);
+
+  font-weight: 900;
+
+  cursor: pointer;
+
 }
 
-.start-btn {
-    background: var(--dark);
-    color: white;
-    border: none;
-    border-radius: 14px;
-    padding: 16px 28px;
-    font-size: 16px;
-    font-weight: 900;
-    cursor: pointer;
+
+.reset-button {
+
+  display: block;
+
+  margin:
+    15px auto 0;
+
+  border: 0;
+
+  background: transparent;
+
+  color: var(--muted);
+
+  text-decoration: underline;
+
+  cursor: pointer;
+
 }
 
-.reset-btn {
-    display: block;
-    margin: 15px auto 0;
-    background: transparent;
-    border: none;
-    color: #667085;
-    font-size: 13px;
-    cursor: pointer;
-    text-decoration: underline;
-}
 
-/* =========================
+/* =====================================================
    GAME
-========================= */
+===================================================== */
 
-.game-card {
-    background: white;
-    border-radius: 25px;
-    overflow: hidden;
-    box-shadow: 0 12px 35px rgba(0,0,0,.07);
+.game {
+
+  display: none;
+
+  overflow: hidden;
+
+  background: var(--card);
+
+  border:
+    1px solid var(--border);
+
+  border-radius: 25px;
+
+  box-shadow:
+    0 15px 45px
+    rgba(0,0,0,.07);
+
 }
 
-.image-container {
-    height: 450px;
-    background: #e9ecef;
-    position: relative;
-    overflow: hidden;
+
+.image-box {
+
+  height: 450px;
+
+  position: relative;
+
+  background:
+    var(--soft);
+
 }
+
 
 #cityImage {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: none;
+
+  width: 100%;
+
+  height: 100%;
+
+  object-fit: cover;
+
+  display: none;
+
 }
+
 
 .image-placeholder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background:
-        radial-gradient(circle at 30% 20%, #ffffff, transparent 30%),
-        linear-gradient(135deg, #e9ecef, #dfe3e8);
-    color: #667085;
-    text-align: center;
-    padding: 20px;
+
+  width: 100%;
+
+  height: 100%;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  flex-direction: column;
+
+  color: var(--muted);
+
 }
 
-.image-placeholder .big {
-    font-size: 70px;
-    margin-bottom: 12px;
+
+.image-placeholder div {
+
+  font-size: 65px;
+
+  margin-bottom: 10px;
+
 }
 
-.image-placeholder strong {
-    font-size: 20px;
-    color: #344054;
-}
 
 .loading {
-    position: absolute;
-    inset: 0;
-    background: rgba(255,255,255,.94);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 5;
+
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 10;
+
+  background:
+    var(--card);
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  flex-direction: column;
+
+  gap: 10px;
+
 }
+
 
 .spinner {
-    width: 38px;
-    height: 38px;
-    border: 4px solid #e5e7eb;
-    border-top-color: #111827;
-    border-radius: 50%;
-    animation: spin .8s linear infinite;
-    margin-bottom: 12px;
+
+  width: 38px;
+
+  height: 38px;
+
+  border:
+    4px solid var(--border);
+
+  border-top-color:
+    var(--text);
+
+  border-radius: 50%;
+
+  animation:
+    spin .8s linear infinite;
+
 }
+
 
 @keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
+
+  to {
+
+    transform:
+      rotate(360deg);
+
+  }
+
 }
 
-.image-credit {
-    position: absolute;
-    right: 10px;
-    bottom: 10px;
-    padding: 6px 9px;
-    border-radius: 8px;
-    background: rgba(0,0,0,.65);
-    color: white;
-    font-size: 11px;
-    z-index: 3;
+
+.credit {
+
+  position: absolute;
+
+  bottom: 10px;
+
+  right: 10px;
+
+  padding:
+    6px 9px;
+
+  border-radius: 8px;
+
+  color: white;
+
+  background:
+    rgba(0,0,0,.65);
+
+  font-size: 11px;
+
 }
 
-/* =========================
+
+/* =====================================================
    TIMER
-========================= */
+===================================================== */
 
 .timer {
-    height: 6px;
-    background: #e5e7eb;
+
+  height: 6px;
+
+  background:
+    var(--border);
+
 }
+
 
 .timer-bar {
-    height: 100%;
-    width: 100%;
-    background: #111827;
-    transition: width 1s linear;
+
+  width: 100%;
+
+  height: 100%;
+
+  background:
+    var(--button);
+
+  transition:
+    width 1s linear;
+
 }
 
-/* =========================
+
+/* =====================================================
    CONTENT
-========================= */
+===================================================== */
 
 .content {
-    padding: 27px;
+
+  padding: 27px;
+
 }
+
 
 .question {
-    font-size: 27px;
-    font-weight: 900;
-    margin-bottom: 20px;
+
+  font-size: 27px;
+
+  font-weight: 900;
+
+  margin-bottom: 20px;
+
 }
+
 
 .hints {
-    display: grid;
-    gap: 10px;
-    margin-bottom: 18px;
+
+  display: grid;
+
+  gap: 10px;
+
 }
+
 
 .hint {
-    display: none;
-    background: #f7f8fa;
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 15px;
-    line-height: 1.45;
+
+  display: none;
+
+  padding: 15px;
+
+  border:
+    1px solid var(--border);
+
+  border-radius: 14px;
+
+  background:
+    var(--soft);
+
+  line-height: 1.5;
+
 }
 
-.hint.visible {
-    display: block;
-    animation: appear .2s ease;
+
+.hint.show {
+
+  display: block;
+
 }
 
-@keyframes appear {
-    from {
-        opacity: 0;
-        transform: translateY(-4px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.hint-number {
-    font-weight: 900;
-    margin-right: 6px;
-}
 
 .answer-row {
-    display: flex;
-    gap: 10px;
+
+  display: flex;
+
+  gap: 10px;
+
+  margin-top: 18px;
+
 }
+
 
 #answer {
-    flex: 1;
-    min-width: 0;
-    border: 2px solid var(--border);
-    border-radius: 14px;
-    padding: 15px;
-    font-size: 16px;
-    outline: none;
+
+  flex: 1;
+
+  min-width: 0;
+
+  padding: 15px;
+
+  border:
+    2px solid var(--border);
+
+  border-radius: 14px;
+
+  background: var(--input);
+
+  color: var(--text);
+
+  font-size: 16px;
+
+  outline: none;
+
 }
+
 
 #answer:focus {
-    border-color: #111827;
+
+  border-color:
+    var(--text);
+
 }
 
-.main-btn {
-    border: none;
-    border-radius: 14px;
-    padding: 15px 20px;
-    font-size: 15px;
-    font-weight: 900;
-    cursor: pointer;
+
+button {
+
+  font-family: inherit;
+
 }
 
-#checkBtn {
-    background: var(--dark);
-    color: white;
+
+.main-button {
+
+  border: 0;
+
+  border-radius: 14px;
+
+  padding:
+    14px 19px;
+
+  font-weight: 900;
+
+  cursor: pointer;
+
 }
 
-#hintBtn {
-    width: 100%;
-    margin-top: 10px;
-    background: #eef0f2;
-    color: var(--text);
+
+.check {
+
+  background:
+    var(--button);
+
+  color:
+    var(--buttonText);
+
 }
 
-button:disabled {
-    opacity: .5;
-    cursor: not-allowed;
+
+.hint-button {
+
+  width: 100%;
+
+  margin-top: 10px;
+
+  background:
+    var(--soft);
+
+  color:
+    var(--text);
+
 }
+
 
 .result {
-    display: none;
-    margin-top: 15px;
-    padding: 16px;
-    border-radius: 14px;
-    font-weight: 800;
-    line-height: 1.45;
+
+  display: none;
+
+  margin-top: 15px;
+
+  padding: 15px;
+
+  border-radius: 14px;
+
+  line-height: 1.5;
+
+  font-weight: 800;
+
 }
+
 
 .result.correct {
-    display: block;
-    background: #dcfce7;
-    color: #166534;
+
+  display: block;
+
+  background:
+    var(--successBg);
+
+  color:
+    var(--successText);
+
 }
+
 
 .result.wrong {
-    display: block;
-    background: #fee2e2;
-    color: #991b1b;
+
+  display: block;
+
+  background:
+    var(--errorBg);
+
+  color:
+    var(--errorText);
+
 }
 
-.next-btn {
-    display: none;
-    width: 100%;
-    margin-top: 12px;
-    background: var(--blue);
-    color: white;
+
+.next {
+
+  display: none;
+
+  width: 100%;
+
+  margin-top: 12px;
+
+  background:
+    #2563eb;
+
+  color: white;
+
 }
 
-.back-btn {
-    display: none;
-    width: 100%;
-    margin-top: 10px;
-    background: #eef0f2;
-    color: #111827;
+
+.menu {
+
+  display: none;
+
+  width: 100%;
+
+  margin-top: 10px;
+
+  background:
+    var(--soft);
+
+  color:
+    var(--text);
+
 }
 
-/* =========================
+
+/* =====================================================
    MOBILE
-========================= */
+===================================================== */
 
-@media(max-width: 650px) {
+@media(max-width:650px) {
 
-    .header-inner {
-        padding: 12px;
-    }
+  .logo {
 
-    .logo {
-        font-size: 16px;
-    }
+    font-size: 15px;
 
-    .stats {
-        gap: 4px;
-    }
+  }
 
-    .stat {
-        padding: 7px 8px;
-        font-size: 11px;
-    }
 
-    main {
-        margin-top: 15px;
-    }
+  .stats {
 
-    .start-screen {
-        padding: 40px 18px;
-    }
+    gap: 3px;
 
-    .start-screen h1 {
-        font-size: 32px;
-    }
+  }
 
-    .image-container {
-        height: 300px;
-    }
 
-    .content {
-        padding: 20px;
-    }
+  .stat {
 
-    .question {
-        font-size: 22px;
-    }
+    padding:
+      6px 7px;
 
-    .answer-row {
-        flex-direction: column;
-    }
+    font-size: 10px;
 
-    #checkBtn {
-        width: 100%;
-    }
+  }
 
-    .image-placeholder .big {
-        font-size: 55px;
-    }
+
+  .image-box {
+
+    height: 300px;
+
+  }
+
+
+  .start {
+
+    padding:
+      40px 18px;
+
+  }
+
+
+  .start h1 {
+
+    font-size: 32px;
+
+  }
+
+
+  .content {
+
+    padding: 20px;
+
+  }
+
+
+  .question {
+
+    font-size: 22px;
+
+  }
+
+
+  .answer-row {
+
+    flex-direction: column;
+
+  }
+
+
+  .check {
+
+    width: 100%;
+
+  }
 
 }
 
 </style>
+
 </head>
+
 
 <body>
 
+
 <header>
 
-    <div class="header-inner">
+  <div class="header-inner">
 
-        <div class="logo">
-            🌍 Zgadnij Miasto
+    <div class="logo">
+      🌍 Zgadnij Miasto
+    </div>
+
+
+    <div class="header-right">
+
+      <div class="stats">
+
+        <div class="stat">
+          🎯 <span id="score">0</span>
         </div>
 
-        <div class="stats">
-
-            <div class="stat">
-                🎯 <span id="score">0</span>
-            </div>
-
-            <div class="stat">
-                🔥 <span id="streak">0</span>
-            </div>
-
-            <div class="stat">
-                ⏱️ <span id="time">60</span>
-            </div>
-
+        <div class="stat">
+          🔥 <span id="streak">0</span>
         </div>
+
+        <div class="stat">
+          ⏱️ <span id="time">60</span>
+        </div>
+
+      </div>
+
+
+      <button
+        class="theme-btn"
+        id="themeButton"
+        onclick="toggleTheme()"
+      >
+        🌙
+      </button>
 
     </div>
+
+  </div>
 
 </header>
 
 
 <main>
 
-    <!-- =========================
-         START
-    ========================== -->
 
-    <section
-        id="startScreen"
-        class="start-screen"
+<!-- ===================================================
+ START
+=================================================== -->
+
+<section
+  class="start"
+  id="startScreen"
+>
+
+  <div class="start-icon">
+    🌍
+  </div>
+
+
+  <h1>
+    Zgadnij Miasto
+  </h1>
+
+
+  <p>
+    Zobacz zdjęcie, przeczytaj trzy losowe
+    podpowiedzi i zgadnij miasto!
+  </p>
+
+
+  <select id="mode">
+
+    <option value="world">
+      🌍 Cały świat
+    </option>
+
+    <option value="europe">
+      🇪🇺 Europa
+    </option>
+
+    <option value="poland">
+      🇵🇱 Polska
+    </option>
+
+  </select>
+
+
+  <br>
+
+
+  <button
+    class="start-button"
+    onclick="startGame()"
+  >
+    🎮 ROZPOCZNIJ GRĘ
+  </button>
+
+
+  <button
+    class="reset-button"
+    onclick="resetScore()"
+  >
+    Wyzeruj wynik
+  </button>
+
+</section>
+
+
+<!-- ===================================================
+ GAME
+=================================================== -->
+
+<section
+  class="game"
+  id="game"
+>
+
+
+  <div class="image-box">
+
+
+    <img
+      id="cityImage"
+      alt="Zdjęcie miasta"
     >
 
-        <div class="start-icon">
-            🌍
-        </div>
 
-        <h1>
-            Zgadnij Miasto
-        </h1>
-
-        <p>
-            Zobacz zdjęcie, przeczytaj podpowiedzi
-            i zgadnij, jakie miasto ukrywa się za pytaniem!
-        </p>
-
-
-        <div class="mode-select">
-
-            <select id="mode">
-
-                <option value="world">
-                    🌍 Cały świat
-                </option>
-
-                <option value="poland">
-                    🇵🇱 Polska
-                </option>
-
-                <option value="europe">
-                    🇪🇺 Europa
-                </option>
-
-            </select>
-
-        </div>
-
-
-        <button
-            class="start-btn"
-            onclick="startGame()"
-        >
-            🎮 ROZPOCZNIJ GRĘ
-        </button>
-
-
-        <button
-            class="reset-btn"
-            onclick="resetProgress()"
-        >
-            Wyzeruj mój wynik
-        </button>
-
-    </section>
-
-
-    <!-- =========================
-         GAME
-    ========================== -->
-
-    <section
-        id="game"
-        class="game-card"
-        style="display:none"
+    <div
+      class="image-placeholder"
+      id="placeholder"
     >
 
-        <div class="image-container">
+      <div>
+        🏙️
+      </div>
 
-            <img
-                id="cityImage"
-                alt="Zdjęcie miasta"
-            >
+      <strong>
+        Ładowanie zdjęcia...
+      </strong>
 
-
-            <div
-                id="imagePlaceholder"
-                class="image-placeholder"
-            >
-
-                <div class="big">
-                    🏙️
-                </div>
-
-                <strong>
-                    Brak zdjęcia
-                </strong>
-
-                <span>
-                    Miasto można nadal odgadnąć z podpowiedzi.
-                </span>
-
-            </div>
+    </div>
 
 
-            <div
-                id="loading"
-                class="loading"
-            >
+    <div
+      class="loading"
+      id="loading"
+    >
 
-                <div class="spinner"></div>
+      <div class="spinner"></div>
 
-                <div>
-                    Losowanie miasta...
-                </div>
+      <strong>
+        Losowanie miasta...
+      </strong>
 
-            </div>
-
-
-            <div
-                id="credit"
-                class="image-credit"
-                style="display:none"
-            >
-                Wikimedia Commons
-            </div>
-
-        </div>
+    </div>
 
 
-        <div class="timer">
-
-            <div
-                id="timerBar"
-                class="timer-bar"
-            ></div>
-
-        </div>
-
-
-        <div class="content">
-
-            <div class="question">
-                🧐 Jakie to miasto?
-            </div>
+    <div
+      class="credit"
+      id="credit"
+      style="display:none"
+    >
+      Wikimedia Commons
+    </div>
 
 
-            <div class="hints">
-
-                <div
-                    id="hint1"
-                    class="hint"
-                >
-
-                    <span class="hint-number">
-                        💡 1.
-                    </span>
-
-                    <span class="hint-text"></span>
-
-                </div>
+  </div>
 
 
-                <div
-                    id="hint2"
-                    class="hint"
-                >
+  <div class="timer">
 
-                    <span class="hint-number">
-                        💡 2.
-                    </span>
+    <div
+      class="timer-bar"
+      id="timerBar"
+    ></div>
 
-                    <span class="hint-text"></span>
-
-                </div>
+  </div>
 
 
-                <div
-                    id="hint3"
-                    class="hint"
-                >
-
-                    <span class="hint-number">
-                        💡 3.
-                    </span>
-
-                    <span class="hint-text"></span>
-
-                </div>
-
-            </div>
+  <div class="content">
 
 
-            <div class="answer-row">
-
-                <input
-                    id="answer"
-                    type="text"
-                    placeholder="Wpisz nazwę miasta..."
-                    autocomplete="off"
-                    spellcheck="false"
-                >
-
-                <button
-                    id="checkBtn"
-                    class="main-btn"
-                    onclick="checkAnswer()"
-                >
-                    SPRAWDŹ
-                </button>
-
-            </div>
+    <div class="question">
+      🧐 Jakie to miasto?
+    </div>
 
 
-            <button
-                id="hintBtn"
-                class="main-btn"
-                onclick="showHint()"
-            >
-                💡 POKAŻ PODPOWIEDŹ
-            </button>
+    <div class="hints">
+
+      <div
+        class="hint"
+        id="hint1"
+      >
+        💡 1.
+        <span></span>
+      </div>
 
 
-            <div
-                id="result"
-                class="result"
-            ></div>
+      <div
+        class="hint"
+        id="hint2"
+      >
+        💡 2.
+        <span></span>
+      </div>
 
 
-            <button
-                id="nextBtn"
-                class="main-btn next-btn"
-                onclick="nextRound()"
-            >
-                NASTĘPNE MIASTO →
-            </button>
+      <div
+        class="hint"
+        id="hint3"
+      >
+        💡 3.
+        <span></span>
+      </div>
+
+    </div>
 
 
-            <button
-                id="backBtn"
-                class="main-btn back-btn"
-                onclick="backToStart()"
-            >
-                ← MENU GŁÓWNE
-            </button>
+    <div class="answer-row">
 
-        </div>
+      <input
+        id="answer"
+        type="text"
+        placeholder="Wpisz nazwę miasta..."
+        autocomplete="off"
+      >
 
-    </section>
+
+      <button
+        class="main-button check"
+        id="checkButton"
+        onclick="checkAnswer()"
+      >
+        SPRAWDŹ
+      </button>
+
+    </div>
+
+
+    <button
+      class="main-button hint-button"
+      id="hintButton"
+      onclick="showHint()"
+    >
+      💡 POKAŻ PODPOWIEDŹ
+    </button>
+
+
+    <div
+      class="result"
+      id="result"
+    ></div>
+
+
+    <button
+      class="main-button next"
+      id="nextButton"
+      onclick="nextCity()"
+    >
+      NASTĘPNE MIASTO →
+    </button>
+
+
+    <button
+      class="main-button menu"
+      id="menuButton"
+      onclick="backToMenu()"
+    >
+      ← MENU
+
+    </button>
+
+
+  </div>
+
+</section>
+
 
 </main>
 
 
 <script>
 
-/*
-==================================================
-  CLOUDFLARE WORKER
-==================================================
-*/
+/* =====================================================
+ WORKER
+===================================================== */
 
-const WORKER_URL =
-    "https://zgadnij-miasto-api.papierzowyroblox.workers.dev";
+const WORKER =
+  "https://zgadnij-miasto-api.papierzowyroblox.workers.dev";
 
 
-/*
-==================================================
-  ZMIENNE GRY
-
-  Wynik i seria są pobierane z localStorage.
-==================================================
-*/
+/* =====================================================
+ LOCAL STORAGE
+===================================================== */
 
 let score =
-    Number(
-        localStorage.getItem(
-            "zgadnijMiasto_score"
-        )
-    ) || 0;
+  Number(
+    localStorage.getItem(
+      "zgadnijMiasto_score"
+    )
+  ) || 0;
 
 
 let streak =
-    Number(
-        localStorage.getItem(
-            "zgadnijMiasto_streak"
-        )
-    ) || 0;
+  Number(
+    localStorage.getItem(
+      "zgadnijMiasto_streak"
+    )
+  ) || 0;
 
 
-let currentCity = null;
+let theme =
+  localStorage.getItem(
+    "zgadnijMiasto_theme"
+  ) || "light";
+
+
+/* =====================================================
+ GAME VARIABLES
+===================================================== */
+
+let city = null;
 
 let hintsUsed = 0;
 
 let timeLeft = 60;
 
-let timerInterval = null;
+let timer = null;
 
-let gameRunning = false;
+let running = false;
 
 
-/*
-==================================================
-  ELEMENTY
-==================================================
-*/
+/* =====================================================
+ ELEMENTS
+===================================================== */
+
+const scoreEl =
+  document.getElementById("score");
+
+const streakEl =
+  document.getElementById("streak");
+
+const timeEl =
+  document.getElementById("time");
 
 const startScreen =
-    document.getElementById("startScreen");
+  document.getElementById("startScreen");
 
 const game =
-    document.getElementById("game");
-
-const cityImage =
-    document.getElementById("cityImage");
-
-const imagePlaceholder =
-    document.getElementById("imagePlaceholder");
+  document.getElementById("game");
 
 const loading =
-    document.getElementById("loading");
+  document.getElementById("loading");
+
+const cityImage =
+  document.getElementById("cityImage");
+
+const placeholder =
+  document.getElementById("placeholder");
 
 const credit =
-    document.getElementById("credit");
+  document.getElementById("credit");
 
 const answer =
-    document.getElementById("answer");
+  document.getElementById("answer");
 
-const checkBtn =
-    document.getElementById("checkBtn");
+const checkButton =
+  document.getElementById("checkButton");
 
-const hintBtn =
-    document.getElementById("hintBtn");
+const hintButton =
+  document.getElementById("hintButton");
 
 const result =
-    document.getElementById("result");
+  document.getElementById("result");
 
-const nextBtn =
-    document.getElementById("nextBtn");
+const nextButton =
+  document.getElementById("nextButton");
 
-const backBtn =
-    document.getElementById("backBtn");
+const menuButton =
+  document.getElementById("menuButton");
 
 const timerBar =
-    document.getElementById("timerBar");
+  document.getElementById("timerBar");
 
 
-/*
-==================================================
-  NORMALIZACJA TEKSTU
-==================================================
-*/
+/* =====================================================
+ THEME
+===================================================== */
 
-function normalize(text) {
+function applyTheme() {
 
-    return String(text)
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/[łŁ]/g, "l")
-        .trim()
-        .replace(/\s+/g, " ");
-
-}
+  document.body.classList.toggle(
+    "dark",
+    theme === "dark"
+  );
 
 
-/*
-==================================================
-  ZAPIS POSTĘPU
-==================================================
-*/
-
-function saveProgress() {
-
-    localStorage.setItem(
-        "zgadnijMiasto_score",
-        String(score)
-    );
-
-    localStorage.setItem(
-        "zgadnijMiasto_streak",
-        String(streak)
-    );
+  document.getElementById(
+    "themeButton"
+  ).innerText =
+    theme === "dark"
+      ? "☀️"
+      : "🌙";
 
 }
 
 
-/*
-==================================================
-  START GRY
+function toggleTheme() {
 
-  UWAGA:
-  Nie zerujemy tutaj score/streak.
-==================================================
-*/
+  theme =
+    theme === "dark"
+      ? "light"
+      : "dark";
 
-async function startGame() {
 
-    saveProgress();
+  localStorage.setItem(
+    "zgadnijMiasto_theme",
+    theme
+  );
 
-    updateStats();
 
-    startScreen.style.display =
-        "none";
-
-    game.style.display =
-        "block";
-
-    await loadCity();
+  applyTheme();
 
 }
 
 
-/*
-==================================================
-  ŁADOWANIE MIASTA
-==================================================
-*/
+applyTheme();
 
-async function loadCity() {
 
-    clearInterval(timerInterval);
+/* =====================================================
+ STATS
+===================================================== */
 
-    gameRunning = false;
+function saveStats() {
 
-    currentCity = null;
+  localStorage.setItem(
+    "zgadnijMiasto_score",
+    score
+  );
 
-    hintsUsed = 0;
-
-
-    loading.style.display =
-        "flex";
-
-
-    loading.innerHTML = `
-        <div class="spinner"></div>
-        <div>Losowanie miasta...</div>
-    `;
-
-
-    result.className =
-        "result";
-
-    result.innerHTML =
-        "";
-
-
-    nextBtn.style.display =
-        "none";
-
-    backBtn.style.display =
-        "none";
-
-
-    checkBtn.disabled =
-        true;
-
-    hintBtn.disabled =
-        true;
-
-
-    answer.value =
-        "";
-
-
-    /*
-      Podpowiedzi
-    */
-
-    for(let i = 1; i <= 3; i++) {
-
-        const hint =
-            document.getElementById(
-                "hint" + i
-            );
-
-        hint.classList.remove(
-            "visible"
-        );
-
-        hint.querySelector(
-            ".hint-text"
-        ).innerText = "";
-
-    }
-
-
-    /*
-      Zdjęcie
-    */
-
-    cityImage.style.display =
-        "none";
-
-    cityImage.removeAttribute(
-        "src"
-    );
-
-    imagePlaceholder.style.display =
-        "flex";
-
-    credit.style.display =
-        "none";
-
-
-    /*
-      Tryb
-    */
-
-    const mode =
-        document.getElementById(
-            "mode"
-        ).value;
-
-
-    try {
-
-        const response =
-            await fetch(
-                WORKER_URL +
-                "/api/city?mode=" +
-                encodeURIComponent(mode),
-                {
-                    method: "GET",
-
-                    headers: {
-                        "Accept":
-                            "application/json"
-                    },
-
-                    cache: "no-store"
-                }
-            );
-
-
-        if(!response.ok) {
-
-            throw new Error(
-                "Worker zwrócił HTTP " +
-                response.status
-            );
-
-        }
-
-
-        const data =
-            await response.json();
-
-
-        if(!data.ok) {
-
-            throw new Error(
-                data.error ||
-                "API zwróciło błąd."
-            );
-
-        }
-
-
-        if(
-            !data.city ||
-            !Array.isArray(data.hints) ||
-            data.hints.length < 3
-        ) {
-
-            throw new Error(
-                "API nie zwróciło kompletnego miasta."
-            );
-
-        }
-
-
-        currentCity =
-            data;
-
-
-        /*
-        ==========================================
-          PODPOWIEDZI
-        ==========================================
-        */
-
-        document
-            .getElementById("hint1")
-            .querySelector(".hint-text")
-            .innerText =
-            data.hints[0];
-
-
-        document
-            .getElementById("hint2")
-            .querySelector(".hint-text")
-            .innerText =
-            data.hints[1];
-
-
-        document
-            .getElementById("hint3")
-            .querySelector(".hint-text")
-            .innerText =
-            data.hints[2];
-
-
-        /*
-        ==========================================
-          ZDJĘCIE
-        ==========================================
-        */
-
-        if(data.image) {
-
-            cityImage.src =
-                data.image;
-
-            cityImage.style.display =
-                "block";
-
-            imagePlaceholder.style.display =
-                "none";
-
-            credit.innerText =
-                data.credit ||
-                "Wikimedia Commons";
-
-            credit.style.display =
-                "block";
-
-        } else {
-
-            cityImage.style.display =
-                "none";
-
-            imagePlaceholder.style.display =
-                "flex";
-
-        }
-
-
-        loading.style.display =
-            "none";
-
-
-        checkBtn.disabled =
-            false;
-
-        hintBtn.disabled =
-            false;
-
-
-        gameRunning =
-            true;
-
-
-        answer.focus();
-
-
-        startTimer();
-
-
-    } catch(error) {
-
-        console.error(
-            "Błąd gry:",
-            error
-        );
-
-
-        showApiError(
-            error.message ||
-            "Nie udało się pobrać miasta."
-        );
-
-    }
+  localStorage.setItem(
+    "zgadnijMiasto_streak",
+    streak
+  );
 
 }
 
-
-/*
-==================================================
-  BŁĄD API
-==================================================
-*/
-
-function showApiError(message) {
-
-    loading.style.display =
-        "flex";
-
-
-    loading.innerHTML = `
-        <div style="
-            font-size:42px;
-            margin-bottom:10px;
-        ">
-            ❌
-        </div>
-
-        <strong>
-            Nie udało się pobrać miasta
-        </strong>
-
-        <div style="
-            margin-top:8px;
-            max-width:500px;
-            text-align:center;
-            color:#667085;
-            font-size:13px;
-        ">
-            ${escapeHtml(message)}
-        </div>
-
-        <button
-            onclick="loadCity()"
-            style="
-                margin-top:15px;
-                padding:12px 18px;
-                border:0;
-                border-radius:12px;
-                background:#111827;
-                color:white;
-                font-weight:800;
-                cursor:pointer;
-            "
-        >
-            SPRÓBUJ PONOWNIE
-        </button>
-    `;
-
-
-    checkBtn.disabled =
-        true;
-
-    hintBtn.disabled =
-        true;
-
-    gameRunning =
-        false;
-
-}
-
-
-/*
-==================================================
-  ESCAPE HTML
-==================================================
-*/
-
-function escapeHtml(text) {
-
-    return String(text)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-
-}
-
-
-/*
-==================================================
-  PODPOWIEDZI
-==================================================
-*/
-
-function showHint() {
-
-    if(!gameRunning) {
-        return;
-    }
-
-
-    if(hintsUsed >= 3) {
-        return;
-    }
-
-
-    hintsUsed++;
-
-
-    const hint =
-        document.getElementById(
-            "hint" + hintsUsed
-        );
-
-
-    hint.classList.add(
-        "visible"
-    );
-
-
-    if(hintsUsed >= 3) {
-
-        hintBtn.disabled =
-            true;
-
-    }
-
-}
-
-
-/*
-==================================================
-  SPRAWDZANIE ODPOWIEDZI
-==================================================
-*/
-
-function checkAnswer() {
-
-    if(!gameRunning) {
-        return;
-    }
-
-
-    const userAnswer =
-        normalize(
-            answer.value
-        );
-
-
-    if(!userAnswer) {
-
-        answer.focus();
-
-        return;
-
-    }
-
-
-    const correctAnswer =
-        normalize(
-            currentCity.city
-        );
-
-
-    if(
-        userAnswer ===
-        correctAnswer
-    ) {
-
-        correctAnswerHandler();
-
-    } else {
-
-        wrongAnswerHandler();
-
-    }
-
-}
-
-
-/*
-==================================================
-  POPRAWNA ODPOWIEDŹ
-==================================================
-*/
-
-function correctAnswerHandler() {
-
-    gameRunning =
-        false;
-
-
-    clearInterval(
-        timerInterval
-    );
-
-
-    let points = 100;
-
-
-    if(hintsUsed === 1) {
-        points = 75;
-    }
-
-
-    if(hintsUsed === 2) {
-        points = 50;
-    }
-
-
-    if(hintsUsed === 3) {
-        points = 25;
-    }
-
-
-    /*
-      Bonus za szybkie odgadnięcie
-    */
-
-    if(timeLeft >= 45) {
-
-        points += 20;
-
-    } else if(timeLeft >= 30) {
-
-        points += 10;
-
-    }
-
-
-    score += points;
-
-    streak++;
-
-
-    /*
-      Zapis od razu po zdobyciu punktów
-    */
-
-    saveProgress();
-
-
-    updateStats();
-
-
-    result.className =
-        "result correct";
-
-
-    result.innerHTML = `
-        🎉 <strong>Brawo!</strong><br>
-        To było miasto:
-        <strong>
-            ${escapeHtml(currentCity.city)}
-        </strong>
-        <br>
-        +${points} punktów!
-    `;
-
-
-    checkBtn.disabled =
-        true;
-
-    hintBtn.disabled =
-        true;
-
-
-    nextBtn.style.display =
-        "block";
-
-    backBtn.style.display =
-        "block";
-
-}
-
-
-/*
-==================================================
-  ZŁA ODPOWIEDŹ
-==================================================
-*/
-
-function wrongAnswerHandler() {
-
-    streak = 0;
-
-
-    saveProgress();
-
-    updateStats();
-
-
-    result.className =
-        "result wrong";
-
-
-    result.innerHTML =
-        "❌ Nie tym razem! Spróbuj jeszcze raz.";
-
-
-    answer.select();
-
-}
-
-
-/*
-==================================================
-  TIMER
-==================================================
-*/
-
-function startTimer() {
-
-    clearInterval(
-        timerInterval
-    );
-
-
-    timeLeft = 60;
-
-
-    timerBar.style.width =
-        "100%";
-
-
-    updateStats();
-
-
-    timerInterval =
-        setInterval(() => {
-
-            if(!gameRunning) {
-                return;
-            }
-
-
-            timeLeft--;
-
-
-            updateStats();
-
-
-            timerBar.style.width =
-                (
-                    timeLeft / 60 * 100
-                ) + "%";
-
-
-            if(timeLeft <= 0) {
-
-                timeOut();
-
-            }
-
-        }, 1000);
-
-}
-
-
-/*
-==================================================
-  KONIEC CZASU
-==================================================
-*/
-
-function timeOut() {
-
-    gameRunning =
-        false;
-
-
-    clearInterval(
-        timerInterval
-    );
-
-
-    streak = 0;
-
-
-    saveProgress();
-
-    updateStats();
-
-
-    result.className =
-        "result wrong";
-
-
-    result.innerHTML = `
-        ⏰ <strong>Koniec czasu!</strong><br>
-        Poprawna odpowiedź:
-        <strong>
-            ${escapeHtml(currentCity.city)}
-        </strong>
-    `;
-
-
-    checkBtn.disabled =
-        true;
-
-    hintBtn.disabled =
-        true;
-
-
-    nextBtn.style.display =
-        "block";
-
-    backBtn.style.display =
-        "block";
-
-
-    /*
-      Pokaż wszystkie podpowiedzi
-    */
-
-    for(let i = 1; i <= 3; i++) {
-
-        document
-            .getElementById(
-                "hint" + i
-            )
-            .classList.add(
-                "visible"
-            );
-
-    }
-
-}
-
-
-/*
-==================================================
-  NASTĘPNE MIASTO
-==================================================
-*/
-
-async function nextRound() {
-
-    await loadCity();
-
-}
-
-
-/*
-==================================================
-  MENU
-==================================================
-*/
-
-function backToStart() {
-
-    clearInterval(
-        timerInterval
-    );
-
-
-    gameRunning =
-        false;
-
-
-    saveProgress();
-
-
-    game.style.display =
-        "none";
-
-
-    startScreen.style.display =
-        "block";
-
-
-    updateStats();
-
-}
-
-
-/*
-==================================================
-  STATYSTYKI
-==================================================
-*/
 
 function updateStats() {
 
-    document.getElementById(
-        "score"
-    ).innerText =
-        score;
+  scoreEl.innerText =
+    score;
 
+  streakEl.innerText =
+    streak;
 
-    document.getElementById(
-        "streak"
-    ).innerText =
-        streak;
-
-
-    document.getElementById(
-        "time"
-    ).innerText =
-        timeLeft;
+  timeEl.innerText =
+    timeLeft;
 
 }
 
 
-/*
-==================================================
-  RESET WYNIKU
-==================================================
-*/
+/* =====================================================
+ NORMALIZACJA
+===================================================== */
 
-function resetProgress() {
+function normalize(text) {
 
-    const confirmation =
-        confirm(
-            "Czy na pewno chcesz wyzerować wynik i serię?"
-        );
-
-
-    if(!confirmation) {
-        return;
-    }
-
-
-    score = 0;
-
-    streak = 0;
-
-
-    saveProgress();
-
-    updateStats();
-
-
-    alert(
-        "Wynik został wyzerowany."
+  return String(text)
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(
+      /[\u0300-\u036f]/g,
+      ""
+    )
+    .replace(
+      /ł/g,
+      "l"
+    )
+    .trim()
+    .replace(
+      /\s+/g,
+      " "
     );
 
 }
 
 
-/*
-==================================================
-  ENTER = SPRAWDŹ
-==================================================
-*/
+/* =====================================================
+ START
+===================================================== */
 
-answer.addEventListener(
-    "keydown",
-    function(event) {
+async function startGame() {
+
+  startScreen.style.display =
+    "none";
+
+  game.style.display =
+    "block";
+
+  await loadCity();
+
+}
+
+
+/* =====================================================
+ LOAD CITY
+===================================================== */
+
+async function loadCity() {
+
+  clearInterval(timer);
+
+  running = false;
+
+  city = null;
+
+  hintsUsed = 0;
+
+  timeLeft = 60;
+
+  updateStats();
+
+
+  loading.style.display =
+    "flex";
+
+  loading.innerHTML = `
+    <div class="spinner"></div>
+    <strong>
+      Losowanie miasta...
+    </strong>
+  `;
+
+
+  cityImage.style.display =
+    "none";
+
+  cityImage.removeAttribute(
+    "src"
+  );
+
+
+  placeholder.style.display =
+    "flex";
+
+
+  credit.style.display =
+    "none";
+
+
+  result.className =
+    "result";
+
+  result.innerHTML =
+    "";
+
+
+  nextButton.style.display =
+    "none";
+
+  menuButton.style.display =
+    "none";
+
+
+  checkButton.disabled =
+    true;
+
+  hintButton.disabled =
+    true;
+
+
+  answer.value =
+    "";
+
+
+  for(
+    let i = 1;
+    i <= 3;
+    i++
+  ) {
+
+    const el =
+      document.getElementById(
+        "hint" + i
+      );
+
+
+    el.classList.remove(
+      "show"
+    );
+
+
+    el.querySelector(
+      "span"
+    ).innerText =
+      "";
+
+  }
+
+
+  const mode =
+    document.getElementById(
+      "mode"
+    ).value;
+
+
+  try {
+
+    const response =
+      await fetch(
+        WORKER +
+        "/api/city?mode=" +
+        encodeURIComponent(mode) +
+        "&random=" +
+        Date.now(),
+        {
+          cache:
+            "no-store"
+        }
+      );
+
+
+    if(
+      !response.ok
+    ) {
+
+      throw new Error(
+        "Worker HTTP " +
+        response.status
+      );
+
+    }
+
+
+    const data =
+      await response.json();
+
+
+    if(
+      !data.ok ||
+      !data.city ||
+      !Array.isArray(
+        data.hints
+      )
+    ) {
+
+      throw new Error(
+        "Nieprawidłowa odpowiedź API."
+      );
+
+    }
+
+
+    city =
+      data;
+
+
+    /* ===============================
+       HINTS
+    =============================== */
+
+    data.hints
+      .slice(0,3)
+      .forEach(
+        (hint,index) => {
+
+          const el =
+            document.getElementById(
+              "hint" +
+              (index + 1)
+            );
+
+
+          el.querySelector(
+            "span"
+          ).innerText =
+            hint;
+
+        }
+      );
+
+
+    /* ===============================
+       IMAGE
+    =============================== */
+
+    if(data.image) {
+
+      cityImage.onload =
+        () => {
+
+          cityImage.style.display =
+            "block";
+
+          placeholder.style.display =
+            "none";
+
+          loading.style.display =
+            "none";
+
+        };
+
+
+      cityImage.onerror =
+        async () => {
+
+          cityImage.style.display =
+            "none";
+
+          placeholder.style.display =
+            "flex";
+
+          loading.style.display =
+            "none";
+
+        };
+
+
+      cityImage.src =
+        data.image;
+
+
+      credit.innerText =
+        data.credit ||
+        "Wikimedia Commons";
+
+
+      credit.style.display =
+        "block";
+
+    } else {
+
+      loading.style.display =
+        "none";
+
+    }
+
+
+    if(!data.image) {
+
+      loading.style.display =
+        "none";
+
+    }
+
+
+    checkButton.disabled =
+      false;
+
+    hintButton.disabled =
+      false;
+
+
+    running =
+      true;
+
+
+    startTimer();
+
+
+    answer.focus();
+
+
+  } catch(error) {
+
+    loading.innerHTML = `
+
+      <div style="
+        font-size:45px;
+      ">
+        ❌
+      </div>
+
+      <strong>
+        Nie udało się pobrać miasta
+      </strong>
+
+      <small style="
+        color:var(--muted);
+        margin-top:5px;
+        text-align:center;
+      ">
+        ${escapeHtml(
+          error.message
+        )}
+      </small>
+
+      <button
+        onclick="loadCity()"
+        style="
+          margin-top:12px;
+          padding:12px 18px;
+          border:0;
+          border-radius:12px;
+          background:var(--button);
+          color:var(--buttonText);
+          font-weight:900;
+          cursor:pointer;
+        "
+      >
+        SPRÓBUJ PONOWNIE
+      </button>
+
+    `;
+
+  }
+
+}
+
+
+/* =====================================================
+ TIMER
+===================================================== */
+
+function startTimer() {
+
+  clearInterval(timer);
+
+  timeLeft = 60;
+
+  timerBar.style.width =
+    "100%";
+
+
+  timer =
+    setInterval(
+      () => {
+
+        if(!running)
+          return;
+
+
+        timeLeft--;
+
+        updateStats();
+
+
+        timerBar.style.width =
+          (
+            timeLeft / 60 * 100
+          ) + "%";
+
 
         if(
-            event.key ===
-            "Enter"
+          timeLeft <= 0
         ) {
 
-            event.preventDefault();
-
-            checkAnswer();
+          timeout();
 
         }
 
+      },
+      1000
+    );
+
+}
+
+
+/* =====================================================
+ SHOW HINT
+===================================================== */
+
+function showHint() {
+
+  if(!running)
+    return;
+
+
+  if(
+    hintsUsed >= 3
+  )
+    return;
+
+
+  hintsUsed++;
+
+
+  document
+    .getElementById(
+      "hint" +
+      hintsUsed
+    )
+    .classList.add(
+      "show"
+    );
+
+
+  if(
+    hintsUsed >= 3
+  ) {
+
+    hintButton.disabled =
+      true;
+
+  }
+
+}
+
+
+/* =====================================================
+ CHECK
+===================================================== */
+
+function checkAnswer() {
+
+  if(!running)
+    return;
+
+
+  const value =
+    normalize(
+      answer.value
+    );
+
+
+  if(!value) {
+
+    answer.focus();
+
+    return;
+
+  }
+
+
+  if(
+    value ===
+    normalize(city.city)
+  ) {
+
+    correct();
+
+  } else {
+
+    wrong();
+
+  }
+
+}
+
+
+/* =====================================================
+ CORRECT
+===================================================== */
+
+function correct() {
+
+  running = false;
+
+  clearInterval(timer);
+
+
+  let points = 100;
+
+
+  if(
+    hintsUsed === 1
+  ) {
+
+    points = 75;
+
+  }
+
+
+  if(
+    hintsUsed === 2
+  ) {
+
+    points = 50;
+
+  }
+
+
+  if(
+    hintsUsed === 3
+  ) {
+
+    points = 25;
+
+  }
+
+
+  if(
+    timeLeft >= 45
+  ) {
+
+    points += 20;
+
+  }
+  else if(
+    timeLeft >= 30
+  ) {
+
+    points += 10;
+
+  }
+
+
+  score += points;
+
+  streak++;
+
+
+  saveStats();
+
+  updateStats();
+
+
+  result.className =
+    "result correct";
+
+
+  result.innerHTML = `
+    🎉 Brawo!<br>
+    Poprawna odpowiedź:
+    <strong>
+      ${escapeHtml(city.city)}
+    </strong>
+    <br>
+    +${points} punktów!
+  `;
+
+
+  checkButton.disabled =
+    true;
+
+  hintButton.disabled =
+    true;
+
+
+  nextButton.style.display =
+    "block";
+
+  menuButton.style.display =
+    "block";
+
+}
+
+
+/* =====================================================
+ WRONG
+===================================================== */
+
+function wrong() {
+
+  result.className =
+    "result wrong";
+
+
+  result.innerHTML =
+    "❌ Nie tym razem! Spróbuj ponownie.";
+
+
+  answer.select();
+
+}
+
+
+/* =====================================================
+ TIMEOUT
+===================================================== */
+
+function timeout() {
+
+  running = false;
+
+  clearInterval(timer);
+
+
+  streak = 0;
+
+
+  saveStats();
+
+  updateStats();
+
+
+  result.className =
+    "result wrong";
+
+
+  result.innerHTML = `
+    ⏰ Koniec czasu!<br>
+    Poprawna odpowiedź:
+    <strong>
+      ${escapeHtml(city.city)}
+    </strong>
+  `;
+
+
+  checkButton.disabled =
+    true;
+
+  hintButton.disabled =
+    true;
+
+
+  for(
+    let i = 1;
+    i <= 3;
+    i++
+  ) {
+
+    document
+      .getElementById(
+        "hint" + i
+      )
+      .classList.add(
+        "show"
+      );
+
+  }
+
+
+  nextButton.style.display =
+    "block";
+
+  menuButton.style.display =
+    "block";
+
+}
+
+
+/* =====================================================
+ NEXT
+===================================================== */
+
+async function nextCity() {
+
+  await loadCity();
+
+}
+
+
+/* =====================================================
+ MENU
+===================================================== */
+
+function backToMenu() {
+
+  clearInterval(timer);
+
+  running = false;
+
+  game.style.display =
+    "none";
+
+  startScreen.style.display =
+    "block";
+
+  saveStats();
+
+  updateStats();
+
+}
+
+
+/* =====================================================
+ RESET
+===================================================== */
+
+function resetScore() {
+
+  if(
+    !confirm(
+      "Na pewno wyzerować wynik i serię?"
+    )
+  )
+    return;
+
+
+  score = 0;
+
+  streak = 0;
+
+
+  saveStats();
+
+  updateStats();
+
+}
+
+
+/* =====================================================
+ ENTER
+===================================================== */
+
+answer.addEventListener(
+  "keydown",
+  event => {
+
+    if(
+      event.key ===
+      "Enter"
+    ) {
+
+      event.preventDefault();
+
+      checkAnswer();
+
     }
+
+  }
 );
 
 
-/*
-==================================================
-  BŁĄD ZDJĘCIA
-==================================================
-*/
+/* =====================================================
+ ESCAPE
+===================================================== */
 
-cityImage.addEventListener(
-    "error",
-    function() {
+function escapeHtml(text) {
 
-        cityImage.style.display =
-            "none";
+  return String(text)
 
-        imagePlaceholder.style.display =
-            "flex";
+    .replace(
+      /&/g,
+      "&amp;"
+    )
 
-        credit.style.display =
-            "none";
+    .replace(
+      /</g,
+      "&lt;"
+    )
 
-    }
-);
+    .replace(
+      />/g,
+      "&gt;"
+    )
 
+    .replace(
+      /"/g,
+      "&quot;"
+    )
 
-/*
-==================================================
-  POPRAWNE ZDJĘCIE
-==================================================
-*/
+    .replace(
+      /'/g,
+      "&#039;"
+    );
 
-cityImage.addEventListener(
-    "load",
-    function() {
-
-        cityImage.style.display =
-            "block";
-
-        imagePlaceholder.style.display =
-            "none";
-
-    }
-);
+}
 
 
-/*
-==================================================
-  WŁĄCZENIE STRONY
-==================================================
-*/
+/* =====================================================
+ INITIAL
+===================================================== */
 
 updateStats();
 
 </script>
 
+
 </body>
+
 </html>
