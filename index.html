@@ -1,0 +1,2328 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Random Country — Odkryj świat</title>
+
+<meta
+  name="description"
+  content="Losuj państwa świata i poznawaj ich najważniejsze informacje."
+>
+
+<style>
+
+:root {
+  --bg: #070a12;
+  --bg2: #0d1220;
+  --card: rgba(18, 24, 40, .82);
+  --border: rgba(255,255,255,.09);
+  --text: #f7f8fc;
+  --muted: #9ba6bb;
+  --primary: #7657ff;
+  --primary2: #38a1ff;
+  --success: #46d68c;
+  --danger: #ff647d;
+  --radius: 26px;
+  --shadow: 0 30px 90px rgba(0,0,0,.45);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  color: var(--text);
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  background:
+    radial-gradient(
+      circle at 10% 0%,
+      rgba(118,87,255,.24),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 90% 90%,
+      rgba(56,161,255,.16),
+      transparent 30%
+    ),
+    var(--bg);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: .3;
+
+  background-image:
+    linear-gradient(
+      rgba(255,255,255,.025) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(255,255,255,.025) 1px,
+      transparent 1px
+    );
+
+  background-size: 40px 40px;
+
+  mask-image:
+    linear-gradient(
+      to bottom,
+      black,
+      transparent
+    );
+}
+
+button,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* =========================================
+   CONTAINER
+========================================= */
+
+.container {
+  width: min(1150px, calc(100% - 32px));
+  margin: auto;
+}
+
+/* =========================================
+   HEADER
+========================================= */
+
+header {
+  padding: 25px 0;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  font-weight: 900;
+  letter-spacing: -.04em;
+}
+
+.logo-icon {
+  width: 45px;
+  height: 45px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--primary),
+      var(--primary2)
+    );
+
+  box-shadow:
+    0 12px 35px rgba(118,87,255,.35);
+
+  font-size: 21px;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 8px 13px;
+
+  border:
+    1px solid var(--border);
+
+  border-radius: 999px;
+
+  background:
+    rgba(255,255,255,.035);
+
+  color: var(--muted);
+
+  font-size: 12px;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: var(--success);
+
+  box-shadow:
+    0 0 14px var(--success);
+}
+
+/* =========================================
+   MAIN
+========================================= */
+
+main {
+  padding: 50px 0 80px;
+}
+
+.hero {
+  max-width: 800px;
+  margin: 0 auto 40px;
+
+  text-align: center;
+}
+
+.eyebrow {
+  display: inline-flex;
+
+  padding: 8px 13px;
+  margin-bottom: 20px;
+
+  border:
+    1px solid var(--border);
+
+  border-radius: 999px;
+
+  background:
+    rgba(255,255,255,.035);
+
+  color: #bbc4d5;
+
+  font-size: 12px;
+  font-weight: 800;
+
+  letter-spacing: .04em;
+}
+
+.hero h1 {
+  margin-bottom: 20px;
+
+  font-size:
+    clamp(44px, 7vw, 80px);
+
+  line-height: .98;
+
+  letter-spacing: -.075em;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ffffff 10%,
+      #b8baff 55%,
+      #70dcff
+    );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+
+  color: transparent;
+}
+
+.hero p {
+  max-width: 650px;
+  margin: auto;
+
+  color: var(--muted);
+
+  font-size: 17px;
+  line-height: 1.75;
+}
+
+/* =========================================
+   CONTROLS
+========================================= */
+
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 11px;
+
+  margin-bottom: 28px;
+}
+
+.select-wrap {
+  position: relative;
+}
+
+select {
+  appearance: none;
+
+  min-width: 200px;
+
+  padding:
+    15px 42px 15px 16px;
+
+  color: white;
+
+  background: #12192a;
+
+  border:
+    1px solid var(--border);
+
+  border-radius: 15px;
+
+  outline: none;
+}
+
+.select-wrap::after {
+  content: "⌄";
+
+  position: absolute;
+
+  right: 15px;
+  top: 50%;
+
+  transform:
+    translateY(-50%);
+
+  color: var(--muted);
+
+  pointer-events: none;
+}
+
+.btn {
+  padding: 15px 20px;
+
+  border: 0;
+
+  border-radius: 15px;
+
+  font-weight: 850;
+
+  transition:
+    transform .2s ease,
+    opacity .2s ease,
+    background .2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-primary {
+  color: white;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--primary),
+      var(--primary2)
+    );
+
+  box-shadow:
+    0 12px 35px rgba(93,87,255,.28);
+}
+
+.btn-secondary {
+  color: white;
+
+  background: #172039;
+
+  border:
+    1px solid var(--border);
+}
+
+/* =========================================
+   COUNTRY CARD
+========================================= */
+
+.country-card {
+  overflow: hidden;
+
+  border:
+    1px solid var(--border);
+
+  border-radius: var(--radius);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.07),
+      rgba(255,255,255,.025)
+    ),
+    var(--card);
+
+  box-shadow: var(--shadow);
+
+  backdrop-filter: blur(24px);
+
+  animation:
+    cardIn .5s ease both;
+}
+
+@keyframes cardIn {
+
+  from {
+    opacity: 0;
+    transform:
+      translateY(18px)
+      scale(.985);
+  }
+
+  to {
+    opacity: 1;
+    transform:
+      translateY(0)
+      scale(1);
+  }
+
+}
+
+.country-main {
+  display: grid;
+
+  grid-template-columns:
+    minmax(260px,.8fr)
+    minmax(0,1.2fr);
+
+  gap: 40px;
+
+  padding: 38px;
+}
+
+.flag-box {
+  min-height: 310px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  border:
+    1px solid var(--border);
+
+  border-radius: 22px;
+
+  background:
+    rgba(255,255,255,.035);
+}
+
+.flag {
+  width: 100%;
+  max-width: 410px;
+  max-height: 260px;
+
+  object-fit: contain;
+
+  border-radius: 10px;
+
+  background: white;
+
+  box-shadow:
+    0 20px 45px rgba(0,0,0,.35);
+
+  transition:
+    transform .3s ease;
+}
+
+.flag:hover {
+  transform: scale(1.025);
+}
+
+.country-label {
+  margin-bottom: 8px;
+
+  color: #8f9ab0;
+
+  font-size: 11px;
+  font-weight: 900;
+
+  text-transform: uppercase;
+
+  letter-spacing: .14em;
+}
+
+.country-name {
+  margin-bottom: 12px;
+
+  font-size:
+    clamp(40px, 5vw, 64px);
+
+  line-height: 1;
+
+  letter-spacing: -.06em;
+}
+
+.official {
+  margin-bottom: 20px;
+
+  color: var(--muted);
+
+  line-height: 1.6;
+}
+
+.iso {
+  display: inline-flex;
+
+  padding: 7px 10px;
+  margin-bottom: 22px;
+
+  border:
+    1px solid rgba(118,87,255,.25);
+
+  border-radius: 9px;
+
+  color: #c9c0ff;
+
+  background:
+    rgba(118,87,255,.12);
+
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.stats {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2,1fr);
+
+  gap: 10px;
+}
+
+.stat {
+  padding: 15px;
+
+  border:
+    1px solid var(--border);
+
+  border-radius: 15px;
+
+  background:
+    rgba(255,255,255,.035);
+}
+
+.stat-title {
+  margin-bottom: 7px;
+
+  color: #8994aa;
+
+  font-size: 10px;
+  font-weight: 900;
+
+  text-transform: uppercase;
+
+  letter-spacing: .1em;
+}
+
+.stat-value {
+  font-size: 14px;
+  font-weight: 700;
+
+  line-height: 1.45;
+
+  word-break: break-word;
+}
+
+.map {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  margin-top: 17px;
+
+  padding: 14px 18px;
+
+  color: white;
+
+  text-decoration: none;
+
+  border:
+    1px solid var(--border);
+
+  border-radius: 14px;
+
+  background:
+    rgba(255,255,255,.06);
+
+  transition:
+    transform .2s ease,
+    background .2s ease;
+}
+
+.map:hover {
+  transform: translateY(-2px);
+
+  background:
+    rgba(255,255,255,.1);
+}
+
+/* =========================================
+   AI
+========================================= */
+
+.ai {
+  padding:
+    0 38px 38px;
+}
+
+.ai-box {
+  padding: 24px;
+
+  border:
+    1px solid rgba(118,87,255,.22);
+
+  border-radius: 21px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(118,87,255,.1),
+      rgba(56,156,255,.05)
+    );
+}
+
+.ai-head {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  margin-bottom: 14px;
+}
+
+.ai-title {
+  font-weight: 900;
+}
+
+.ai-title span {
+  color: #b9b0ff;
+}
+
+.ai-btn {
+  padding: 10px 14px;
+
+  border:
+    1px solid rgba(118,87,255,.3);
+
+  border-radius: 11px;
+
+  background:
+    rgba(118,87,255,.16);
+
+  color: white;
+
+  font-weight: 800;
+}
+
+.ai-text {
+  color: #bdc6d7;
+
+  font-size: 14px;
+
+  line-height: 1.8;
+}
+
+/* =========================================
+   HISTORY
+========================================= */
+
+.history {
+  margin-top: 30px;
+}
+
+.history-header {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 13px;
+}
+
+.history-header h2 {
+  font-size: 17px;
+}
+
+.clear {
+  border: 0;
+
+  background: none;
+
+  color: var(--muted);
+
+  font-size: 12px;
+}
+
+.history-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(6,1fr);
+
+  gap: 10px;
+}
+
+.history-item {
+  overflow: hidden;
+
+  border:
+    1px solid var(--border);
+
+  border-radius: 15px;
+
+  background:
+    rgba(255,255,255,.035);
+
+  transition:
+    transform .2s ease,
+    border-color .2s ease;
+}
+
+.history-item:hover {
+  transform: translateY(-3px);
+
+  border-color:
+    rgba(118,87,255,.4);
+}
+
+.history-flag {
+  width: 100%;
+  height: 68px;
+
+  object-fit: cover;
+}
+
+.history-name {
+  padding: 9px;
+
+  font-size: 12px;
+  font-weight: 750;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+}
+
+/* =========================================
+   LOADING
+========================================= */
+
+.loading {
+  min-height: 500px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 16px;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+
+  border:
+    3px solid rgba(255,255,255,.12);
+
+  border-top-color:
+    var(--primary);
+
+  border-radius: 50%;
+
+  animation:
+    spin .8s linear infinite;
+}
+
+@keyframes spin {
+
+  to {
+    transform: rotate(360deg);
+  }
+
+}
+
+.loading-text {
+  color: var(--muted);
+
+  font-size: 14px;
+}
+
+/* =========================================
+   ERROR
+========================================= */
+
+.error {
+  padding: 70px 25px;
+
+  text-align: center;
+}
+
+.error-icon {
+  margin-bottom: 15px;
+
+  font-size: 45px;
+}
+
+.error h2 {
+  margin-bottom: 8px;
+}
+
+.error p {
+  max-width: 600px;
+
+  margin:
+    0 auto 20px;
+
+  color: var(--muted);
+
+  line-height: 1.6;
+}
+
+/* =========================================
+   FOOTER
+========================================= */
+
+footer {
+  padding-bottom: 35px;
+
+  text-align: center;
+
+  color: #6e788c;
+
+  font-size: 12px;
+}
+
+footer strong {
+  color: #929cb0;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media(max-width: 850px) {
+
+  .country-main {
+    grid-template-columns: 1fr;
+  }
+
+  .history-grid {
+    grid-template-columns:
+      repeat(3,1fr);
+  }
+
+}
+
+@media(max-width: 560px) {
+
+  .container {
+    width:
+      min(
+        calc(100% - 22px),
+        1150px
+      );
+  }
+
+  .status {
+    display: none;
+  }
+
+  main {
+    padding-top: 30px;
+  }
+
+  .hero h1 {
+    font-size: 47px;
+  }
+
+  .hero p {
+    font-size: 15px;
+  }
+
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .select-wrap,
+  select,
+  .controls .btn {
+    width: 100%;
+  }
+
+  .country-main {
+    padding: 20px;
+  }
+
+  .ai {
+    padding:
+      0 20px 20px;
+  }
+
+  .flag-box {
+    min-height: 200px;
+  }
+
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  .country-name {
+    font-size: 43px;
+  }
+
+  .ai-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .history-grid {
+    grid-template-columns:
+      repeat(2,1fr);
+  }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+
+  <div class="container">
+
+    <nav class="nav">
+
+      <div class="logo">
+
+        <div class="logo-icon">
+          🌍
+        </div>
+
+        <span>
+          Random Country
+        </span>
+
+      </div>
+
+      <div class="status">
+
+        <span class="status-dot"></span>
+
+        Odkrywaj świat
+
+      </div>
+
+    </nav>
+
+  </div>
+
+</header>
+
+
+<main>
+
+<div class="container">
+
+<section class="hero">
+
+  <div class="eyebrow">
+    🌎 GEOGRAFIA · LOSOWANIE · AI
+  </div>
+
+  <h1>
+    Odkryj losowe państwo.
+  </h1>
+
+  <p>
+    Wylosuj państwo świata i poznaj jego
+    flagę, stolicę, populację, powierzchnię,
+    języki, walutę, region oraz ciekawostkę
+    wygenerowaną przez Cloudflare Workers AI.
+  </p>
+
+</section>
+
+
+<section class="controls">
+
+  <div class="select-wrap">
+
+    <select id="region">
+
+      <option value="all">
+        🌍 Cały świat
+      </option>
+
+      <option value="Europe">
+        🇪🇺 Europa
+      </option>
+
+      <option value="Asia">
+        🌏 Azja
+      </option>
+
+      <option value="Africa">
+        🌍 Afryka
+      </option>
+
+      <option value="North America">
+        🌎 Ameryka Północna
+      </option>
+
+      <option value="South America">
+        🌎 Ameryka Południowa
+      </option>
+
+      <option value="Oceania">
+        🌊 Oceania
+      </option>
+
+    </select>
+
+  </div>
+
+
+  <button
+    id="random"
+    class="btn btn-primary"
+  >
+    🎲 Losuj państwo
+  </button>
+
+
+  <button
+    id="aiTop"
+    class="btn btn-secondary"
+  >
+    ✨ Ciekawostka AI
+  </button>
+
+</section>
+
+
+<section
+  id="card"
+  class="country-card"
+  aria-live="polite"
+>
+
+  <div class="loading">
+
+    <div class="spinner"></div>
+
+    <div class="loading-text">
+      Ładowanie danych świata...
+    </div>
+
+  </div>
+
+</section>
+
+
+<section class="history">
+
+  <div class="history-header">
+
+    <h2>
+      Ostatnio odkryte
+    </h2>
+
+    <button
+      id="clear"
+      class="clear"
+    >
+      Wyczyść historię
+    </button>
+
+  </div>
+
+
+  <div
+    id="history"
+    class="history-grid"
+  ></div>
+
+</section>
+
+</div>
+
+</main>
+
+
+<footer>
+
+  <div class="container">
+
+    Dane państw:
+    <strong>REST Countries</strong>
+
+    ·
+
+    AI:
+    <strong>Cloudflare Workers AI</strong>
+
+    ·
+
+    API:
+    <strong>Cloudflare Worker</strong>
+
+  </div>
+
+</footer>
+
+
+<script>
+
+/*
+=========================================================
+  RANDOM COUNTRY
+  FRONTEND → CLOUDFLARE WORKER API
+=========================================================
+
+  WAŻNE:
+
+  Po utworzeniu Workera Cloudflare otrzymasz adres
+  w rodzaju:
+
+  https://random-country-api.TWOJ-ACCOUNT.workers.dev
+
+  Wklej go poniżej.
+
+=========================================================
+*/
+
+const API_URL =
+  "https://TWOJ-WORKER.workers.dev";
+
+
+/*
+=========================================================
+  GLOBAL STATE
+=========================================================
+*/
+
+let countries = [];
+
+let currentCountry = null;
+
+let isLoading = false;
+
+
+/*
+=========================================================
+  ELEMENTS
+=========================================================
+*/
+
+const card =
+  document.getElementById("card");
+
+const randomButton =
+  document.getElementById("random");
+
+const aiTop =
+  document.getElementById("aiTop");
+
+const region =
+  document.getElementById("region");
+
+const historyContainer =
+  document.getElementById("history");
+
+const clearButton =
+  document.getElementById("clear");
+
+
+/*
+=========================================================
+  POLISH COUNTRY NAMES
+=========================================================
+*/
+
+const polishNames = {
+
+  "Afghanistan":"Afganistan",
+  "Albania":"Albania",
+  "Algeria":"Algieria",
+  "Andorra":"Andora",
+  "Angola":"Angola",
+  "Argentina":"Argentyna",
+  "Armenia":"Armenia",
+  "Australia":"Australia",
+  "Austria":"Austria",
+  "Azerbaijan":"Azerbejdżan",
+
+  "Belgium":"Belgia",
+  "Brazil":"Brazylia",
+  "Bulgaria":"Bułgaria",
+
+  "Canada":"Kanada",
+  "Chile":"Chile",
+  "China":"Chiny",
+  "Colombia":"Kolumbia",
+  "Croatia":"Chorwacja",
+  "Cyprus":"Cypr",
+  "Czechia":"Czechy",
+
+  "Denmark":"Dania",
+  "Egypt":"Egipt",
+  "Estonia":"Estonia",
+
+  "Finland":"Finlandia",
+  "France":"Francja",
+
+  "Georgia":"Gruzja",
+  "Germany":"Niemcy",
+  "Greece":"Grecja",
+  "Hungary":"Węgry",
+
+  "Iceland":"Islandia",
+  "India":"Indie",
+  "Indonesia":"Indonezja",
+  "Ireland":"Irlandia",
+  "Israel":"Izrael",
+  "Italy":"Włochy",
+
+  "Japan":"Japonia",
+
+  "Kazakhstan":"Kazachstan",
+  "Kenya":"Kenia",
+
+  "Latvia":"Łotwa",
+  "Lithuania":"Litwa",
+  "Luxembourg":"Luksemburg",
+
+  "Malaysia":"Malezja",
+  "Mexico":"Meksyk",
+  "Moldova":"Mołdawia",
+  "Monaco":"Monako",
+  "Mongolia":"Mongolia",
+  "Montenegro":"Czarnogóra",
+  "Morocco":"Maroko",
+
+  "Nepal":"Nepal",
+  "Netherlands":"Holandia",
+  "New Zealand":"Nowa Zelandia",
+  "Nigeria":"Nigeria",
+  "Norway":"Norwegia",
+
+  "Pakistan":"Pakistan",
+  "Panama":"Panama",
+  "Paraguay":"Paragwaj",
+  "Peru":"Peru",
+  "Philippines":"Filipiny",
+  "Poland":"Polska",
+  "Portugal":"Portugalia",
+
+  "Romania":"Rumunia",
+  "Russia":"Rosja",
+
+  "Saudi Arabia":"Arabia Saudyjska",
+  "Serbia":"Serbia",
+  "Singapore":"Singapur",
+  "Slovakia":"Słowacja",
+  "Slovenia":"Słowenia",
+  "South Africa":"Republika Południowej Afryki",
+  "South Korea":"Korea Południowa",
+  "Spain":"Hiszpania",
+  "Sweden":"Szwecja",
+  "Switzerland":"Szwajcaria",
+
+  "Thailand":"Tajlandia",
+  "Turkey":"Turcja",
+
+  "Ukraine":"Ukraina",
+  "United Arab Emirates":"Zjednoczone Emiraty Arabskie",
+  "United Kingdom":"Wielka Brytania",
+  "United States":"Stany Zjednoczone",
+  "Uruguay":"Urugwaj",
+
+  "Vatican City":"Watykan",
+  "Venezuela":"Wenezuela",
+  "Vietnam":"Wietnam",
+
+  "Zambia":"Zambia",
+  "Zimbabwe":"Zimbabwe"
+
+};
+
+
+/*
+=========================================================
+  SECURITY ESCAPE
+=========================================================
+*/
+
+function escapeHTML(value) {
+
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+
+}
+
+
+/*
+=========================================================
+  API HELPER
+=========================================================
+*/
+
+async function api(
+  endpoint,
+  options = {}
+) {
+
+  if (
+    API_URL.includes("TWOJ-WORKER")
+  ) {
+
+    throw new Error(
+      "Nie ustawiono adresu Cloudflare Worker API."
+    );
+
+  }
+
+
+  const response =
+    await fetch(
+      API_URL.replace(/\/$/, "") + endpoint,
+      {
+        ...options,
+
+        headers: {
+          "Content-Type":
+            "application/json",
+
+          ...(options.headers || {})
+        }
+      }
+    );
+
+
+  const data =
+    await response.json()
+      .catch(() => null);
+
+
+  if (!response.ok) {
+
+    throw new Error(
+      data?.error ||
+      "Błąd komunikacji z API."
+    );
+
+  }
+
+
+  return data;
+
+}
+
+
+/*
+=========================================================
+  COUNTRY NAME
+=========================================================
+*/
+
+function countryName(country) {
+
+  return (
+    polishNames[
+      country?.name?.common
+    ] ||
+
+    country?.name?.common ||
+
+    "Nieznane państwo"
+  );
+
+}
+
+
+/*
+=========================================================
+  CAPITAL
+=========================================================
+*/
+
+function getCapital(country) {
+
+  return (
+    country?.capital?.join(", ") ||
+    "Brak danych"
+  );
+
+}
+
+
+/*
+=========================================================
+  LANGUAGES
+=========================================================
+*/
+
+function getLanguages(country) {
+
+  if (!country?.languages) {
+
+    return "Brak danych";
+
+  }
+
+  return Object
+    .values(country.languages)
+    .join(", ");
+
+}
+
+
+/*
+=========================================================
+  CURRENCY
+=========================================================
+*/
+
+function getCurrency(country) {
+
+  if (!country?.currencies) {
+
+    return "Brak danych";
+
+  }
+
+  return Object
+    .entries(country.currencies)
+    .map(
+      ([code, data]) =>
+        `${data?.name || "Nieznana"} (${code})`
+    )
+    .join(", ");
+
+}
+
+
+/*
+=========================================================
+  NUMBER
+=========================================================
+*/
+
+function formatNumber(value) {
+
+  if (
+    value === null ||
+    value === undefined ||
+    Number.isNaN(Number(value))
+  ) {
+
+    return "Brak danych";
+
+  }
+
+  return new Intl.NumberFormat(
+    "pl-PL"
+  ).format(Number(value));
+
+}
+
+
+/*
+=========================================================
+  LOAD COUNTRIES
+=========================================================
+*/
+
+async function loadCountries() {
+
+  try {
+
+    const data =
+      await api(
+        "/api/countries"
+      );
+
+
+    countries =
+      Array.isArray(data?.countries)
+        ? data.countries
+        : [];
+
+
+    if (!countries.length) {
+
+      throw new Error(
+        "API nie zwróciło listy państw."
+      );
+
+    }
+
+
+    renderHistory();
+
+    await randomCountry();
+
+  }
+
+  catch (error) {
+
+    showError(
+      error.message
+    );
+
+  }
+
+}
+
+
+/*
+=========================================================
+  RANDOM COUNTRY
+=========================================================
+*/
+
+async function randomCountry() {
+
+  if (
+    isLoading ||
+    !countries.length
+  ) {
+
+    return;
+
+  }
+
+
+  isLoading = true;
+
+  randomButton.disabled = true;
+
+  randomButton.textContent =
+    "🎲 Losowanie...";
+
+
+  card.innerHTML = `
+
+    <div class="loading">
+
+      <div class="spinner"></div>
+
+      <div class="loading-text">
+        Losujemy państwo...
+      </div>
+
+    </div>
+
+  `;
+
+
+  await new Promise(
+    resolve =>
+      setTimeout(resolve, 450)
+  );
+
+
+  const selectedRegion =
+    region.value;
+
+
+  let available =
+    countries.filter(
+      country => {
+
+        if (
+          selectedRegion === "all"
+        ) {
+
+          return true;
+
+        }
+
+
+        return (
+          country.region ===
+          selectedRegion ||
+
+          country.continents?.includes(
+            selectedRegion
+          )
+        );
+
+      }
+    );
+
+
+  if (!available.length) {
+
+    available = countries;
+
+  }
+
+
+  if (
+    currentCountry &&
+    available.length > 1
+  ) {
+
+    available =
+      available.filter(
+        country =>
+          country.cca3 !==
+          currentCountry.cca3
+      );
+
+  }
+
+
+  const selected =
+    available[
+      Math.floor(
+        Math.random() *
+        available.length
+      )
+    ];
+
+
+  currentCountry =
+    selected;
+
+
+  renderCountry(selected);
+
+  saveHistory(selected);
+
+  renderHistory();
+
+
+  isLoading = false;
+
+  randomButton.disabled = false;
+
+  randomButton.textContent =
+    "🎲 Losuj państwo";
+
+}
+
+
+/*
+=========================================================
+  RENDER COUNTRY
+=========================================================
+*/
+
+function renderCountry(country) {
+
+  const name =
+    countryName(country);
+
+  const flag =
+    country?.flags?.svg ||
+    country?.flags?.png ||
+    "";
+
+
+  card.innerHTML = `
+
+    <div class="country-main">
+
+      <div class="flag-box">
+
+        ${
+          flag
+
+          ?
+
+          `
+            <img
+              class="flag"
+              src="${escapeHTML(flag)}"
+              alt="Flaga ${escapeHTML(name)}"
+            >
+          `
+
+          :
+
+          `
+            <div
+              style="
+                font-size:60px;
+              "
+            >
+              🌍
+            </div>
+          `
+        }
+
+      </div>
+
+
+      <div>
+
+        <div class="country-label">
+          Wylosowane państwo
+        </div>
+
+
+        <h2 class="country-name">
+          ${escapeHTML(name)}
+        </h2>
+
+
+        <p class="official">
+          ${escapeHTML(
+            country?.name?.official ||
+            "Brak oficjalnej nazwy"
+          )}
+        </p>
+
+
+        <div class="iso">
+
+          ISO
+          ${escapeHTML(
+            country?.cca2 ||
+            "?"
+          )}
+
+          ·
+
+          ${escapeHTML(
+            country?.cca3 ||
+            "?"
+          )}
+
+        </div>
+
+
+        <div class="stats">
+
+          ${stat(
+            "Stolica",
+            getCapital(country)
+          )}
+
+          ${stat(
+            "Populacja",
+            formatNumber(
+              country?.population
+            )
+          )}
+
+          ${stat(
+            "Powierzchnia",
+            country?.area
+              ? formatNumber(country.area) +
+                " km²"
+              : "Brak danych"
+          )}
+
+          ${stat(
+            "Kontynent",
+            country?.continents?.join(", ")
+          )}
+
+          ${stat(
+            "Region",
+            country?.region
+          )}
+
+          ${stat(
+            "Subregion",
+            country?.subregion
+          )}
+
+          ${stat(
+            "Języki",
+            getLanguages(country)
+          )}
+
+          ${stat(
+            "Waluta",
+            getCurrency(country)
+          )}
+
+          ${stat(
+            "Strefy czasowe",
+            country?.timezones?.join(", ")
+          )}
+
+        </div>
+
+
+        <a
+          class="map"
+          href="${
+            escapeHTML(
+              country?.maps?.googleMaps ||
+              "https://www.google.com/maps/search/?api=1&query=" +
+              encodeURIComponent(
+                country?.name?.common || ""
+              )
+            )
+          }"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+
+          📍
+          Zobacz na mapie
+
+        </a>
+
+      </div>
+
+    </div>
+
+
+    <div class="ai">
+
+      <div class="ai-box">
+
+        <div class="ai-head">
+
+          <div class="ai-title">
+
+            ✨
+            <span>Ciekawostka AI</span>
+
+          </div>
+
+
+          <button
+            id="aiButton"
+            class="ai-btn"
+            type="button"
+          >
+            Wygeneruj
+          </button>
+
+        </div>
+
+
+        <div
+          id="aiText"
+          class="ai-text"
+        >
+
+          Kliknij „Wygeneruj”, aby poznać
+          ciekawostkę o tym państwie.
+
+        </div>
+
+      </div>
+
+    </div>
+
+  `;
+
+
+  document
+    .getElementById("aiButton")
+    .addEventListener(
+      "click",
+      generateAI
+    );
+
+
+  card.style.animation = "none";
+
+  void card.offsetWidth;
+
+  card.style.animation =
+    "cardIn .5s ease both";
+
+}
+
+
+/*
+=========================================================
+  STAT
+=========================================================
+*/
+
+function stat(
+  title,
+  value
+) {
+
+  return `
+
+    <div class="stat">
+
+      <div class="stat-title">
+        ${escapeHTML(title)}
+      </div>
+
+      <div class="stat-value">
+        ${escapeHTML(
+          value || "Brak danych"
+        )}
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+
+/*
+=========================================================
+  AI GENERATION
+=========================================================
+*/
+
+async function generateAI() {
+
+  if (!currentCountry) {
+
+    return;
+
+  }
+
+
+  const button =
+    document.getElementById(
+      "aiButton"
+    );
+
+  const text =
+    document.getElementById(
+      "aiText"
+    );
+
+
+  button.disabled = true;
+
+  button.textContent =
+    "✨ Generuję...";
+
+
+  text.textContent =
+    "Cloudflare AI przygotowuje ciekawostkę...";
+
+
+  try {
+
+    const data =
+      await api(
+        "/api/ai",
+        {
+          method: "POST",
+
+          body:
+            JSON.stringify({
+
+              country: {
+
+                name:
+                  countryName(
+                    currentCountry
+                  ),
+
+                official:
+                  currentCountry
+                    ?.name
+                    ?.official,
+
+                capital:
+                  getCapital(
+                    currentCountry
+                  ),
+
+                population:
+                  currentCountry
+                    ?.population,
+
+                area:
+                  currentCountry
+                    ?.area,
+
+                region:
+                  currentCountry
+                    ?.region,
+
+                subregion:
+                  currentCountry
+                    ?.subregion,
+
+                languages:
+                  getLanguages(
+                    currentCountry
+                  ),
+
+                currency:
+                  getCurrency(
+                    currentCountry
+                  )
+
+              }
+
+            })
+        }
+      );
+
+
+    text.textContent =
+      data?.text ||
+      "Brak odpowiedzi AI.";
+
+  }
+
+  catch (error) {
+
+    text.textContent =
+      "Nie udało się wygenerować ciekawostki. Spróbuj ponownie.";
+
+  }
+
+
+  button.disabled = false;
+
+  button.textContent =
+    "Wygeneruj ponownie";
+
+}
+
+
+/*
+=========================================================
+  HISTORY
+=========================================================
+*/
+
+function saveHistory(country) {
+
+  let history =
+    JSON.parse(
+      localStorage.getItem(
+        "random-country-history"
+      ) || "[]"
+    );
+
+
+  history =
+    history.filter(
+      item =>
+        item?.cca3 !==
+        country?.cca3
+    );
+
+
+  history.unshift(country);
+
+
+  history =
+    history.slice(0, 6);
+
+
+  localStorage.setItem(
+    "random-country-history",
+    JSON.stringify(history)
+  );
+
+}
+
+
+function renderHistory() {
+
+  const history =
+    JSON.parse(
+      localStorage.getItem(
+        "random-country-history"
+      ) || "[]"
+    );
+
+
+  if (!history.length) {
+
+    historyContainer.innerHTML = `
+
+      <div
+        style="
+          grid-column:1/-1;
+          color:#7d879a;
+          font-size:13px;
+        "
+      >
+
+        Odkryte państwa pojawią się tutaj.
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  historyContainer.innerHTML =
+    history
+      .map(
+        (country, index) => `
+
+          <div
+            class="history-item"
+            data-index="${index}"
+          >
+
+            <img
+              class="history-flag"
+              src="${escapeHTML(
+                country?.flags?.png ||
+                country?.flags?.svg ||
+                ""
+              )}"
+              alt=""
+            >
+
+            <div class="history-name">
+              ${escapeHTML(
+                countryName(country)
+              )}
+            </div>
+
+          </div>
+
+        `
+      )
+      .join("");
+
+
+  document
+    .querySelectorAll(
+      ".history-item"
+    )
+    .forEach(item => {
+
+      item.addEventListener(
+        "click",
+        () => {
+
+          const history =
+            JSON.parse(
+              localStorage.getItem(
+                "random-country-history"
+              ) || "[]"
+            );
+
+
+          const selected =
+            history[
+              Number(
+                item.dataset.index
+              )
+            ];
+
+
+          if (!selected) {
+
+            return;
+
+          }
+
+
+          currentCountry =
+            selected;
+
+
+          renderCountry(
+            selected
+          );
+
+
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+          });
+
+        }
+      );
+
+    });
+
+}
+
+
+clearButton.addEventListener(
+  "click",
+  () => {
+
+    localStorage.removeItem(
+      "random-country-history"
+    );
+
+    renderHistory();
+
+  }
+);
+
+
+/*
+=========================================================
+  ERROR
+=========================================================
+*/
+
+function showError(message) {
+
+  card.innerHTML = `
+
+    <div class="error">
+
+      <div class="error-icon">
+        ⚠️
+      </div>
+
+      <h2>
+        Nie udało się załadować danych
+      </h2>
+
+      <p>
+        ${escapeHTML(message)}
+      </p>
+
+      <button
+        id="retry"
+        class="btn btn-primary"
+      >
+        Spróbuj ponownie
+      </button>
+
+    </div>
+
+  `;
+
+
+  document
+    .getElementById("retry")
+    .addEventListener(
+      "click",
+      loadCountries
+    );
+
+}
+
+
+/*
+=========================================================
+  EVENTS
+=========================================================
+*/
+
+randomButton.addEventListener(
+  "click",
+  randomCountry
+);
+
+
+aiTop.addEventListener(
+  "click",
+  generateAI
+);
+
+
+region.addEventListener(
+  "change",
+  randomCountry
+);
+
+
+document.addEventListener(
+  "keydown",
+  event => {
+
+    if (
+      event.code !== "Space" &&
+      event.code !== "Enter"
+    ) {
+
+      return;
+
+    }
+
+
+    const tag =
+      document.activeElement?.tagName;
+
+
+    if (
+      tag === "INPUT" ||
+      tag === "TEXTAREA" ||
+      tag === "SELECT"
+    ) {
+
+      return;
+
+    }
+
+
+    event.preventDefault();
+
+    randomCountry();
+
+  }
+);
+
+
+/*
+=========================================================
+  START
+=========================================================
+*/
+
+loadCountries();
+
+</script>
+
+</body>
+        </html>
