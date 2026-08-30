@@ -1,0 +1,3769 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+
+<title>World School — Poznaj świat</title>
+
+<style>
+:root{
+  --bg:#f4f6fb;
+  --bg2:#ffffff;
+  --surface:rgba(255,255,255,.78);
+  --surface-solid:#fff;
+  --text:#101522;
+  --muted:#70798b;
+  --line:rgba(16,21,34,.09);
+
+  --primary:#6757f5;
+  --primary2:#8c7fff;
+  --cyan:#35c7e8;
+  --green:#18b982;
+  --red:#ed5d68;
+  --yellow:#f5b942;
+
+  --shadow:
+    0 25px 70px rgba(32,38,62,.10);
+
+  --shadow-small:
+    0 10px 30px rgba(32,38,62,.08);
+
+  --radius:28px;
+}
+
+html[data-theme="dark"]{
+  --bg:#080b13;
+  --bg2:#0d111b;
+  --surface:rgba(18,23,35,.78);
+  --surface-solid:#121725;
+  --text:#f5f7fb;
+  --muted:#929bad;
+  --line:rgba(255,255,255,.08);
+
+  --shadow:
+    0 30px 90px rgba(0,0,0,.38);
+
+  --shadow-small:
+    0 12px 35px rgba(0,0,0,.28);
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  margin:0;
+  min-height:100vh;
+
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  color:var(--text);
+
+  background:
+    radial-gradient(
+      circle at 5% 5%,
+      rgba(103,87,245,.14),
+      transparent 25%
+    ),
+    radial-gradient(
+      circle at 95% 10%,
+      rgba(53,199,232,.10),
+      transparent 24%
+    ),
+    var(--bg);
+
+  transition:
+    background .45s ease,
+    color .35s ease;
+
+  padding-bottom:30px;
+}
+
+button,
+input,
+select{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible{
+  outline:
+    3px solid
+    rgba(103,87,245,.22);
+
+  outline-offset:3px;
+}
+
+/* =========================
+   TOPBAR
+========================= */
+
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:1000;
+
+  padding:
+    14px 18px;
+
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(244,246,251,.94),
+      rgba(244,246,251,.72)
+    );
+
+  backdrop-filter:
+    blur(24px)
+    saturate(140%);
+
+  border-bottom:
+    1px solid var(--line);
+}
+
+html[data-theme="dark"] .topbar{
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(8,11,19,.94),
+      rgba(8,11,19,.72)
+    );
+}
+
+.topbar-inner{
+  max-width:1450px;
+  margin:auto;
+
+  display:flex;
+  align-items:center;
+
+  gap:18px;
+}
+
+/* LOGO */
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:11px;
+
+  min-width:max-content;
+
+  text-decoration:none;
+  color:var(--text);
+}
+
+.brand-mark{
+  width:46px;
+  height:46px;
+
+  border-radius:16px;
+
+  display:grid;
+  place-items:center;
+
+  font-size:23px;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--primary),
+      var(--cyan)
+    );
+
+  box-shadow:
+    0 12px 30px
+    rgba(103,87,245,.28);
+}
+
+.brand-name{
+  font-weight:950;
+  font-size:18px;
+  letter-spacing:-.03em;
+}
+
+.brand-caption{
+  margin-top:1px;
+
+  font-size:9px;
+  font-weight:800;
+
+  letter-spacing:.15em;
+
+  color:var(--muted);
+}
+
+/* NAVIGATION */
+
+.nav-shell{
+  flex:1;
+
+  display:flex;
+  justify-content:center;
+}
+
+.nav{
+  display:flex;
+  align-items:center;
+  gap:5px;
+
+  padding:5px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:19px;
+
+  background:
+    var(--surface);
+
+  backdrop-filter:blur(18px);
+
+  box-shadow:
+    var(--shadow-small);
+}
+
+.nav button{
+  position:relative;
+
+  border:0;
+
+  background:transparent;
+
+  color:var(--muted);
+
+  padding:
+    11px 15px;
+
+  min-height:43px;
+
+  border-radius:14px;
+
+  font-weight:800;
+  font-size:13px;
+
+  white-space:nowrap;
+
+  transition:
+    transform .25s ease,
+    color .25s ease,
+    background .25s ease;
+}
+
+.nav button:hover{
+  color:var(--text);
+  transform:translateY(-1px);
+}
+
+.nav button.active{
+  color:var(--text);
+
+  background:
+    var(--surface-solid);
+
+  box-shadow:
+    0 5px 18px
+    rgba(0,0,0,.06);
+}
+
+.nav button.active::after{
+  content:"";
+
+  position:absolute;
+
+  left:25%;
+  right:25%;
+  bottom:4px;
+
+  height:2px;
+
+  border-radius:99px;
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--primary),
+      var(--cyan)
+    );
+}
+
+/* ACTIONS */
+
+.top-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.icon-button{
+  width:44px;
+  height:44px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:15px;
+
+  background:var(--surface-solid);
+
+  color:var(--text);
+
+  transition:
+    transform .25s ease,
+    box-shadow .25s ease;
+}
+
+.icon-button:hover{
+  transform:
+    translateY(-2px)
+    scale(1.03);
+
+  box-shadow:
+    var(--shadow-small);
+}
+
+/* =========================
+   MOBILE NAV
+========================= */
+
+.mobile-nav{
+  display:none;
+}
+
+/* =========================
+   MAIN
+========================= */
+
+main{
+  max-width:1450px;
+  margin:auto;
+
+  padding:
+    35px 20px 90px;
+}
+
+.page{
+  display:none;
+
+  animation:
+    pageEnter .45s
+    cubic-bezier(.2,.8,.2,1);
+}
+
+.page.active{
+  display:block;
+}
+
+@keyframes pageEnter{
+  from{
+    opacity:0;
+    transform:
+      translateY(16px)
+      scale(.995);
+  }
+
+  to{
+    opacity:1;
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+/* =========================
+   HERO
+========================= */
+
+.hero{
+  display:grid;
+
+  grid-template-columns:
+    minmax(0,1.55fr)
+    minmax(310px,.7fr);
+
+  gap:18px;
+}
+
+.hero-card{
+  position:relative;
+
+  min-height:500px;
+
+  overflow:hidden;
+
+  padding:
+    clamp(32px,5vw,65px);
+
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+
+  border-radius:36px;
+
+  color:#fff;
+
+  background:
+    radial-gradient(
+      circle at 80% 20%,
+      rgba(117,105,255,.42),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 20% 100%,
+      rgba(53,199,232,.20),
+      transparent 32%
+    ),
+    linear-gradient(
+      135deg,
+      #111827,
+      #211b3c
+    );
+
+  box-shadow:
+    0 35px 100px
+    rgba(23,27,48,.20);
+}
+
+.hero-card::before{
+  content:"";
+
+  position:absolute;
+
+  width:420px;
+  height:420px;
+
+  right:-150px;
+  bottom:-160px;
+
+  border-radius:50%;
+
+  border:
+    1px solid
+    rgba(255,255,255,.12);
+
+  box-shadow:
+    0 0 0 70px
+      rgba(255,255,255,.025),
+    0 0 0 140px
+      rgba(255,255,255,.018);
+
+  animation:
+    orbit 12s linear infinite;
+}
+
+@keyframes orbit{
+  to{
+    transform:rotate(360deg);
+  }
+}
+
+.hero-globe{
+  position:absolute;
+
+  right:35px;
+  top:30px;
+
+  font-size:
+    clamp(100px,14vw,190px);
+
+  opacity:.075;
+
+  animation:
+    globeFloat 7s ease-in-out infinite;
+}
+
+@keyframes globeFloat{
+  50%{
+    transform:
+      translateY(-16px)
+      rotate(4deg);
+  }
+}
+
+.eyebrow{
+  position:relative;
+  z-index:2;
+
+  width:max-content;
+
+  padding:
+    8px 12px;
+
+  border-radius:99px;
+
+  background:
+    rgba(255,255,255,.08);
+
+  border:
+    1px solid
+    rgba(255,255,255,.12);
+
+  font-size:10px;
+  font-weight:900;
+
+  letter-spacing:.13em;
+}
+
+.hero-card h1{
+  position:relative;
+  z-index:2;
+
+  max-width:850px;
+
+  margin:
+    23px 0 17px;
+
+  font-size:
+    clamp(48px,6.5vw,86px);
+
+  line-height:.94;
+
+  letter-spacing:-.065em;
+}
+
+.hero-card p{
+  position:relative;
+  z-index:2;
+
+  max-width:680px;
+
+  margin:0;
+
+  color:#cbd5e1;
+
+  font-size:
+    clamp(16px,2vw,19px);
+
+  line-height:1.65;
+}
+
+.hero-buttons{
+  position:relative;
+  z-index:2;
+
+  display:flex;
+  flex-wrap:wrap;
+
+  gap:10px;
+
+  margin-top:30px;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+.primary{
+  border:0;
+
+  padding:
+    14px 19px;
+
+  border-radius:15px;
+
+  color:#fff;
+
+  font-weight:900;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--primary),
+      var(--primary2)
+    );
+
+  box-shadow:
+    0 13px 35px
+    rgba(103,87,245,.28);
+
+  transition:
+    transform .25s ease,
+    box-shadow .25s ease;
+}
+
+.primary:hover{
+  transform:translateY(-3px);
+
+  box-shadow:
+    0 18px 45px
+    rgba(103,87,245,.38);
+}
+
+.secondary{
+  border:
+    1px solid var(--line);
+
+  padding:
+    14px 19px;
+
+  border-radius:15px;
+
+  color:var(--text);
+
+  font-weight:850;
+
+  background:
+    var(--surface-solid);
+
+  transition:
+    transform .25s ease,
+    box-shadow .25s ease;
+}
+
+.secondary:hover{
+  transform:translateY(-2px);
+
+  box-shadow:
+    var(--shadow-small);
+}
+
+/* =========================
+   STAT PANEL
+========================= */
+
+.stats{
+  display:grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap:12px;
+}
+
+.stat-card{
+  min-height:244px;
+
+  padding:25px;
+
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:27px;
+
+  background:
+    var(--surface);
+
+  backdrop-filter:
+    blur(20px);
+
+  box-shadow:
+    var(--shadow-small);
+
+  transition:
+    transform .3s ease,
+    box-shadow .3s ease;
+}
+
+.stat-card:hover{
+  transform:translateY(-5px);
+  box-shadow:var(--shadow);
+}
+
+.stat-icon{
+  margin-bottom:auto;
+
+  font-size:31px;
+}
+
+.stat-value{
+  font-size:43px;
+
+  font-weight:950;
+
+  letter-spacing:-.06em;
+}
+
+.stat-label{
+  color:var(--muted);
+
+  font-size:13px;
+  font-weight:700;
+}
+
+/* =========================
+   SECTION
+========================= */
+
+.section-heading{
+  margin:
+    48px 0 20px;
+
+  display:flex;
+
+  justify-content:space-between;
+  align-items:end;
+
+  gap:20px;
+}
+
+.section-heading h2{
+  margin:0;
+
+  font-size:
+    clamp(27px,4vw,36px);
+
+  letter-spacing:-.045em;
+}
+
+.section-heading p{
+  margin:
+    6px 0 0;
+
+  color:var(--muted);
+}
+
+/* =========================
+   FEATURE GRID
+========================= */
+
+.features{
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,1fr);
+
+  gap:15px;
+}
+
+.feature{
+  padding:27px;
+
+  min-height:220px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:25px;
+
+  background:var(--surface);
+
+  box-shadow:var(--shadow-small);
+
+  cursor:pointer;
+
+  transition:
+    transform .3s ease,
+    box-shadow .3s ease,
+    border-color .3s ease;
+}
+
+.feature:hover{
+  transform:translateY(-7px);
+
+  border-color:
+    rgba(103,87,245,.3);
+
+  box-shadow:var(--shadow);
+}
+
+.feature-icon{
+  width:53px;
+  height:53px;
+
+  display:grid;
+  place-items:center;
+
+  border-radius:17px;
+
+  background:
+    rgba(103,87,245,.10);
+
+  font-size:27px;
+}
+
+.feature h3{
+  margin:
+    20px 0 8px;
+
+  font-size:20px;
+}
+
+.feature p{
+  margin:0;
+
+  color:var(--muted);
+
+  line-height:1.6;
+}
+
+/* =========================
+   COUNTRY PAGE
+========================= */
+
+.page-title{
+  max-width:850px;
+}
+
+.page-title h1{
+  margin:0;
+
+  font-size:
+    clamp(38px,6vw,64px);
+
+  line-height:.98;
+
+  letter-spacing:-.06em;
+}
+
+.page-title p{
+  color:var(--muted);
+
+  font-size:17px;
+
+  line-height:1.6;
+}
+
+.toolbar{
+  margin:
+    28px 0 20px;
+
+  padding:10px;
+
+  display:flex;
+  flex-wrap:wrap;
+
+  gap:9px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:20px;
+
+  background:var(--surface);
+
+  box-shadow:var(--shadow-small);
+
+  backdrop-filter:blur(20px);
+}
+
+.search{
+  flex:1;
+
+  min-width:240px;
+
+  padding:
+    13px 16px;
+
+  border:
+    1px solid transparent;
+
+  border-radius:14px;
+
+  background:
+    rgba(127,127,127,.07);
+
+  color:var(--text);
+
+  outline:none;
+}
+
+.search:focus{
+  border-color:
+    rgba(103,87,245,.4);
+}
+
+.filter{
+  min-width:160px;
+
+  padding:
+    13px 15px;
+
+  border:
+    1px solid transparent;
+
+  border-radius:14px;
+
+  background:
+    rgba(127,127,127,.07);
+
+  color:var(--text);
+}
+
+/* =========================
+   COUNTRY GRID
+========================= */
+
+.country-grid{
+  display:grid;
+
+  grid-template-columns:
+    repeat(
+      auto-fill,
+      minmax(275px,1fr)
+    );
+
+  gap:14px;
+}
+
+.country{
+  position:relative;
+
+  overflow:hidden;
+
+  padding:20px;
+
+  min-height:255px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:23px;
+
+  background:var(--surface);
+
+  box-shadow:var(--shadow-small);
+
+  cursor:pointer;
+
+  transition:
+    transform .3s cubic-bezier(.2,.8,.2,1),
+    box-shadow .3s ease,
+    border-color .3s ease;
+}
+
+.country:hover{
+  transform:
+    translateY(-6px);
+
+  box-shadow:var(--shadow);
+
+  border-color:
+    rgba(103,87,245,.30);
+}
+
+.country-top{
+  display:flex;
+
+  align-items:flex-start;
+
+  justify-content:space-between;
+}
+
+.country-flag{
+  font-size:57px;
+
+  line-height:1;
+
+  filter:
+    drop-shadow(
+      0 8px 12px
+      rgba(0,0,0,.10)
+    );
+}
+
+.region-badge{
+  padding:
+    6px 9px;
+
+  border-radius:99px;
+
+  background:
+    rgba(103,87,245,.09);
+
+  color:var(--muted);
+
+  font-size:10px;
+  font-weight:900;
+}
+
+.country h3{
+  margin:
+    19px 0 10px;
+
+  font-size:19px;
+}
+
+.country-info{
+  display:grid;
+  gap:6px;
+
+  color:var(--muted);
+
+  font-size:12.5px;
+  line-height:1.35;
+}
+
+.country-info strong{
+  color:var(--text);
+}
+
+/* =========================
+   DETAIL
+========================= */
+
+.detail-layout{
+  display:grid;
+
+  grid-template-columns:
+    minmax(280px,.65fr)
+    minmax(0,1.35fr);
+
+  gap:17px;
+
+  margin-top:25px;
+}
+
+.detail-visual{
+  min-height:460px;
+
+  display:grid;
+  place-items:center;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:31px;
+
+  background:
+    radial-gradient(
+      circle at 50% 45%,
+      rgba(103,87,245,.13),
+      transparent 35%
+    ),
+    var(--surface);
+
+  box-shadow:var(--shadow);
+}
+
+.detail-flag{
+  font-size:
+    clamp(130px,18vw,210px);
+
+  animation:
+    detailPop .55s
+    cubic-bezier(.2,.8,.2,1);
+}
+
+@keyframes detailPop{
+  from{
+    opacity:0;
+    transform:scale(.75);
+  }
+  to{
+    opacity:1;
+    transform:scale(1);
+  }
+}
+
+.detail-card{
+  padding:
+    clamp(25px,4vw,42px);
+
+  border:
+    1px solid var(--line);
+
+  border-radius:31px;
+
+  background:var(--surface);
+
+  box-shadow:var(--shadow);
+}
+
+.detail-card h1{
+  margin:
+    15px 0 6px;
+
+  font-size:
+    clamp(38px,5vw,62px);
+
+  line-height:.95;
+
+  letter-spacing:-.06em;
+}
+
+.detail-official{
+  color:var(--muted);
+
+  margin-bottom:27px;
+}
+
+.detail-grid{
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,1fr);
+
+  gap:10px;
+}
+
+.detail-item{
+  padding:17px;
+
+  border-radius:17px;
+
+  background:
+    rgba(127,127,127,.07);
+}
+
+.detail-item small{
+  display:block;
+
+  color:var(--muted);
+
+  margin-bottom:5px;
+
+  font-size:11px;
+  font-weight:700;
+}
+
+.detail-item strong{
+  line-height:1.4;
+}
+
+/* =========================
+   QUIZ
+========================= */
+
+.quiz-wrap{
+  max-width:900px;
+  margin:auto;
+}
+
+.quiz-top{
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  gap:15px;
+}
+
+.quiz-title h1{
+  margin:0;
+
+  font-size:
+    clamp(37px,6vw,58px);
+
+  letter-spacing:-.06em;
+}
+
+.quiz-title p{
+  margin:
+    8px 0 0;
+
+  color:var(--muted);
+}
+
+.quiz-score{
+  padding:
+    10px 14px;
+
+  border-radius:14px;
+
+  background:var(--surface-solid);
+
+  border:
+    1px solid var(--line);
+
+  font-weight:900;
+}
+
+.progress-track{
+  height:7px;
+
+  margin:
+    25px 0 17px;
+
+  overflow:hidden;
+
+  border-radius:99px;
+
+  background:
+    rgba(127,127,127,.12);
+}
+
+.progress-value{
+  height:100%;
+
+  width:0%;
+
+  border-radius:99px;
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--primary),
+      var(--cyan)
+    );
+
+  transition:width .45s ease;
+}
+
+.quiz-card{
+  padding:
+    clamp(22px,5vw,45px);
+
+  text-align:center;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:31px;
+
+  background:var(--surface);
+
+  box-shadow:var(--shadow);
+}
+
+.quiz-visual{
+  min-height:170px;
+
+  display:grid;
+  place-items:center;
+
+  font-size:
+    clamp(85px,15vw,135px);
+
+  margin-bottom:18px;
+
+  animation:
+    questionIn .45s
+    cubic-bezier(.2,.8,.2,1);
+}
+
+@keyframes questionIn{
+  from{
+    opacity:0;
+    transform:
+      scale(.8)
+      translateY(12px);
+  }
+
+  to{
+    opacity:1;
+    transform:
+      scale(1)
+      translateY(0);
+  }
+}
+
+.quiz-question{
+  max-width:700px;
+  margin:
+    0 auto 25px;
+
+  font-size:
+    clamp(20px,3vw,28px);
+
+  font-weight:900;
+
+  line-height:1.25;
+}
+
+.answers{
+  display:grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap:11px;
+}
+
+.answer{
+  min-height:68px;
+
+  padding:
+    14px 17px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:17px;
+
+  background:
+    rgba(127,127,127,.06);
+
+  color:var(--text);
+
+  font-weight:800;
+
+  text-align:left;
+
+  transition:
+    transform .2s ease,
+    border-color .2s ease,
+    background .2s ease;
+}
+
+.answer:hover:not(:disabled){
+  transform:translateY(-2px);
+
+  border-color:
+    rgba(103,87,245,.45);
+
+  background:
+    var(--surface-solid);
+}
+
+.answer.correct{
+  background:
+    rgba(24,185,130,.12);
+
+  border-color:
+    var(--green);
+}
+
+.answer.wrong{
+  background:
+    rgba(237,93,104,.12);
+
+  border-color:
+    var(--red);
+}
+
+.answer:disabled{
+  cursor:default;
+}
+
+.feedback{
+  min-height:28px;
+
+  margin-top:18px;
+
+  font-weight:900;
+}
+
+.quiz-result{
+  padding:45px 20px;
+
+  text-align:center;
+}
+
+.result-emoji{
+  font-size:70px;
+}
+
+.result-score{
+  margin:
+    10px 0;
+
+  font-size:90px;
+
+  font-weight:950;
+
+  letter-spacing:-.08em;
+}
+
+/* =========================
+   LOADING
+========================= */
+
+.loading{
+  grid-column:1/-1;
+
+  min-height:300px;
+
+  display:grid;
+  place-items:center;
+
+  color:var(--muted);
+}
+
+.spinner{
+  width:35px;
+  height:35px;
+
+  border:
+    3px solid
+    rgba(103,87,245,.15);
+
+  border-top-color:
+    var(--primary);
+
+  border-radius:50%;
+
+  animation:
+    spin .7s linear infinite;
+}
+
+@keyframes spin{
+  to{
+    transform:rotate(360deg);
+  }
+}
+
+/* =========================
+   TOAST
+========================= */
+
+.toast{
+  position:fixed;
+
+  left:50%;
+  bottom:25px;
+
+  z-index:2000;
+
+  transform:
+    translate(-50%,20px);
+
+  opacity:0;
+
+  pointer-events:none;
+
+  padding:
+    13px 18px;
+
+  border-radius:15px;
+
+  color:#fff;
+
+  background:#151a27;
+
+  box-shadow:
+    0 18px 50px
+    rgba(0,0,0,.25);
+
+  font-weight:800;
+
+  transition:
+    opacity .3s ease,
+    transform .3s ease;
+}
+
+.toast.show{
+  opacity:1;
+
+  transform:
+    translate(-50%,0);
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:1100px){
+
+  .hero{
+    grid-template-columns:1fr;
+  }
+
+  .stats{
+    grid-template-columns:
+      repeat(4,1fr);
+  }
+
+  .stat-card{
+    min-height:170px;
+  }
+
+  .nav button{
+    padding:
+      10px 11px;
+
+    font-size:12px;
+  }
+}
+
+@media(max-width:800px){
+
+  .topbar{
+    padding:
+      10px 12px;
+  }
+
+  .topbar-inner{
+    gap:10px;
+  }
+
+  .nav-shell{
+    display:none;
+  }
+
+  .brand-caption{
+    display:none;
+  }
+
+  .brand-name{
+    font-size:16px;
+  }
+
+  .brand-mark{
+    width:43px;
+    height:43px;
+  }
+
+  .mobile-nav{
+    position:fixed;
+
+    display:flex;
+
+    left:10px;
+    right:10px;
+    bottom:
+      calc(10px + env(safe-area-inset-bottom));
+
+    z-index:1500;
+
+    padding:7px;
+
+    justify-content:space-around;
+
+    border:
+      1px solid var(--line);
+
+    border-radius:21px;
+
+    background:
+      color-mix(
+        in srgb,
+        var(--surface-solid) 86%,
+        transparent
+      );
+
+    backdrop-filter:
+      blur(24px)
+      saturate(160%);
+
+    box-shadow:
+      0 20px 55px
+      rgba(0,0,0,.16);
+  }
+
+  .mobile-nav button{
+    flex:1;
+
+    border:0;
+
+    background:transparent;
+
+    color:var(--muted);
+
+    min-height:52px;
+
+    border-radius:16px;
+
+    font-size:10px;
+    font-weight:850;
+
+    transition:.25s;
+  }
+
+  .mobile-nav button span{
+    display:block;
+
+    font-size:20px;
+
+    margin-bottom:2px;
+  }
+
+  .mobile-nav button.active{
+    color:var(--text);
+
+    background:
+      rgba(103,87,245,.10);
+  }
+
+  main{
+    padding:
+      25px 13px 110px;
+  }
+
+  .hero-card{
+    min-height:530px;
+
+    padding:
+      30px 25px;
+
+    border-radius:28px;
+  }
+
+  .hero-card h1{
+    font-size:
+      clamp(45px,14vw,67px);
+  }
+
+  .stats{
+    grid-template-columns:
+      1fr 1fr;
+  }
+
+  .stat-card{
+    min-height:150px;
+    padding:20px;
+  }
+
+  .stat-value{
+    font-size:35px;
+  }
+
+  .features{
+    grid-template-columns:1fr;
+  }
+
+  .detail-layout{
+    grid-template-columns:1fr;
+  }
+
+  .detail-visual{
+    min-height:300px;
+  }
+
+  .detail-grid{
+    grid-template-columns:1fr;
+  }
+
+  .answers{
+    grid-template-columns:1fr;
+  }
+
+  .quiz-top{
+    align-items:flex-start;
+  }
+
+}
+
+@media(max-width:480px){
+
+  .top-actions{
+    margin-left:auto;
+  }
+
+  .icon-button{
+    width:42px;
+    height:42px;
+  }
+
+  .hero-card{
+    min-height:560px;
+  }
+
+  .hero-buttons{
+    flex-direction:column;
+  }
+
+  .hero-buttons button{
+    width:100%;
+  }
+
+  .toolbar{
+    padding:8px;
+  }
+
+  .search,
+  .filter{
+    width:100%;
+    min-width:0;
+  }
+
+  .country-grid{
+    grid-template-columns:1fr;
+  }
+
+  .country{
+    min-height:230px;
+  }
+
+  .quiz-card{
+    border-radius:25px;
+  }
+
+  .quiz-visual{
+    min-height:130px;
+  }
+
+  .result-score{
+    font-size:72px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+
+  <div class="topbar-inner">
+
+    <a class="brand" href="#" onclick="showPage('home');return false">
+
+      <div class="brand-mark">
+        🌍
+      </div>
+
+      <div>
+        <div class="brand-name">
+          World School
+        </div>
+
+        <div class="brand-caption">
+          POZNAJ ŚWIAT
+        </div>
+      </div>
+
+    </a>
+
+
+    <div class="nav-shell">
+
+      <nav class="nav">
+
+        <button
+          class="active"
+          data-page="home">
+          🏠 Start
+        </button>
+
+        <button
+          data-page="countries">
+          🌎 Państwa
+        </button>
+
+        <button
+          data-page="flagQuiz">
+          🏳️ Flag Quiz
+        </button>
+
+        <button
+          data-page="capitalQuiz">
+          🏛️ Capital Quiz
+        </button>
+
+        <button
+          data-page="geoQuiz">
+          🧠 Geography
+        </button>
+
+      </nav>
+
+    </div>
+
+
+    <div class="top-actions">
+
+      <button
+        id="themeButton"
+        class="icon-button"
+        aria-label="Zmień motyw">
+        🌙
+      </button>
+
+    </div>
+
+  </div>
+
+</header>
+
+
+<!-- MOBILE NAV -->
+
+<nav class="mobile-nav">
+
+  <button
+    class="active"
+    data-page="home">
+
+    <span>🏠</span>
+    Start
+
+  </button>
+
+  <button
+    data-page="countries">
+
+    <span>🌎</span>
+    Państwa
+
+  </button>
+
+  <button
+    data-page="flagQuiz">
+
+    <span>🏳️</span>
+    Flagi
+
+  </button>
+
+  <button
+    data-page="capitalQuiz">
+
+    <span>🏛️</span>
+    Stolice
+
+  </button>
+
+  <button
+    data-page="geoQuiz">
+
+    <span>🧠</span>
+    Quiz
+
+  </button>
+
+</nav>
+
+
+<main>
+
+<!-- =========================
+     HOME
+========================= -->
+
+<section
+  id="home"
+  class="page active">
+
+  <div class="hero">
+
+    <div class="hero-card">
+
+      <div class="hero-globe">
+        🌍
+      </div>
+
+      <span class="eyebrow">
+        ✦ INTERAKTYWNA GEOGRAFIA
+      </span>
+
+      <h1>
+        Poznaj świat.<br>
+        Zapamiętaj więcej.
+      </h1>
+
+      <p>
+        Odkrywaj państwa, flagi, stolice,
+        języki i waluty. Ucz się poprzez
+        krótkie i angażujące quizy.
+      </p>
+
+      <div class="hero-buttons">
+
+        <button
+          class="primary"
+          onclick="showPage('countries')">
+          Odkrywaj państwa →
+        </button>
+
+        <button
+          class="secondary"
+          onclick="showPage('flagQuiz')">
+          Zagraj teraz
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <div class="stats">
+
+      <div class="stat-card">
+
+        <div class="stat-icon">
+          🌍
+        </div>
+
+        <div
+          id="countryStat"
+          class="stat-value">
+          —
+        </div>
+
+        <div class="stat-label">
+          państw w bazie
+        </div>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <div class="stat-icon">
+          🧠
+        </div>
+
+        <div class="stat-value">
+          3
+        </div>
+
+        <div class="stat-label">
+          tryby quizu
+        </div>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <div class="stat-icon">
+          ⚡
+        </div>
+
+        <div
+          id="bestStat"
+          class="stat-value">
+          0%
+        </div>
+
+        <div class="stat-label">
+          najlepszy wynik
+        </div>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <div class="stat-icon">
+          🔥
+        </div>
+
+        <div
+          id="streakStat"
+          class="stat-value">
+          0
+        </div>
+
+        <div class="stat-label">
+          seria poprawnych
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="section-heading">
+
+    <div>
+
+      <h2>
+        Wybierz swoją drogę
+      </h2>
+
+      <p>
+        Nauka, odkrywanie albo szybki test wiedzy.
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <div class="features">
+
+    <article
+      class="feature"
+      onclick="showPage('countries')">
+
+      <div class="feature-icon">
+        🌍
+      </div>
+
+      <h3>
+        World School
+      </h3>
+
+      <p>
+        Przeglądaj państwa świata i poznawaj
+        ich stolice, języki, waluty,
+        populację oraz powierzchnię.
+      </p>
+
+    </article>
+
+
+    <article
+      class="feature"
+      onclick="showPage('flagQuiz')">
+
+      <div class="feature-icon">
+        🏳️
+      </div>
+
+      <h3>
+        Flag Quiz
+      </h3>
+
+      <p>
+        Zobacz flagę i wybierz właściwe
+        państwo spośród czterech odpowiedzi.
+      </p>
+
+    </article>
+
+
+    <article
+      class="feature"
+      onclick="showPage('capitalQuiz')">
+
+      <div class="feature-icon">
+        🏛️
+      </div>
+
+      <h3>
+        Capital Quiz
+      </h3>
+
+      <p>
+        Sprawdź, jak dobrze znasz stolice
+        państw z całego świata.
+      </p>
+
+    </article>
+
+  </div>
+
+</section>
+
+
+<!-- =========================
+     COUNTRIES
+========================= -->
+
+<section
+  id="countries"
+  class="page">
+
+  <div class="page-title">
+
+    <h1>
+      Państwa świata.
+    </h1>
+
+    <p>
+      Znajdź dowolne państwo i odkryj
+      najważniejsze informacje geograficzne.
+    </p>
+
+  </div>
+
+
+  <div class="toolbar">
+
+    <input
+      id="search"
+      class="search"
+      type="search"
+      placeholder="🔎  Szukaj kraju, stolicy, języka lub waluty…"
+      autocomplete="off">
+
+
+    <select
+      id="region"
+      class="filter">
+
+      <option value="">
+        Wszystkie regiony
+      </option>
+
+    </select>
+
+
+    <button
+      class="secondary"
+      onclick="resetFilters()">
+      Reset
+    </button>
+
+  </div>
+
+
+  <div
+    id="countryGrid"
+    class="country-grid">
+
+    <div class="loading">
+
+      <div class="spinner"></div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =========================
+     DETAIL
+========================= -->
+
+<section
+  id="detail"
+  class="page">
+
+  <div id="detailContent"></div>
+
+</section>
+
+
+<!-- =========================
+     FLAG QUIZ
+========================= -->
+
+<section
+  id="flagQuiz"
+  class="page">
+
+  <div class="quiz-wrap">
+
+    <div class="quiz-top">
+
+      <div class="quiz-title">
+
+        <h1>
+          Flag Quiz
+        </h1>
+
+        <p>
+          Rozpoznaj państwo po jego fladze.
+        </p>
+
+      </div>
+
+      <div
+        id="flagScore"
+        class="quiz-score">
+        0 pkt
+      </div>
+
+    </div>
+
+    <div id="flagQuizBox"></div>
+
+  </div>
+
+</section>
+
+
+<!-- =========================
+     CAPITAL QUIZ
+========================= -->
+
+<section
+  id="capitalQuiz"
+  class="page">
+
+  <div class="quiz-wrap">
+
+    <div class="quiz-top">
+
+      <div class="quiz-title">
+
+        <h1>
+          Capital Quiz
+        </h1>
+
+        <p>
+          Dopasuj stolicę do państwa.
+        </p>
+
+      </div>
+
+      <div
+        id="capitalScore"
+        class="quiz-score">
+        0 pkt
+      </div>
+
+    </div>
+
+    <div id="capitalQuizBox"></div>
+
+  </div>
+
+</section>
+
+
+<!-- =========================
+     GEOGRAPHY QUIZ
+========================= -->
+
+<section
+  id="geoQuiz"
+  class="page">
+
+  <div class="quiz-wrap">
+
+    <div class="quiz-top">
+
+      <div class="quiz-title">
+
+        <h1>
+          Geography Quiz
+        </h1>
+
+        <p>
+          Mieszanka pytań z całego świata.
+        </p>
+
+      </div>
+
+      <div
+        id="geoScore"
+        class="quiz-score">
+        0 pkt
+      </div>
+
+    </div>
+
+    <div id="geoQuizBox"></div>
+
+  </div>
+
+</section>
+
+</main>
+
+
+<div
+  id="toast"
+  class="toast">
+</div>
+
+
+<script>
+
+/* =====================================================
+   CLOUDFLARE WORKER
+   =====================================================
+
+   Po wdrożeniu Workera wklej jego adres tutaj.
+
+   PRZYKŁAD:
+
+   const API =
+     "https://world-school-api.twojanazwa.workers.dev/api/countries";
+
+*/
+
+const API =
+  "https://world-school-api.papierzowyroblox.workers.dev";
+
+
+let countries = [];
+
+let quizState = {
+  type:null,
+  score:0,
+  question:0,
+  streak:0,
+  answered:false,
+  current:null
+};
+
+
+/* =====================================================
+   HELPERS
+===================================================== */
+
+const $ = id =>
+  document.getElementById(id);
+
+
+function escapeHTML(value){
+
+  return String(value ?? "")
+    .replace(/[&<>"']/g, char => ({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#039;"
+    })[char]);
+
+}
+
+
+function shuffle(array){
+
+  return [...array]
+    .sort(
+      () =>
+        Math.random() - .5
+    );
+
+}
+
+
+function values(object){
+
+  return object
+    ? Object.values(object)
+    : [];
+
+}
+
+
+function getFlag(country){
+
+  return (
+    country?.flags?.emoji ||
+    "🏳️"
+  );
+
+}
+
+
+function getCapital(country){
+
+  return (
+    country?.capital?.[0] ||
+    "Brak"
+  );
+
+}
+
+
+function getLanguages(country){
+
+  return (
+    values(
+      country?.languages
+    ).join(", ") ||
+    "Brak danych"
+  );
+
+}
+
+
+function getCurrency(country){
+
+  const currencies =
+    values(
+      country?.currencies
+    );
+
+  if(!currencies.length)
+    return "Brak danych";
+
+  const currency =
+    currencies[0];
+
+  return (
+    currency.symbol
+      ? currency.symbol + " "
+      : ""
+  ) +
+  (
+    currency.name ||
+    ""
+  );
+
+}
+
+
+function formatNumber(value){
+
+  if(
+    value === undefined ||
+    value === null
+  )
+    return "—";
+
+  return new Intl.NumberFormat(
+    "pl-PL"
+  ).format(value);
+
+}
+
+
+function toast(message){
+
+  const element =
+    $("toast");
+
+  element.textContent =
+    message;
+
+  element.classList.add(
+    "show"
+  );
+
+  clearTimeout(
+    toast.timer
+  );
+
+  toast.timer =
+    setTimeout(
+      () =>
+        element.classList.remove(
+          "show"
+        ),
+      2200
+    );
+
+}
+
+
+/* =====================================================
+   THEME
+===================================================== */
+
+function setTheme(theme){
+
+  document.documentElement
+    .dataset
+    .theme = theme;
+
+  localStorage.setItem(
+    "worldSchoolTheme",
+    theme
+  );
+
+  $("themeButton")
+    .textContent =
+      theme === "dark"
+        ? "☀️"
+        : "🌙";
+
+}
+
+
+const savedTheme =
+  localStorage.getItem(
+    "worldSchoolTheme"
+  ) ||
+  (
+    window.matchMedia &&
+    window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches
+      ? "dark"
+      : "light"
+  );
+
+
+setTheme(savedTheme);
+
+
+$("themeButton").onclick = () => {
+
+  const current =
+    document.documentElement
+      .dataset
+      .theme;
+
+  setTheme(
+    current === "dark"
+      ? "light"
+      : "dark"
+  );
+
+};
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+
+function updateNavigation(page){
+
+  document
+    .querySelectorAll(
+      "[data-page]"
+    )
+    .forEach(button => {
+
+      button.classList.toggle(
+        "active",
+        button.dataset.page === page
+      );
+
+    });
+
+}
+
+
+function showPage(page){
+
+  document
+    .querySelectorAll(".page")
+    .forEach(element =>
+      element.classList.remove(
+        "active"
+      )
+    );
+
+
+  const target =
+    $(page);
+
+  if(!target)
+    return;
+
+
+  target.classList.add(
+    "active"
+  );
+
+
+  updateNavigation(page);
+
+
+  if(
+    page === "flagQuiz"
+  ){
+
+    startQuiz("flag");
+
+  }
+
+
+  if(
+    page === "capitalQuiz"
+  ){
+
+    startQuiz("capital");
+
+  }
+
+
+  if(
+    page === "geoQuiz"
+  ){
+
+    startQuiz("geo");
+
+  }
+
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+
+}
+
+
+document
+  .querySelectorAll(
+    "[data-page]"
+  )
+  .forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () =>
+        showPage(
+          button.dataset.page
+        )
+    );
+
+  });
+
+
+/* =====================================================
+   LOAD DATA
+===================================================== */
+
+async function loadCountries(){
+
+  try{
+
+    const response =
+      await fetch(
+        API,
+        {
+          headers:{
+            "Accept":
+              "application/json"
+          }
+        }
+      );
+
+
+    if(!response.ok)
+      throw new Error(
+        "HTTP " +
+        response.status
+      );
+
+
+    countries =
+      await response.json();
+
+
+    countries =
+      countries
+        .filter(
+          country =>
+            country?.name?.common
+        )
+        .sort(
+          (a,b) =>
+            a.name.common.localeCompare(
+              b.name.common,
+              "pl"
+            )
+        );
+
+
+    $("countryStat")
+      .textContent =
+      countries.length;
+
+
+    buildRegions();
+
+    renderCountries();
+
+    updateBest();
+
+    toast(
+      "Świat jest gotowy do odkrywania 🌍"
+    );
+
+  }
+  catch(error){
+
+    console.error(error);
+
+    $("countryGrid")
+      .innerHTML = `
+
+        <div
+          class="loading"
+          style="display:block;text-align:center">
+
+          <h3>
+            Nie udało się pobrać danych.
+          </h3>
+
+          <p>
+            Sprawdź adres Cloudflare Worker
+            w zmiennej <b>API</b>.
+          </p>
+
+        </div>
+
+      `;
+
+  }
+
+}
+
+
+/* =====================================================
+   REGIONS
+===================================================== */
+
+function buildRegions(){
+
+  const regions =
+    [
+      ...new Set(
+        countries
+          .map(
+            country =>
+              country.region
+          )
+          .filter(Boolean)
+      )
+    ]
+    .sort();
+
+
+  $("region").innerHTML =
+    `
+      <option value="">
+        Wszystkie regiony
+      </option>
+    ` +
+
+    regions
+      .map(
+        region =>
+          `
+            <option
+              value="${escapeHTML(region)}">
+              ${escapeHTML(region)}
+            </option>
+          `
+      )
+      .join("");
+
+}
+
+
+/* =====================================================
+   COUNTRY LIST
+===================================================== */
+
+function renderCountries(){
+
+  const query =
+    $("search")
+      .value
+      .toLowerCase()
+      .trim();
+
+
+  const selectedRegion =
+    $("region").value;
+
+
+  const result =
+    countries.filter(country => {
+
+      const searchable = [
+
+        country.name?.common,
+
+        country.name?.official,
+
+        getCapital(country),
+
+        getLanguages(country),
+
+        getCurrency(country),
+
+        country.region,
+
+        country.subregion
+
+      ]
+      .join(" ")
+      .toLowerCase();
+
+
+      return (
+
+        (
+          !selectedRegion ||
+          country.region ===
+          selectedRegion
+        )
+
+        &&
+
+        (
+          !query ||
+          searchable.includes(query)
+        )
+
+      );
+
+    });
+
+
+  if(!result.length){
+
+    $("countryGrid")
+      .innerHTML = `
+
+        <div class="loading">
+
+          <div>
+            <h3>
+              Niczego nie znaleziono.
+            </h3>
+
+            <p>
+              Spróbuj innej nazwy.
+            </p>
+          </div>
+
+        </div>
+
+      `;
+
+    return;
+
+  }
+
+
+  $("countryGrid")
+    .innerHTML =
+    result
+      .map(
+        country => {
+
+          const code =
+            escapeHTML(
+              country.cca2 || ""
+            );
+
+
+          return `
+
+            <article
+              class="country"
+              onclick="openCountry('${code}')">
+
+              <div
+                class="country-top">
+
+                <div
+                  class="country-flag">
+
+                  ${getFlag(country)}
+
+                </div>
+
+                <span
+                  class="region-badge">
+
+                  ${escapeHTML(
+                    country.region ||
+                    "Świat"
+                  )}
+
+                </span>
+
+              </div>
+
+
+              <h3>
+                ${escapeHTML(
+                  country.name.common
+                )}
+              </h3>
+
+
+              <div
+                class="country-info">
+
+                <div>
+                  🏛️
+                  <strong>
+                    Stolica:
+                  </strong>
+                  ${escapeHTML(
+                    getCapital(country)
+                  )}
+                </div>
+
+                <div>
+                  🗣️
+                  <strong>
+                    Języki:
+                  </strong>
+                  ${escapeHTML(
+                    getLanguages(country)
+                  )}
+                </div>
+
+                <div>
+                  💰
+                  <strong>
+                    Waluta:
+                  </strong>
+                  ${escapeHTML(
+                    getCurrency(country)
+                  )}
+                </div>
+
+                <div>
+                  👥
+                  <strong>
+                    Ludność:
+                  </strong>
+                  ${formatNumber(
+                    country.population
+                  )}
+                </div>
+
+              </div>
+
+            </article>
+
+          `;
+
+        }
+      )
+      .join("");
+
+}
+
+
+$("search")
+  .addEventListener(
+    "input",
+    renderCountries
+  );
+
+
+$("region")
+  .addEventListener(
+    "change",
+    renderCountries
+  );
+
+
+function resetFilters(){
+
+  $("search").value = "";
+
+  $("region").value = "";
+
+  renderCountries();
+
+}
+
+
+/* =====================================================
+   COUNTRY DETAIL
+===================================================== */
+
+function openCountry(code){
+
+  const country =
+    countries.find(
+      item =>
+        item.cca2 === code
+    );
+
+
+  if(!country)
+    return;
+
+
+  $("detailContent")
+    .innerHTML = `
+
+      <button
+        class="secondary"
+        onclick="showPage('countries')">
+
+        ← Wróć do państw
+
+      </button>
+
+
+      <div
+        class="detail-layout">
+
+        <div
+          class="detail-visual">
+
+          <div
+            class="detail-flag">
+
+            ${getFlag(country)}
+
+          </div>
+
+        </div>
+
+
+        <div
+          class="detail-card">
+
+          <span
+            class="region-badge">
+
+            ${escapeHTML(
+              country.region ||
+              "Świat"
+            )}
+
+          </span>
+
+
+          <h1>
+            ${escapeHTML(
+              country.name.common
+            )}
+          </h1>
+
+
+          <div
+            class="detail-official">
+
+            ${escapeHTML(
+              country.name.official ||
+              ""
+            )}
+
+          </div>
+
+
+          <div
+            class="detail-grid">
+
+            <div class="detail-item">
+
+              <small>
+                🏛️ Stolica
+              </small>
+
+              <strong>
+                ${escapeHTML(
+                  getCapital(country)
+                )}
+              </strong>
+
+            </div>
+
+
+            <div class="detail-item">
+
+              <small>
+                🗣️ Języki
+              </small>
+
+              <strong>
+                ${escapeHTML(
+                  getLanguages(country)
+                )}
+              </strong>
+
+            </div>
+
+
+            <div class="detail-item">
+
+              <small>
+                💰 Waluta
+              </small>
+
+              <strong>
+                ${escapeHTML(
+                  getCurrency(country)
+                )}
+              </strong>
+
+            </div>
+
+
+            <div class="detail-item">
+
+              <small>
+                👥 Populacja
+              </small>
+
+              <strong>
+                ${formatNumber(
+                  country.population
+                )}
+              </strong>
+
+            </div>
+
+
+            <div class="detail-item">
+
+              <small>
+                📐 Powierzchnia
+              </small>
+
+              <strong>
+                ${formatNumber(
+                  country.area
+                )}
+                km²
+              </strong>
+
+            </div>
+
+
+            <div class="detail-item">
+
+              <small>
+                🌎 Region
+              </small>
+
+              <strong>
+                ${escapeHTML(
+                  country.subregion ||
+                  country.region ||
+                  "—"
+                )}
+              </strong>
+
+            </div>
+
+
+            <div class="detail-item">
+
+              <small>
+                🔤 Kod państwa
+              </small>
+
+              <strong>
+                ${escapeHTML(
+                  country.cca2 ||
+                  "—"
+                )}
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    `;
+
+
+  showPage("detail");
+
+}
+
+
+/* =====================================================
+   QUIZ
+===================================================== */
+
+function quizPool(){
+
+  return countries.filter(
+    country =>
+      country?.name?.common
+  );
+
+}
+
+
+function createQuizQuestion(type){
+
+  const pool =
+    quizPool();
+
+
+  if(!pool.length)
+    return null;
+
+
+  const country =
+    pool[
+      Math.floor(
+        Math.random() *
+        pool.length
+      )
+    ];
+
+
+  const others =
+    shuffle(
+      pool.filter(
+        item =>
+          item.cca2 !==
+          country.cca2
+      )
+    )
+    .slice(0,3);
+
+
+  /* FLAG */
+
+  if(type === "flag"){
+
+    const options =
+      shuffle([
+        country,
+        ...others
+      ]);
+
+
+    return {
+
+      visual:
+        getFlag(country),
+
+      question:
+        "Które państwo ma tę flagę?",
+
+      options:
+        options.map(
+          item =>
+            item.name.common
+        ),
+
+      correct:
+        country.name.common
+
+    };
+
+  }
+
+
+  /* CAPITAL */
+
+  if(type === "capital"){
+
+    const options =
+      shuffle([
+        country,
+        ...others
+      ]);
+
+
+    return {
+
+      visual:
+        getFlag(country),
+
+      question:
+        `Jaka jest stolica państwa „${country.name.common}”?`,
+
+      options:
+        options.map(
+          item =>
+            getCapital(item)
+        ),
+
+      correct:
+        getCapital(country)
+
+    };
+
+  }
+
+
+  /* GEOGRAPHY */
+
+  const questionType =
+    shuffle([
+      "flag",
+      "capital",
+      "language",
+      "currency"
+    ])[0];
+
+
+  if(
+    questionType ===
+    "flag"
+  ){
+
+    return createQuizQuestion(
+      "flag"
+    );
+
+  }
+
+
+  if(
+    questionType ===
+    "capital"
+  ){
+
+    return createQuizQuestion(
+      "capital"
+    );
+
+  }
+
+
+  const isLanguage =
+    questionType ===
+    "language";
+
+
+  const correct =
+    isLanguage
+      ? getLanguages(country)
+      : getCurrency(country);
+
+
+  const wrong =
+    shuffle(
+      pool.filter(
+        item =>
+          item.cca2 !==
+          country.cca2
+      )
+    )
+    .slice(0,3)
+    .map(
+      item =>
+        isLanguage
+          ? getLanguages(item)
+          : getCurrency(item)
+    );
+
+
+  return {
+
+    visual:
+      getFlag(country),
+
+    question:
+      isLanguage
+        ? `Który język jest związany z państwem „${country.name.common}”?`
+        : `Jaką walutę używa państwo „${country.name.common}”?`,
+
+    options:
+      shuffle([
+        correct,
+        ...wrong
+      ]),
+
+    correct
+
+  };
+
+}
+
+
+function getQuizBox(){
+
+  return $(
+    quizState.type ===
+      "flag"
+      ? "flagQuizBox"
+
+      : quizState.type ===
+        "capital"
+        ? "capitalQuizBox"
+
+        : "geoQuizBox"
+  );
+
+}
+
+
+function getScoreElement(){
+
+  return $(
+    quizState.type ===
+      "flag"
+      ? "flagScore"
+
+      : quizState.type ===
+        "capital"
+        ? "capitalScore"
+
+        : "geoScore"
+  );
+
+}
+
+
+function startQuiz(type){
+
+  if(!countries.length)
+    return;
+
+
+  quizState = {
+
+    type,
+
+    score:0,
+
+    question:0,
+
+    streak:0,
+
+    answered:false,
+
+    current:
+      createQuizQuestion(type)
+
+  };
+
+
+  renderQuiz();
+
+}
+
+
+function renderQuiz(){
+
+  const box =
+    getQuizBox();
+
+
+  const scoreElement =
+    getScoreElement();
+
+
+  scoreElement.textContent =
+    quizState.score +
+    " pkt";
+
+
+  if(
+    quizState.question >= 10
+  ){
+
+    const percentage =
+      Math.round(
+        quizState.score /
+        10 *
+        100
+      );
+
+
+    saveBest(
+      quizState.type,
+      percentage
+    );
+
+
+    box.innerHTML = `
+
+      <div
+        class="quiz-card quiz-result">
+
+        <div
+          class="result-emoji">
+
+          ${
+            percentage >= 90
+              ? "🏆"
+              : percentage >= 70
+                ? "🌟"
+                : percentage >= 50
+                  ? "💪"
+                  : "📚"
+          }
+
+        </div>
+
+
+        <div
+          class="result-score">
+
+          ${percentage}%
+
+        </div>
+
+
+        <h2>
+          Quiz ukończony!
+        </h2>
+
+
+        <p
+          style="
+            color:var(--muted);
+            line-height:1.6;
+          ">
+
+          Wynik:
+          <strong>
+            ${quizState.score}
+          </strong>
+          / 10
+
+        </p>
+
+
+        <button
+          class="primary"
+          onclick="startQuiz('${quizState.type}')">
+
+          Zagraj ponownie
+
+        </button>
+
+      </div>
+
+    `;
+
+
+    updateBest();
+
+    return;
+
+  }
+
+
+  const progress =
+    quizState.question /
+    10 *
+    100;
+
+
+  box.innerHTML = `
+
+    <div class="progress-track">
+
+      <div
+        class="progress-value"
+        style="
+          width:${progress}%
+        ">
+      </div>
+
+    </div>
+
+
+    <div
+      class="quiz-card">
+
+      <div
+        class="quiz-visual">
+
+        ${quizState.current.visual}
+
+      </div>
+
+
+      <div
+        class="quiz-question">
+
+        ${escapeHTML(
+          quizState.current.question
+        )}
+
+      </div>
+
+
+      <div
+        class="answers">
+
+        ${quizState.current.options
+          .map(
+            (option,index) => `
+
+              <button
+                class="answer"
+                onclick="
+                  answerQuiz(${index})
+                ">
+
+                ${escapeHTML(option)}
+
+              </button>
+
+            `
+          )
+          .join("")
+        }
+
+      </div>
+
+
+      <div
+        id="feedback"
+        class="feedback">
+
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+
+function answerQuiz(index){
+
+  if(
+    quizState.answered
+  )
+    return;
+
+
+  quizState.answered =
+    true;
+
+
+  const question =
+    quizState.current;
+
+
+  const buttons =
+    getQuizBox()
+      .querySelectorAll(
+        ".answer"
+      );
+
+
+  const chosen =
+    question.options[index];
+
+
+  const correct =
+    chosen ===
+    question.correct;
+
+
+  buttons.forEach(
+    (button,i) => {
+
+      button.disabled =
+        true;
+
+
+      if(
+        question.options[i] ===
+        question.correct
+      ){
+
+        button.classList.add(
+          "correct"
+        );
+
+      }
+
+    }
+  );
+
+
+  if(correct){
+
+    quizState.score++;
+
+    quizState.streak++;
+
+
+    $("streakStat")
+      .textContent =
+      quizState.streak;
+
+
+    buttons[index]
+      .classList.add(
+        "correct"
+      );
+
+
+    $("feedback")
+      .innerHTML =
+      "✓ Świetnie! Poprawna odpowiedź.";
+
+  }
+  else{
+
+    quizState.streak = 0;
+
+    $("streakStat")
+      .textContent = "0";
+
+
+    buttons[index]
+      .classList.add(
+        "wrong"
+      );
+
+
+    $("feedback")
+      .innerHTML =
+      `
+        ✕ Poprawna odpowiedź:
+        <strong>
+          ${escapeHTML(
+            question.correct
+          )}
+        </strong>
+      `;
+
+  }
+
+
+  getScoreElement()
+    .textContent =
+    quizState.score +
+    " pkt";
+
+
+  setTimeout(
+    () => {
+
+      quizState.question++;
+
+      quizState.answered =
+        false;
+
+      quizState.current =
+        createQuizQuestion(
+          quizState.type
+        );
+
+      renderQuiz();
+
+    },
+    1000
+  );
+
+}
+
+
+/* =====================================================
+   BEST SCORES
+===================================================== */
+
+function saveBest(
+  type,
+  score
+){
+
+  const key =
+    "worldSchoolBest_" +
+    type;
+
+
+  const old =
+    Number(
+      localStorage.getItem(
+        key
+      )
+    ) || 0;
+
+
+  if(score > old){
+
+    localStorage.setItem(
+      key,
+      score
+    );
+
+    toast(
+      "Nowy rekord! 🏆"
+    );
+
+  }
+
+}
+
+
+function updateBest(){
+
+  const scores =
+    [
+      "flag",
+      "capital",
+      "geo"
+    ]
+    .map(
+      type =>
+        Number(
+          localStorage.getItem(
+            "worldSchoolBest_" +
+            type
+          )
+        ) || 0
+    );
+
+
+  $("bestStat")
+    .textContent =
+    Math.max(
+      ...scores
+    ) + "%";
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+loadCountries();
+
+</script>
+
+</body>
+  </html>
