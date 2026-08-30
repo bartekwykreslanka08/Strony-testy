@@ -23,11 +23,8 @@
   --red:#ed5d68;
   --yellow:#f5b942;
 
-  --shadow:
-    0 25px 70px rgba(32,38,62,.10);
-
-  --shadow-small:
-    0 10px 30px rgba(32,38,62,.08);
+  --shadow:0 25px 70px rgba(32,38,62,.10);
+  --shadow-small:0 10px 30px rgba(32,38,62,.08);
 
   --radius:28px;
 }
@@ -41,11 +38,8 @@ html[data-theme="dark"]{
   --muted:#929bad;
   --line:rgba(255,255,255,.08);
 
-  --shadow:
-    0 30px 90px rgba(0,0,0,.38);
-
-  --shadow-small:
-    0 12px 35px rgba(0,0,0,.28);
+  --shadow:0 30px 90px rgba(0,0,0,.38);
+  --shadow-small:0 12px 35px rgba(0,0,0,.28);
 }
 
 *{
@@ -59,41 +53,19 @@ html{
 body{
   margin:0;
   min-height:100vh;
-
-  font-family:
-    Inter,
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
-
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   color:var(--text);
 
   background:
-    radial-gradient(
-      circle at 5% 5%,
-      rgba(103,87,245,.14),
-      transparent 25%
-    ),
-    radial-gradient(
-      circle at 95% 10%,
-      rgba(53,199,232,.10),
-      transparent 24%
-    ),
+    radial-gradient(circle at 5% 5%,rgba(103,87,245,.14),transparent 25%),
+    radial-gradient(circle at 95% 10%,rgba(53,199,232,.10),transparent 24%),
     var(--bg);
 
-  transition:
-    background .45s ease,
-    color .35s ease;
-
+  transition:background .45s ease,color .35s ease;
   padding-bottom:30px;
 }
 
-button,
-input,
-select{
+button,input,select{
   font:inherit;
 }
 
@@ -104,10 +76,7 @@ button{
 button:focus-visible,
 input:focus-visible,
 select:focus-visible{
-  outline:
-    3px solid
-    rgba(103,87,245,.22);
-
+  outline:3px solid rgba(103,87,245,.22);
   outline-offset:3px;
 }
 
@@ -119,53 +88,39 @@ select:focus-visible{
   position:sticky;
   top:0;
   z-index:1000;
+  padding:14px 18px;
 
-  padding:
-    14px 18px;
+  background:linear-gradient(
+    to bottom,
+    rgba(244,246,251,.94),
+    rgba(244,246,251,.72)
+  );
 
-  background:
-    linear-gradient(
-      to bottom,
-      rgba(244,246,251,.94),
-      rgba(244,246,251,.72)
-    );
-
-  backdrop-filter:
-    blur(24px)
-    saturate(140%);
-
-  border-bottom:
-    1px solid var(--line);
+  backdrop-filter:blur(24px) saturate(140%);
+  border-bottom:1px solid var(--line);
 }
 
 html[data-theme="dark"] .topbar{
-  background:
-    linear-gradient(
-      to bottom,
-      rgba(8,11,19,.94),
-      rgba(8,11,19,.72)
-    );
+  background:linear-gradient(
+    to bottom,
+    rgba(8,11,19,.94),
+    rgba(8,11,19,.72)
+  );
 }
 
 .topbar-inner{
   max-width:1450px;
   margin:auto;
-
   display:flex;
   align-items:center;
-
   gap:18px;
 }
-
-/* LOGO */
 
 .brand{
   display:flex;
   align-items:center;
   gap:11px;
-
   min-width:max-content;
-
   text-decoration:none;
   color:var(--text);
 }
@@ -173,24 +128,18 @@ html[data-theme="dark"] .topbar{
 .brand-mark{
   width:46px;
   height:46px;
-
   border-radius:16px;
-
   display:grid;
   place-items:center;
-
   font-size:23px;
 
-  background:
-    linear-gradient(
-      135deg,
-      var(--primary),
-      var(--cyan)
-    );
+  background:linear-gradient(
+    135deg,
+    var(--primary),
+    var(--cyan)
+  );
 
-  box-shadow:
-    0 12px 30px
-    rgba(103,87,245,.28);
+  box-shadow:0 12px 30px rgba(103,87,245,.28);
 }
 
 .brand-name{
@@ -201,20 +150,14 @@ html[data-theme="dark"] .topbar{
 
 .brand-caption{
   margin-top:1px;
-
   font-size:9px;
   font-weight:800;
-
   letter-spacing:.15em;
-
   color:var(--muted);
 }
 
-/* NAVIGATION */
-
 .nav-shell{
   flex:1;
-
   display:flex;
   justify-content:center;
 }
@@ -223,42 +166,24 @@ html[data-theme="dark"] .topbar{
   display:flex;
   align-items:center;
   gap:5px;
-
   padding:5px;
-
-  border:
-    1px solid var(--line);
-
+  border:1px solid var(--line);
   border-radius:19px;
-
-  background:
-    var(--surface);
-
+  background:var(--surface);
   backdrop-filter:blur(18px);
-
-  box-shadow:
-    var(--shadow-small);
+  box-shadow:var(--shadow-small);
 }
 
 .nav button{
   position:relative;
-
   border:0;
-
   background:transparent;
-
   color:var(--muted);
-
-  padding:
-    11px 15px;
-
+  padding:11px 15px;
   min-height:43px;
-
   border-radius:14px;
-
   font-weight:800;
   font-size:13px;
-
   white-space:nowrap;
 
   transition:
@@ -274,37 +199,25 @@ html[data-theme="dark"] .topbar{
 
 .nav button.active{
   color:var(--text);
-
-  background:
-    var(--surface-solid);
-
-  box-shadow:
-    0 5px 18px
-    rgba(0,0,0,.06);
+  background:var(--surface-solid);
+  box-shadow:0 5px 18px rgba(0,0,0,.06);
 }
 
 .nav button.active::after{
   content:"";
-
   position:absolute;
-
   left:25%;
   right:25%;
   bottom:4px;
-
   height:2px;
-
   border-radius:99px;
 
-  background:
-    linear-gradient(
-      90deg,
-      var(--primary),
-      var(--cyan)
-    );
+  background:linear-gradient(
+    90deg,
+    var(--primary),
+    var(--cyan)
+  );
 }
-
-/* ACTIONS */
 
 .top-actions{
   display:flex;
@@ -315,14 +228,9 @@ html[data-theme="dark"] .topbar{
 .icon-button{
   width:44px;
   height:44px;
-
-  border:
-    1px solid var(--line);
-
+  border:1px solid var(--line);
   border-radius:15px;
-
   background:var(--surface-solid);
-
   color:var(--text);
 
   transition:
@@ -331,17 +239,9 @@ html[data-theme="dark"] .topbar{
 }
 
 .icon-button:hover{
-  transform:
-    translateY(-2px)
-    scale(1.03);
-
-  box-shadow:
-    var(--shadow-small);
+  transform:translateY(-2px) scale(1.03);
+  box-shadow:var(--shadow-small);
 }
-
-/* =========================
-   MOBILE NAV
-========================= */
 
 .mobile-nav{
   display:none;
@@ -354,17 +254,12 @@ html[data-theme="dark"] .topbar{
 main{
   max-width:1450px;
   margin:auto;
-
-  padding:
-    35px 20px 90px;
+  padding:35px 20px 90px;
 }
 
 .page{
   display:none;
-
-  animation:
-    pageEnter .45s
-    cubic-bezier(.2,.8,.2,1);
+  animation:pageEnter .45s cubic-bezier(.2,.8,.2,1);
 }
 
 .page.active{
@@ -374,16 +269,12 @@ main{
 @keyframes pageEnter{
   from{
     opacity:0;
-    transform:
-      translateY(16px)
-      scale(.995);
+    transform:translateY(16px) scale(.995);
   }
 
   to{
     opacity:1;
-    transform:
-      translateY(0)
-      scale(1);
+    transform:translateY(0) scale(1);
   }
 }
 
@@ -393,79 +284,47 @@ main{
 
 .hero{
   display:grid;
-
-  grid-template-columns:
-    minmax(0,1.55fr)
-    minmax(310px,.7fr);
-
+  grid-template-columns:minmax(0,1.55fr) minmax(310px,.7fr);
   gap:18px;
 }
 
 .hero-card{
   position:relative;
-
   min-height:500px;
-
   overflow:hidden;
 
-  padding:
-    clamp(32px,5vw,65px);
+  padding:clamp(32px,5vw,65px);
 
   display:flex;
   flex-direction:column;
   justify-content:center;
 
   border-radius:36px;
-
   color:#fff;
 
   background:
-    radial-gradient(
-      circle at 80% 20%,
-      rgba(117,105,255,.42),
-      transparent 28%
-    ),
-    radial-gradient(
-      circle at 20% 100%,
-      rgba(53,199,232,.20),
-      transparent 32%
-    ),
-    linear-gradient(
-      135deg,
-      #111827,
-      #211b3c
-    );
+    radial-gradient(circle at 80% 20%,rgba(117,105,255,.42),transparent 28%),
+    radial-gradient(circle at 20% 100%,rgba(53,199,232,.20),transparent 32%),
+    linear-gradient(135deg,#111827,#211b3c);
 
-  box-shadow:
-    0 35px 100px
-    rgba(23,27,48,.20);
+  box-shadow:0 35px 100px rgba(23,27,48,.20);
 }
 
 .hero-card::before{
   content:"";
-
   position:absolute;
-
   width:420px;
   height:420px;
-
   right:-150px;
   bottom:-160px;
-
   border-radius:50%;
-
-  border:
-    1px solid
-    rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.12);
 
   box-shadow:
-    0 0 0 70px
-      rgba(255,255,255,.025),
-    0 0 0 140px
-      rgba(255,255,255,.018);
+    0 0 0 70px rgba(255,255,255,.025),
+    0 0 0 140px rgba(255,255,255,.018);
 
-  animation:
-    orbit 12s linear infinite;
+  animation:orbit 12s linear infinite;
 }
 
 @keyframes orbit{
@@ -476,93 +335,58 @@ main{
 
 .hero-globe{
   position:absolute;
-
   right:35px;
   top:30px;
-
-  font-size:
-    clamp(100px,14vw,190px);
-
+  font-size:clamp(100px,14vw,190px);
   opacity:.075;
-
-  animation:
-    globeFloat 7s ease-in-out infinite;
+  animation:globeFloat 7s ease-in-out infinite;
 }
 
 @keyframes globeFloat{
   50%{
-    transform:
-      translateY(-16px)
-      rotate(4deg);
+    transform:translateY(-16px) rotate(4deg);
   }
 }
 
 .eyebrow{
   position:relative;
   z-index:2;
-
   width:max-content;
-
-  padding:
-    8px 12px;
-
+  padding:8px 12px;
   border-radius:99px;
-
-  background:
-    rgba(255,255,255,.08);
-
-  border:
-    1px solid
-    rgba(255,255,255,.12);
-
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.12);
   font-size:10px;
   font-weight:900;
-
   letter-spacing:.13em;
 }
 
 .hero-card h1{
   position:relative;
   z-index:2;
-
   max-width:850px;
-
-  margin:
-    23px 0 17px;
-
-  font-size:
-    clamp(48px,6.5vw,86px);
-
+  margin:23px 0 17px;
+  font-size:clamp(48px,6.5vw,86px);
   line-height:.94;
-
   letter-spacing:-.065em;
 }
 
 .hero-card p{
   position:relative;
   z-index:2;
-
   max-width:680px;
-
   margin:0;
-
   color:#cbd5e1;
-
-  font-size:
-    clamp(16px,2vw,19px);
-
+  font-size:clamp(16px,2vw,19px);
   line-height:1.65;
 }
 
 .hero-buttons{
   position:relative;
   z-index:2;
-
   display:flex;
   flex-wrap:wrap;
-
   gap:10px;
-
   margin-top:30px;
 }
 
@@ -572,26 +396,18 @@ main{
 
 .primary{
   border:0;
-
-  padding:
-    14px 19px;
-
+  padding:14px 19px;
   border-radius:15px;
-
   color:#fff;
-
   font-weight:900;
 
-  background:
-    linear-gradient(
-      135deg,
-      var(--primary),
-      var(--primary2)
-    );
+  background:linear-gradient(
+    135deg,
+    var(--primary),
+    var(--primary2)
+  );
 
-  box-shadow:
-    0 13px 35px
-    rgba(103,87,245,.28);
+  box-shadow:0 13px 35px rgba(103,87,245,.28);
 
   transition:
     transform .25s ease,
@@ -600,27 +416,16 @@ main{
 
 .primary:hover{
   transform:translateY(-3px);
-
-  box-shadow:
-    0 18px 45px
-    rgba(103,87,245,.38);
+  box-shadow:0 18px 45px rgba(103,87,245,.38);
 }
 
 .secondary{
-  border:
-    1px solid var(--line);
-
-  padding:
-    14px 19px;
-
+  border:1px solid var(--line);
+  padding:14px 19px;
   border-radius:15px;
-
   color:var(--text);
-
   font-weight:850;
-
-  background:
-    var(--surface-solid);
+  background:var(--surface-solid);
 
   transition:
     transform .25s ease,
@@ -629,46 +434,31 @@ main{
 
 .secondary:hover{
   transform:translateY(-2px);
-
-  box-shadow:
-    var(--shadow-small);
+  box-shadow:var(--shadow-small);
 }
 
 /* =========================
-   STAT PANEL
+   STATS
 ========================= */
 
 .stats{
   display:grid;
-
-  grid-template-columns:
-    1fr 1fr;
-
+  grid-template-columns:1fr 1fr;
   gap:12px;
 }
 
 .stat-card{
   min-height:244px;
-
   padding:25px;
-
   display:flex;
   flex-direction:column;
   justify-content:flex-end;
 
-  border:
-    1px solid var(--line);
-
+  border:1px solid var(--line);
   border-radius:27px;
-
-  background:
-    var(--surface);
-
-  backdrop-filter:
-    blur(20px);
-
-  box-shadow:
-    var(--shadow-small);
+  background:var(--surface);
+  backdrop-filter:blur(20px);
+  box-shadow:var(--shadow-small);
 
   transition:
     transform .3s ease,
@@ -682,84 +472,57 @@ main{
 
 .stat-icon{
   margin-bottom:auto;
-
   font-size:31px;
 }
 
 .stat-value{
   font-size:43px;
-
   font-weight:950;
-
   letter-spacing:-.06em;
 }
 
 .stat-label{
   color:var(--muted);
-
   font-size:13px;
   font-weight:700;
 }
 
 /* =========================
-   SECTION
+   SECTIONS
 ========================= */
 
 .section-heading{
-  margin:
-    48px 0 20px;
-
+  margin:48px 0 20px;
   display:flex;
-
   justify-content:space-between;
   align-items:end;
-
   gap:20px;
 }
 
 .section-heading h2{
   margin:0;
-
-  font-size:
-    clamp(27px,4vw,36px);
-
+  font-size:clamp(27px,4vw,36px);
   letter-spacing:-.045em;
 }
 
 .section-heading p{
-  margin:
-    6px 0 0;
-
+  margin:6px 0 0;
   color:var(--muted);
 }
 
-/* =========================
-   FEATURE GRID
-========================= */
-
 .features{
   display:grid;
-
-  grid-template-columns:
-    repeat(3,1fr);
-
+  grid-template-columns:repeat(3,1fr);
   gap:15px;
 }
 
 .feature{
   padding:27px;
-
   min-height:220px;
-
-  border:
-    1px solid var(--line);
-
+  border:1px solid var(--line);
   border-radius:25px;
-
   background:var(--surface);
-
   box-shadow:var(--shadow-small);
-
   cursor:pointer;
 
   transition:
@@ -770,40 +533,28 @@ main{
 
 .feature:hover{
   transform:translateY(-7px);
-
-  border-color:
-    rgba(103,87,245,.3);
-
+  border-color:rgba(103,87,245,.3);
   box-shadow:var(--shadow);
 }
 
 .feature-icon{
   width:53px;
   height:53px;
-
   display:grid;
   place-items:center;
-
   border-radius:17px;
-
-  background:
-    rgba(103,87,245,.10);
-
+  background:rgba(103,87,245,.10);
   font-size:27px;
 }
 
 .feature h3{
-  margin:
-    20px 0 8px;
-
+  margin:20px 0 8px;
   font-size:20px;
 }
 
 .feature p{
   margin:0;
-
   color:var(--muted);
-
   line-height:1.6;
 }
 
@@ -817,123 +568,74 @@ main{
 
 .page-title h1{
   margin:0;
-
-  font-size:
-    clamp(38px,6vw,64px);
-
+  font-size:clamp(38px,6vw,64px);
   line-height:.98;
-
   letter-spacing:-.06em;
 }
 
 .page-title p{
   color:var(--muted);
-
   font-size:17px;
-
   line-height:1.6;
 }
 
 .toolbar{
-  margin:
-    28px 0 20px;
-
+  margin:28px 0 20px;
   padding:10px;
-
   display:flex;
   flex-wrap:wrap;
-
   gap:9px;
-
-  border:
-    1px solid var(--line);
-
+  border:1px solid var(--line);
   border-radius:20px;
-
   background:var(--surface);
-
   box-shadow:var(--shadow-small);
-
   backdrop-filter:blur(20px);
 }
 
 .search{
   flex:1;
-
   min-width:240px;
-
-  padding:
-    13px 16px;
-
-  border:
-    1px solid transparent;
-
+  padding:13px 16px;
+  border:1px solid transparent;
   border-radius:14px;
-
-  background:
-    rgba(127,127,127,.07);
-
+  background:rgba(127,127,127,.07);
   color:var(--text);
-
   outline:none;
 }
 
 .search:focus{
-  border-color:
-    rgba(103,87,245,.4);
+  border-color:rgba(103,87,245,.4);
 }
 
 .filter{
   min-width:160px;
-
-  padding:
-    13px 15px;
-
-  border:
-    1px solid transparent;
-
+  padding:13px 15px;
+  border:1px solid transparent;
   border-radius:14px;
-
-  background:
-    rgba(127,127,127,.07);
-
+  background:rgba(127,127,127,.07);
   color:var(--text);
 }
 
 /* =========================
-   COUNTRY GRID
+   COUNTRY CARDS
 ========================= */
 
 .country-grid{
   display:grid;
-
-  grid-template-columns:
-    repeat(
-      auto-fill,
-      minmax(275px,1fr)
-    );
-
+  grid-template-columns:repeat(auto-fill,minmax(275px,1fr));
   gap:14px;
 }
 
 .country{
   position:relative;
-
   overflow:hidden;
-
   padding:20px;
+  min-height:290px;
 
-  min-height:255px;
-
-  border:
-    1px solid var(--line);
-
+  border:1px solid var(--line);
   border-radius:23px;
-
   background:var(--surface);
-
   box-shadow:var(--shadow-small);
-
   cursor:pointer;
 
   transition:
@@ -943,63 +645,100 @@ main{
 }
 
 .country:hover{
-  transform:
-    translateY(-6px);
-
+  transform:translateY(-6px);
   box-shadow:var(--shadow);
-
-  border-color:
-    rgba(103,87,245,.30);
+  border-color:rgba(103,87,245,.30);
 }
 
 .country-top{
   display:flex;
-
   align-items:flex-start;
-
   justify-content:space-between;
+  gap:12px;
 }
 
+/*
+  PRAWDZIWA FLAGA
+*/
+
 .country-flag{
-  font-size:57px;
+  width:105px;
+  height:70px;
 
-  line-height:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 
-  filter:
-    drop-shadow(
-      0 8px 12px
-      rgba(0,0,0,.10)
+  overflow:hidden;
+
+  border-radius:12px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(127,127,127,.08),
+      rgba(127,127,127,.16)
     );
+
+  box-shadow:
+    0 9px 24px rgba(0,0,0,.12);
+
+  animation:
+    flagAppear .45s cubic-bezier(.2,.8,.2,1);
+}
+
+.country-flag img{
+  display:block;
+
+  width:100%;
+  height:100%;
+
+  object-fit:cover;
+
+  border-radius:12px;
+
+  user-select:none;
+  -webkit-user-drag:none;
+
+  transition:
+    transform .35s ease,
+    filter .35s ease;
+}
+
+.country:hover .country-flag img{
+  transform:scale(1.045);
+}
+
+@keyframes flagAppear{
+  from{
+    opacity:0;
+    transform:scale(.88) translateY(5px);
+  }
+
+  to{
+    opacity:1;
+    transform:scale(1) translateY(0);
+  }
 }
 
 .region-badge{
-  padding:
-    6px 9px;
-
+  padding:6px 9px;
   border-radius:99px;
-
-  background:
-    rgba(103,87,245,.09);
-
+  background:rgba(103,87,245,.09);
   color:var(--muted);
-
   font-size:10px;
   font-weight:900;
 }
 
 .country h3{
-  margin:
-    19px 0 10px;
-
+  margin:19px 0 10px;
   font-size:19px;
 }
 
 .country-info{
   display:grid;
   gap:6px;
-
   color:var(--muted);
-
   font-size:12.5px;
   line-height:1.35;
 }
@@ -1014,25 +753,17 @@ main{
 
 .detail-layout{
   display:grid;
-
-  grid-template-columns:
-    minmax(280px,.65fr)
-    minmax(0,1.35fr);
-
+  grid-template-columns:minmax(280px,.65fr) minmax(0,1.35fr);
   gap:17px;
-
   margin-top:25px;
 }
 
 .detail-visual{
   min-height:460px;
-
   display:grid;
   place-items:center;
 
-  border:
-    1px solid var(--line);
-
+  border:1px solid var(--line);
   border-radius:31px;
 
   background:
@@ -1047,12 +778,28 @@ main{
 }
 
 .detail-flag{
-  font-size:
-    clamp(130px,18vw,210px);
+  width:min(80%,520px);
+  aspect-ratio:3 / 2;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
 
   animation:
-    detailPop .55s
-    cubic-bezier(.2,.8,.2,1);
+    detailPop .55s cubic-bezier(.2,.8,.2,1);
+}
+
+.detail-flag img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  border-radius:18px;
+
+  filter:
+    drop-shadow(
+      0 18px 28px
+      rgba(0,0,0,.16)
+    );
 }
 
 @keyframes detailPop{
@@ -1060,6 +807,7 @@ main{
     opacity:0;
     transform:scale(.75);
   }
+
   to{
     opacity:1;
     transform:scale(1);
@@ -1067,62 +815,41 @@ main{
 }
 
 .detail-card{
-  padding:
-    clamp(25px,4vw,42px);
-
-  border:
-    1px solid var(--line);
-
+  padding:clamp(25px,4vw,42px);
+  border:1px solid var(--line);
   border-radius:31px;
-
   background:var(--surface);
-
   box-shadow:var(--shadow);
 }
 
 .detail-card h1{
-  margin:
-    15px 0 6px;
-
-  font-size:
-    clamp(38px,5vw,62px);
-
+  margin:15px 0 6px;
+  font-size:clamp(38px,5vw,62px);
   line-height:.95;
-
   letter-spacing:-.06em;
 }
 
 .detail-official{
   color:var(--muted);
-
   margin-bottom:27px;
 }
 
 .detail-grid{
   display:grid;
-
-  grid-template-columns:
-    repeat(2,1fr);
-
+  grid-template-columns:repeat(2,1fr);
   gap:10px;
 }
 
 .detail-item{
   padding:17px;
-
   border-radius:17px;
-
-  background:
-    rgba(127,127,127,.07);
+  background:rgba(127,127,127,.07);
 }
 
 .detail-item small{
   display:block;
-
   color:var(--muted);
-
   margin-bottom:5px;
-
   font-size:11px;
   font-weight:700;
 }
@@ -1142,63 +869,41 @@ main{
 
 .quiz-top{
   display:flex;
-
   align-items:center;
-
   justify-content:space-between;
-
   gap:15px;
 }
 
 .quiz-title h1{
   margin:0;
-
-  font-size:
-    clamp(37px,6vw,58px);
-
+  font-size:clamp(37px,6vw,58px);
   letter-spacing:-.06em;
 }
 
 .quiz-title p{
-  margin:
-    8px 0 0;
-
+  margin:8px 0 0;
   color:var(--muted);
 }
 
 .quiz-score{
-  padding:
-    10px 14px;
-
+  padding:10px 14px;
   border-radius:14px;
-
   background:var(--surface-solid);
-
-  border:
-    1px solid var(--line);
-
+  border:1px solid var(--line);
   font-weight:900;
 }
 
 .progress-track{
   height:7px;
-
-  margin:
-    25px 0 17px;
-
+  margin:25px 0 17px;
   overflow:hidden;
-
   border-radius:99px;
-
-  background:
-    rgba(127,127,127,.12);
+  background:rgba(127,127,127,.12);
 }
 
 .progress-value{
   height:100%;
-
   width:0%;
-
   border-radius:99px;
 
   background:
@@ -1212,93 +917,109 @@ main{
 }
 
 .quiz-card{
-  padding:
-    clamp(22px,5vw,45px);
-
+  padding:clamp(22px,5vw,45px);
   text-align:center;
-
-  border:
-    1px solid var(--line);
-
+  border:1px solid var(--line);
   border-radius:31px;
-
   background:var(--surface);
-
   box-shadow:var(--shadow);
 }
 
+/*
+  DUŻA PRAWDZIWA FLAGA W QUIZIE
+*/
+
 .quiz-visual{
-  min-height:170px;
+  min-height:230px;
 
-  display:grid;
-  place-items:center;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 
-  font-size:
-    clamp(85px,15vw,135px);
-
-  margin-bottom:18px;
+  margin-bottom:25px;
 
   animation:
     questionIn .45s
     cubic-bezier(.2,.8,.2,1);
 }
 
-@keyframes questionIn{
+.quiz-visual img{
+  display:block;
+
+  width:min(100%,560px);
+  height:280px;
+
+  object-fit:contain;
+
+  border-radius:18px;
+
+  filter:
+    drop-shadow(
+      0 18px 28px
+      rgba(0,0,0,.18)
+    );
+
+  user-select:none;
+  -webkit-user-drag:none;
+
+  animation:
+    flagQuizIn .5s
+    cubic-bezier(.2,.8,.2,1);
+}
+
+@keyframes flagQuizIn{
   from{
     opacity:0;
     transform:
-      scale(.8)
-      translateY(12px);
+      scale(.82)
+      rotate(-2deg);
   }
 
   to{
     opacity:1;
     transform:
       scale(1)
-      translateY(0);
+      rotate(0);
+  }
+}
+
+@keyframes questionIn{
+  from{
+    opacity:0;
+    transform:translateY(12px);
+  }
+
+  to{
+    opacity:1;
+    transform:translateY(0);
   }
 }
 
 .quiz-question{
   max-width:700px;
-  margin:
-    0 auto 25px;
-
-  font-size:
-    clamp(20px,3vw,28px);
-
+  margin:0 auto 25px;
+  font-size:clamp(20px,3vw,28px);
   font-weight:900;
-
   line-height:1.25;
 }
 
 .answers{
   display:grid;
-
-  grid-template-columns:
-    1fr 1fr;
-
+  grid-template-columns:1fr 1fr;
   gap:11px;
 }
 
 .answer{
   min-height:68px;
+  padding:14px 17px;
 
-  padding:
-    14px 17px;
-
-  border:
-    1px solid var(--line);
-
+  border:1px solid var(--line);
   border-radius:17px;
 
-  background:
-    rgba(127,127,127,.06);
-
+  background:rgba(127,127,127,.06);
   color:var(--text);
 
   font-weight:800;
-
   text-align:left;
 
   transition:
@@ -1309,28 +1030,18 @@ main{
 
 .answer:hover:not(:disabled){
   transform:translateY(-2px);
-
-  border-color:
-    rgba(103,87,245,.45);
-
-  background:
-    var(--surface-solid);
+  border-color:rgba(103,87,245,.45);
+  background:var(--surface-solid);
 }
 
 .answer.correct{
-  background:
-    rgba(24,185,130,.12);
-
-  border-color:
-    var(--green);
+  background:rgba(24,185,130,.12);
+  border-color:var(--green);
 }
 
 .answer.wrong{
-  background:
-    rgba(237,93,104,.12);
-
-  border-color:
-    var(--red);
+  background:rgba(237,93,104,.12);
+  border-color:var(--red);
 }
 
 .answer:disabled{
@@ -1339,15 +1050,12 @@ main{
 
 .feedback{
   min-height:28px;
-
   margin-top:18px;
-
   font-weight:900;
 }
 
 .quiz-result{
   padding:45px 20px;
-
   text-align:center;
 }
 
@@ -1356,13 +1064,9 @@ main{
 }
 
 .result-score{
-  margin:
-    10px 0;
-
+  margin:10px 0;
   font-size:90px;
-
   font-weight:950;
-
   letter-spacing:-.08em;
 }
 
@@ -1372,30 +1076,19 @@ main{
 
 .loading{
   grid-column:1/-1;
-
   min-height:300px;
-
   display:grid;
   place-items:center;
-
   color:var(--muted);
 }
 
 .spinner{
   width:35px;
   height:35px;
-
-  border:
-    3px solid
-    rgba(103,87,245,.15);
-
-  border-top-color:
-    var(--primary);
-
+  border:3px solid rgba(103,87,245,.15);
+  border-top-color:var(--primary);
   border-radius:50%;
-
-  animation:
-    spin .7s linear infinite;
+  animation:spin .7s linear infinite;
 }
 
 @keyframes spin{
@@ -1410,31 +1103,21 @@ main{
 
 .toast{
   position:fixed;
-
   left:50%;
   bottom:25px;
-
   z-index:2000;
 
-  transform:
-    translate(-50%,20px);
-
+  transform:translate(-50%,20px);
   opacity:0;
-
   pointer-events:none;
 
-  padding:
-    13px 18px;
-
+  padding:13px 18px;
   border-radius:15px;
 
   color:#fff;
-
   background:#151a27;
 
-  box-shadow:
-    0 18px 50px
-    rgba(0,0,0,.25);
+  box-shadow:0 18px 50px rgba(0,0,0,.25);
 
   font-weight:800;
 
@@ -1445,9 +1128,7 @@ main{
 
 .toast.show{
   opacity:1;
-
-  transform:
-    translate(-50%,0);
+  transform:translate(-50%,0);
 }
 
 /* =========================
@@ -1461,8 +1142,7 @@ main{
   }
 
   .stats{
-    grid-template-columns:
-      repeat(4,1fr);
+    grid-template-columns:repeat(4,1fr);
   }
 
   .stat-card{
@@ -1470,18 +1150,16 @@ main{
   }
 
   .nav button{
-    padding:
-      10px 11px;
-
+    padding:10px 11px;
     font-size:12px;
   }
+
 }
 
 @media(max-width:800px){
 
   .topbar{
-    padding:
-      10px 12px;
+    padding:10px 12px;
   }
 
   .topbar-inner{
@@ -1512,8 +1190,7 @@ main{
 
     left:10px;
     right:10px;
-    bottom:
-      calc(10px + env(safe-area-inset-bottom));
+    bottom:calc(10px + env(safe-area-inset-bottom));
 
     z-index:1500;
 
@@ -1521,9 +1198,7 @@ main{
 
     justify-content:space-around;
 
-    border:
-      1px solid var(--line);
-
+    border:1px solid var(--line);
     border-radius:21px;
 
     background:
@@ -1533,22 +1208,15 @@ main{
         transparent
       );
 
-    backdrop-filter:
-      blur(24px)
-      saturate(160%);
+    backdrop-filter:blur(24px) saturate(160%);
 
-    box-shadow:
-      0 20px 55px
-      rgba(0,0,0,.16);
+    box-shadow:0 20px 55px rgba(0,0,0,.16);
   }
 
   .mobile-nav button{
     flex:1;
-
     border:0;
-
     background:transparent;
-
     color:var(--muted);
 
     min-height:52px;
@@ -1563,41 +1231,31 @@ main{
 
   .mobile-nav button span{
     display:block;
-
     font-size:20px;
-
     margin-bottom:2px;
   }
 
   .mobile-nav button.active{
     color:var(--text);
-
-    background:
-      rgba(103,87,245,.10);
+    background:rgba(103,87,245,.10);
   }
 
   main{
-    padding:
-      25px 13px 110px;
+    padding:25px 13px 110px;
   }
 
   .hero-card{
     min-height:530px;
-
-    padding:
-      30px 25px;
-
+    padding:30px 25px;
     border-radius:28px;
   }
 
   .hero-card h1{
-    font-size:
-      clamp(45px,14vw,67px);
+    font-size:clamp(45px,14vw,67px);
   }
 
   .stats{
-    grid-template-columns:
-      1fr 1fr;
+    grid-template-columns:1fr 1fr;
   }
 
   .stat-card{
@@ -1631,6 +1289,14 @@ main{
 
   .quiz-top{
     align-items:flex-start;
+  }
+
+  .quiz-visual{
+    min-height:190px;
+  }
+
+  .quiz-visual img{
+    height:220px;
   }
 
 }
@@ -1673,7 +1339,12 @@ main{
   }
 
   .country{
-    min-height:230px;
+    min-height:260px;
+  }
+
+  .country-flag{
+    width:115px;
+    height:77px;
   }
 
   .quiz-card{
@@ -1681,12 +1352,17 @@ main{
   }
 
   .quiz-visual{
-    min-height:130px;
+    min-height:170px;
+  }
+
+  .quiz-visual img{
+    height:185px;
   }
 
   .result-score{
     font-size:72px;
   }
+
 }
 </style>
 </head>
@@ -1697,13 +1373,17 @@ main{
 
   <div class="topbar-inner">
 
-    <a class="brand" href="#" onclick="showPage('home');return false">
+    <a
+      class="brand"
+      href="#"
+      onclick="showPage('home');return false">
 
       <div class="brand-mark">
         🌍
       </div>
 
       <div>
+
         <div class="brand-name">
           World School
         </div>
@@ -1711,6 +1391,7 @@ main{
         <div class="brand-caption">
           POZNAJ ŚWIAT
         </div>
+
       </div>
 
     </a>
@@ -1726,23 +1407,19 @@ main{
           🏠 Start
         </button>
 
-        <button
-          data-page="countries">
+        <button data-page="countries">
           🌎 Państwa
         </button>
 
-        <button
-          data-page="flagQuiz">
+        <button data-page="flagQuiz">
           🏳️ Flag Quiz
         </button>
 
-        <button
-          data-page="capitalQuiz">
+        <button data-page="capitalQuiz">
           🏛️ Capital Quiz
         </button>
 
-        <button
-          data-page="geoQuiz">
+        <button data-page="geoQuiz">
           🧠 Geography
         </button>
 
@@ -1767,49 +1444,31 @@ main{
 </header>
 
 
-<!-- MOBILE NAV -->
-
 <nav class="mobile-nav">
 
-  <button
-    class="active"
-    data-page="home">
-
+  <button class="active" data-page="home">
     <span>🏠</span>
     Start
-
   </button>
 
-  <button
-    data-page="countries">
-
+  <button data-page="countries">
     <span>🌎</span>
     Państwa
-
   </button>
 
-  <button
-    data-page="flagQuiz">
-
+  <button data-page="flagQuiz">
     <span>🏳️</span>
     Flagi
-
   </button>
 
-  <button
-    data-page="capitalQuiz">
-
+  <button data-page="capitalQuiz">
     <span>🏛️</span>
     Stolice
-
   </button>
 
-  <button
-    data-page="geoQuiz">
-
+  <button data-page="geoQuiz">
     <span>🧠</span>
     Quiz
-
   </button>
 
 </nav>
@@ -1817,13 +1476,7 @@ main{
 
 <main>
 
-<!-- =========================
-     HOME
-========================= -->
-
-<section
-  id="home"
-  class="page active">
+<section id="home" class="page active">
 
   <div class="hero">
 
@@ -1875,9 +1528,7 @@ main{
           🌍
         </div>
 
-        <div
-          id="countryStat"
-          class="stat-value">
+        <div id="countryStat" class="stat-value">
           —
         </div>
 
@@ -1911,9 +1562,7 @@ main{
           ⚡
         </div>
 
-        <div
-          id="bestStat"
-          class="stat-value">
+        <div id="bestStat" class="stat-value">
           0%
         </div>
 
@@ -1930,9 +1579,7 @@ main{
           🔥
         </div>
 
-        <div
-          id="streakStat"
-          class="stat-value">
+        <div id="streakStat" class="stat-value">
           0
         </div>
 
@@ -2000,8 +1647,8 @@ main{
       </h3>
 
       <p>
-        Zobacz flagę i wybierz właściwe
-        państwo spośród czterech odpowiedzi.
+        Zobacz prawdziwą flagę i wybierz
+        właściwe państwo spośród czterech odpowiedzi.
       </p>
 
     </article>
@@ -2031,13 +1678,7 @@ main{
 </section>
 
 
-<!-- =========================
-     COUNTRIES
-========================= -->
-
-<section
-  id="countries"
-  class="page">
+<section id="countries" class="page">
 
   <div class="page-title">
 
@@ -2063,9 +1704,7 @@ main{
       autocomplete="off">
 
 
-    <select
-      id="region"
-      class="filter">
+    <select id="region" class="filter">
 
       <option value="">
         Wszystkie regiony
@@ -2083,9 +1722,7 @@ main{
   </div>
 
 
-  <div
-    id="countryGrid"
-    class="country-grid">
+  <div id="countryGrid" class="country-grid">
 
     <div class="loading">
 
@@ -2098,26 +1735,14 @@ main{
 </section>
 
 
-<!-- =========================
-     DETAIL
-========================= -->
-
-<section
-  id="detail"
-  class="page">
+<section id="detail" class="page">
 
   <div id="detailContent"></div>
 
 </section>
 
 
-<!-- =========================
-     FLAG QUIZ
-========================= -->
-
-<section
-  id="flagQuiz"
-  class="page">
+<section id="flagQuiz" class="page">
 
   <div class="quiz-wrap">
 
@@ -2130,14 +1755,12 @@ main{
         </h1>
 
         <p>
-          Rozpoznaj państwo po jego fladze.
+          Rozpoznaj państwo po jego prawdziwej fladze.
         </p>
 
       </div>
 
-      <div
-        id="flagScore"
-        class="quiz-score">
+      <div id="flagScore" class="quiz-score">
         0 pkt
       </div>
 
@@ -2150,13 +1773,7 @@ main{
 </section>
 
 
-<!-- =========================
-     CAPITAL QUIZ
-========================= -->
-
-<section
-  id="capitalQuiz"
-  class="page">
+<section id="capitalQuiz" class="page">
 
   <div class="quiz-wrap">
 
@@ -2174,9 +1791,7 @@ main{
 
       </div>
 
-      <div
-        id="capitalScore"
-        class="quiz-score">
+      <div id="capitalScore" class="quiz-score">
         0 pkt
       </div>
 
@@ -2189,13 +1804,7 @@ main{
 </section>
 
 
-<!-- =========================
-     GEOGRAPHY QUIZ
-========================= -->
-
-<section
-  id="geoQuiz"
-  class="page">
+<section id="geoQuiz" class="page">
 
   <div class="quiz-wrap">
 
@@ -2213,9 +1822,7 @@ main{
 
       </div>
 
-      <div
-        id="geoScore"
-        class="quiz-score">
+      <div id="geoScore" class="quiz-score">
         0 pkt
       </div>
 
@@ -2230,32 +1837,21 @@ main{
 </main>
 
 
-<div
-  id="toast"
-  class="toast">
-</div>
+<div id="toast" class="toast"></div>
 
 
 <script>
 
 /* =====================================================
    CLOUDFLARE WORKER
-   =====================================================
-
-   Po wdrożeniu Workera wklej jego adres tutaj.
-
-   PRZYKŁAD:
-
-   const API =
-     "https://world-school-api.twojanazwa.workers.dev/api/countries";
-
-*/
+===================================================== */
 
 const API =
   "https://ws-api.papierzowyroblox.workers.dev/api/countries";
 
 
 let countries = [];
+
 
 let quizState = {
   type:null,
@@ -2271,14 +1867,14 @@ let quizState = {
    HELPERS
 ===================================================== */
 
-const $ = id =>
-  document.getElementById(id);
+const $ =
+  id => document.getElementById(id);
 
 
 function escapeHTML(value){
 
   return String(value ?? "")
-    .replace(/[&<>"']/g, char => ({
+    .replace(/[&<>"']/g,char => ({
       "&":"&amp;",
       "<":"&lt;",
       ">":"&gt;",
@@ -2309,12 +1905,88 @@ function values(object){
 }
 
 
-function getFlag(country){
+/*
+  =====================================================
+  NAJWAŻNIEJSZA ZMIANA
+
+  REST COUNTRIES V5:
+
+  flags.svg
+  flags.png
+
+  Zamiast:
+
+  flags.emoji
+
+  zwracamy prawdziwy URL obrazka.
+  =====================================================
+*/
+
+function getFlagURL(country){
 
   return (
-    country?.flags?.emoji ||
-    "🏳️"
+    country?.flags?.svg ||
+    country?.flags?.png ||
+    ""
   );
+
+}
+
+
+/*
+  Generuje prawdziwy element <img>.
+*/
+
+function flagHTML(
+  country,
+  className = ""
+){
+
+  const url =
+    getFlagURL(country);
+
+  const name =
+    escapeHTML(
+      country?.name?.common ||
+      "Flaga"
+    );
+
+
+  if(!url){
+
+    return `
+      <div
+        class="${className}"
+        style="
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          font-size:45px;
+        ">
+        🏳️
+      </div>
+    `;
+
+  }
+
+
+  return `
+    <div class="${className}">
+      <img
+        src="${escapeHTML(url)}"
+        alt="Flaga ${name}"
+        loading="lazy"
+        decoding="async"
+        draggable="false"
+        onerror="
+          this.onerror=null;
+          this.src='${escapeHTML(
+            country?.flags?.png || ""
+          )}';
+        "
+      >
+    </div>
+  `;
 
 }
 
@@ -2348,11 +2020,14 @@ function getCurrency(country){
       country?.currencies
     );
 
+
   if(!currencies.length)
     return "Brak danych";
 
+
   const currency =
     currencies[0];
+
 
   return (
     currency.symbol
@@ -2375,6 +2050,7 @@ function formatNumber(value){
   )
     return "—";
 
+
   return new Intl.NumberFormat(
     "pl-PL"
   ).format(value);
@@ -2387,16 +2063,20 @@ function toast(message){
   const element =
     $("toast");
 
+
   element.textContent =
     message;
+
 
   element.classList.add(
     "show"
   );
 
+
   clearTimeout(
     toast.timer
   );
+
 
   toast.timer =
     setTimeout(
@@ -2420,10 +2100,12 @@ function setTheme(theme){
     .dataset
     .theme = theme;
 
+
   localStorage.setItem(
     "worldSchoolTheme",
     theme
   );
+
 
   $("themeButton")
     .textContent =
@@ -2457,6 +2139,7 @@ $("themeButton").onclick = () => {
     document.documentElement
       .dataset
       .theme;
+
 
   setTheme(
     current === "dark"
@@ -2503,6 +2186,7 @@ function showPage(page){
   const target =
     $(page);
 
+
   if(!target)
     return;
 
@@ -2515,31 +2199,16 @@ function showPage(page){
   updateNavigation(page);
 
 
-  if(
-    page === "flagQuiz"
-  ){
-
+  if(page === "flagQuiz")
     startQuiz("flag");
 
-  }
 
-
-  if(
-    page === "capitalQuiz"
-  ){
-
+  if(page === "capitalQuiz")
     startQuiz("capital");
 
-  }
 
-
-  if(
-    page === "geoQuiz"
-  ){
-
+  if(page === "geoQuiz")
     startQuiz("geo");
-
-  }
 
 
   window.scrollTo({
@@ -2587,22 +2256,38 @@ async function loadCountries(){
       );
 
 
-    if(!response.ok)
+    if(!response.ok){
+
       throw new Error(
         "HTTP " +
         response.status
       );
 
+    }
 
-    countries =
+
+    const data =
       await response.json();
 
 
+    if(!Array.isArray(data)){
+
+      throw new Error(
+        "API nie zwróciło tablicy państw."
+      );
+
+    }
+
+
     countries =
-      countries
+      data
         .filter(
           country =>
             country?.name?.common
+        )
+        .filter(
+          country =>
+            getFlagURL(country)
         )
         .sort(
           (a,b) =>
@@ -2624,6 +2309,7 @@ async function loadCountries(){
 
     updateBest();
 
+
     toast(
       "Świat jest gotowy do odkrywania 🌍"
     );
@@ -2631,22 +2317,36 @@ async function loadCountries(){
   }
   catch(error){
 
-    console.error(error);
+    console.error(
+      "World School API:",
+      error
+    );
+
 
     $("countryGrid")
       .innerHTML = `
 
         <div
           class="loading"
-          style="display:block;text-align:center">
+          style="
+            display:block;
+            text-align:center;
+            padding:40px;
+          ">
 
           <h3>
             Nie udało się pobrać danych.
           </h3>
 
           <p>
-            Sprawdź adres Cloudflare Worker
-            w zmiennej <b>API</b>.
+            ${escapeHTML(
+              error.message
+            )}
+          </p>
+
+          <p>
+            Sprawdź Cloudflare Worker
+            i adres API.
           </p>
 
         </div>
@@ -2769,6 +2469,7 @@ function renderCountries(){
         <div class="loading">
 
           <div>
+
             <h3>
               Niczego nie znaleziono.
             </h3>
@@ -2776,6 +2477,7 @@ function renderCountries(){
             <p>
               Spróbuj innej nazwy.
             </p>
+
           </div>
 
         </div>
@@ -2805,18 +2507,14 @@ function renderCountries(){
               class="country"
               onclick="openCountry('${code}')">
 
-              <div
-                class="country-top">
+              <div class="country-top">
 
-                <div
-                  class="country-flag">
+                ${flagHTML(
+                  country,
+                  "country-flag"
+                )}
 
-                  ${getFlag(country)}
-
-                </div>
-
-                <span
-                  class="region-badge">
+                <span class="region-badge">
 
                   ${escapeHTML(
                     country.region ||
@@ -2835,8 +2533,7 @@ function renderCountries(){
               </h3>
 
 
-              <div
-                class="country-info">
+              <div class="country-info">
 
                 <div>
                   🏛️
@@ -2945,27 +2642,21 @@ function openCountry(code){
       </button>
 
 
-      <div
-        class="detail-layout">
+      <div class="detail-layout">
 
-        <div
-          class="detail-visual">
+        <div class="detail-visual">
 
-          <div
-            class="detail-flag">
-
-            ${getFlag(country)}
-
-          </div>
+          ${flagHTML(
+            country,
+            "detail-flag"
+          )}
 
         </div>
 
 
-        <div
-          class="detail-card">
+        <div class="detail-card">
 
-          <span
-            class="region-badge">
+          <span class="region-badge">
 
             ${escapeHTML(
               country.region ||
@@ -2982,8 +2673,7 @@ function openCountry(code){
           </h1>
 
 
-          <div
-            class="detail-official">
+          <div class="detail-official">
 
             ${escapeHTML(
               country.name.official ||
@@ -2993,8 +2683,7 @@ function openCountry(code){
           </div>
 
 
-          <div
-            class="detail-grid">
+          <div class="detail-grid">
 
             <div class="detail-item">
 
@@ -3126,7 +2815,8 @@ function quizPool(){
 
   return countries.filter(
     country =>
-      country?.name?.common
+      country?.name?.common &&
+      getFlagURL(country)
   );
 
 }
@@ -3138,7 +2828,7 @@ function createQuizQuestion(type){
     quizPool();
 
 
-  if(!pool.length)
+  if(pool.length < 4)
     return null;
 
 
@@ -3162,8 +2852,6 @@ function createQuizQuestion(type){
     .slice(0,3);
 
 
-  /* FLAG */
-
   if(type === "flag"){
 
     const options =
@@ -3175,8 +2863,13 @@ function createQuizQuestion(type){
 
     return {
 
+      country,
+
       visual:
-        getFlag(country),
+        flagHTML(
+          country,
+          "quiz-flag-container"
+        ),
 
       question:
         "Które państwo ma tę flagę?",
@@ -3195,8 +2888,6 @@ function createQuizQuestion(type){
   }
 
 
-  /* CAPITAL */
-
   if(type === "capital"){
 
     const options =
@@ -3208,8 +2899,13 @@ function createQuizQuestion(type){
 
     return {
 
+      country,
+
       visual:
-        getFlag(country),
+        flagHTML(
+          country,
+          "quiz-flag-container"
+        ),
 
       question:
         `Jaka jest stolica państwa „${country.name.common}”?`,
@@ -3227,8 +2923,6 @@ function createQuizQuestion(type){
 
   }
 
-
-  /* GEOGRAPHY */
 
   const questionType =
     shuffle([
@@ -3293,8 +2987,13 @@ function createQuizQuestion(type){
 
   return {
 
+    country,
+
     visual:
-      getFlag(country),
+      flagHTML(
+        country,
+        "quiz-flag-container"
+      ),
 
     question:
       isLanguage
@@ -3319,10 +3018,12 @@ function getQuizBox(){
   return $(
     quizState.type ===
       "flag"
+
       ? "flagQuizBox"
 
       : quizState.type ===
         "capital"
+
         ? "capitalQuizBox"
 
         : "geoQuizBox"
@@ -3336,10 +3037,12 @@ function getScoreElement(){
   return $(
     quizState.type ===
       "flag"
+
       ? "flagScore"
 
       : quizState.type ===
         "capital"
+
         ? "capitalScore"
 
         : "geoScore"
@@ -3393,6 +3096,31 @@ function renderQuiz(){
 
 
   if(
+    !quizState.current
+  ){
+
+    box.innerHTML = `
+
+      <div class="quiz-card">
+
+        <h2>
+          Brak wystarczających danych.
+        </h2>
+
+        <p>
+          Sprawdź połączenie z API.
+        </p>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  if(
     quizState.question >= 10
   ){
 
@@ -3412,11 +3140,9 @@ function renderQuiz(){
 
     box.innerHTML = `
 
-      <div
-        class="quiz-card quiz-result">
+      <div class="quiz-card quiz-result">
 
-        <div
-          class="result-emoji">
+        <div class="result-emoji">
 
           ${
             percentage >= 90
@@ -3431,11 +3157,8 @@ function renderQuiz(){
         </div>
 
 
-        <div
-          class="result-score">
-
+        <div class="result-score">
           ${percentage}%
-
         </div>
 
 
@@ -3461,7 +3184,9 @@ function renderQuiz(){
 
         <button
           class="primary"
-          onclick="startQuiz('${quizState.type}')">
+          onclick="
+            startQuiz('${quizState.type}')
+          ">
 
           Zagraj ponownie
 
@@ -3499,19 +3224,16 @@ function renderQuiz(){
     </div>
 
 
-    <div
-      class="quiz-card">
+    <div class="quiz-card">
 
-      <div
-        class="quiz-visual">
+      <div class="quiz-visual">
 
         ${quizState.current.visual}
 
       </div>
 
 
-      <div
-        class="quiz-question">
+      <div class="quiz-question">
 
         ${escapeHTML(
           quizState.current.question
@@ -3520,8 +3242,7 @@ function renderQuiz(){
       </div>
 
 
-      <div
-        class="answers">
+      <div class="answers">
 
         ${quizState.current.options
           .map(
@@ -3639,8 +3360,10 @@ function answerQuiz(index){
 
     quizState.streak = 0;
 
+
     $("streakStat")
-      .textContent = "0";
+      .textContent =
+      "0";
 
 
     buttons[index]
@@ -3719,6 +3442,7 @@ function saveBest(
       key,
       score
     );
+
 
     toast(
       "Nowy rekord! 🏆"
